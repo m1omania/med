@@ -1,10 +1,10 @@
-# Render blueprint (optional — for separate API service later)
+# Render — один Web Service: Nuxt (SSR + API)
 services:
   - type: web
     name: antionko
     env: node
-    buildCommand: npm install && npm run build
-    startCommand: npm run preview
+    buildCommand: npm ci && npm run build
+    startCommand: node .output/server/index.mjs
     envVars:
       - key: HF_API_KEY
         sync: false

@@ -21,13 +21,28 @@ npm run dev
 
 Если появляется ошибка `#internal/nuxt/paths is not defined`: очистите кэш и пересоберите типы: `rm -rf .nuxt .output node_modules/.cache && npx nuxi prepare && npm run dev`. В проекте добавлены обходной конфиг (`experimental.payloadExtraction`) и shim в `package.json` для разрешения этого алиаса.
 
-## Деплой (Vercel)
+## Деплой
 
-1. Подключите репозиторий к Vercel.
-2. Build: `nuxt build`, Output: `.output/public` (или авто-определение Nuxt).
-3. В настройках добавьте env: `HF_API_KEY` (пока можно оставить пустым).
+### Vercel
 
-Рекомендуется использовать встроенную поддержку Nuxt в Vercel (авто-определение).
+1. Зайдите на [vercel.com](https://vercel.com), войдите через GitHub.
+2. **Add New** → **Project** → выберите репозиторий **m1omania/med**.
+3. Оставьте авто-определение (Vercel подхватит Nuxt):  
+   Build Command: `nuxt build`, Output — по умолчанию.
+4. При желании в **Environment Variables** добавьте `HF_API_KEY` (пока можно пустым).
+5. Нажмите **Deploy**. После сборки получите ссылку вида `med-xxx.vercel.app`.
+
+### Render
+
+1. Зайдите на [render.com](https://render.com), войдите через GitHub.
+2. **New** → **Web Service**.
+3. Подключите репозиторий **m1omania/med**.
+4. Настройки:
+   - **Environment:** Node.
+   - **Build Command:** `npm ci && npm run build`.
+   - **Start Command:** `node .output/server/index.mjs`.
+5. В **Environment** добавьте при необходимости переменную `HF_API_KEY`.
+6. **Create Web Service**. После деплоя получите ссылку вида `antionko.onrender.com`.
 
 ## Кейсы
 
