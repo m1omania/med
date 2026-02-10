@@ -50,8 +50,8 @@ const timelineItems = computed(() => {
   items.push({
     title: 'Результаты',
     desc: hasResult ? 'Оценка рисков готова' : 'Появятся после опроса',
-    link: hasResult ? `/results/${patientStore.lastResultId || patientStore.results[0]?.id}` : '/quiz',
-    linkText: hasResult ? 'Смотреть' : 'Сначала опрос',
+    link: hasResult ? '/clinics' : '/quiz',
+    linkText: hasResult ? 'Подобрать клиники' : 'Сначала опрос',
     done: hasResult,
   })
   items.push({

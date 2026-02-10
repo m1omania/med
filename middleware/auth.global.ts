@@ -1,8 +1,10 @@
 export default defineNuxtRouteMiddleware((to) => {
+  if (!import.meta.client) return
   const patientStore = usePatientStore()
-  const protectedPaths = ['/dashboard']
+  patientStore.hydrateFromStorage()
+  const protectedPaths = ['/dashboard', '/settings']
   const isProtected = protectedPaths.some((p) => to.path.startsWith(p))
-  if (isProtected && !patientStore.isLoggedIn && import.meta.client) {
+  if (isProtected && !patientStore.isLoggedIn) {
     return navigateTo('/login')
   }
 })

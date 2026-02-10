@@ -21,6 +21,7 @@ export function useQuiz() {
       gender: patientStore.quizData?.gender,
       symptoms: patientStore.quizData?.symptoms ?? [],
       localization: patientStore.quizData?.localization,
+      geography: patientStore.quizData?.geography,
       familyHistory: patientStore.quizData?.familyHistory,
       lifestyle: patientStore.quizData?.lifestyle ?? [],
       ...patientStore.quizData?.extra,

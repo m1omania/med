@@ -9,18 +9,20 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview"
+    "preview": "nuxt preview",
+    "check-links": "node scripts/check-methods-clinics-doctors.mjs"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.4",
+    "@vueuse/core": "^11.2.0",
     "chart.js": "^4.4.6",
+    "gsap": "^3.14.2",
     "leaflet": "^1.9.4",
+    "nanoid": "^5.0.8",
     "nuxt": "^3.13.0",
     "pinia": "^2.2.4",
     "vue": "^3.5.12",
-    "vue-chartjs": "^5.3.0",
-    "@vueuse/core": "^11.2.0",
-    "nanoid": "^5.0.8"
+    "vue-chartjs": "^5.3.0"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.12.2",

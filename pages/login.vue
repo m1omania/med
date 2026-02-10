@@ -38,14 +38,13 @@
 <script setup lang="ts">
 const email = ref('')
 const password = ref('')
-const router = useRouter()
 const patientStore = usePatientStore()
 const { showToast } = useToast()
 
 function onSubmit() {
   patientStore.login({ email: email.value, password: password.value })
   showToast('Вход выполнен.')
-  router.push('/dashboard')
+  navigateTo('/dashboard')
 }
 
 useHead({

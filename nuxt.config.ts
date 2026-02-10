@@ -8,16 +8,16 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt', '@vueuse/nuxt'],
   app: {
     head: {
-      title: 'AntiOnko — онкология Петрозаводск',
+      title: 'AntiOnko — онко-скрининг и рекомендации',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         {
           name: 'description',
           content:
-            'Онко-платформа AntiOnko: оценка рисков, рекомендации, клиники Петрозаводска и Карелии. Персональный скрининг и поддержка.',
+            'Онко-платформа AntiOnko: оценка рисков, рекомендации и подбор клиник. Персональный скрининг и поддержка.',
         },
-        { name: 'keywords', content: 'онкология Петрозаводск, рак, скрининг, клиники Карелия' },
+        { name: 'keywords', content: 'онкология, рак, скрининг, клиники, диагностика' },
       ],
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
@@ -38,5 +38,7 @@ export default defineNuxtConfig({
   ssr: true,
   routeRules: {
     '/api/**': { cors: true },
+    '/news': { redirect: '/methods' },
+    '/news/**': { redirect: '/methods/**' },
   },
 })

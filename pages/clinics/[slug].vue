@@ -1,27 +1,41 @@
 <template>
   <div class="py-8 px-4">
     <div class="max-w-4xl mx-auto">
-      <NuxtLink to="/clinics" class="text-calming-600 hover:underline mb-4 inline-block">
-        ← Все клиники
+      <NuxtLink to="/clinics" class="text-calming-600 hover:underline mb-4 inline-flex items-center gap-1">
+        <AppIcon name="arrow-left" size="sm" /> Все клиники
       </NuxtLink>
       <h1 class="text-2xl font-bold text-calming-900 mb-2">
-        {{ slugLabel }} — клиники в Петрозаводске
+        {{ slugLabel }} — клиники
       </h1>
-      <p class="text-calming-600 mb-6">
-        Подборка клиник по направлению. Карта и контакты для записи.
+      <p class="text-calming-600 mb-4">
+        Подборка клиник по направлению. Выберите город для фильтра.
       </p>
+      <div class="mb-6">
+        <select
+          v-model="cityFilter"
+          class="rounded-lg border border-calming-300 px-3 py-2 text-sm"
+        >
+          <option value="">Все города</option>
+          <option value="Петрозаводск">Петрозаводск</option>
+          <option value="Москва">Москва</option>
+          <option value="Санкт-Петербург">Санкт-Петербург</option>
+        </select>
+      </div>
       <div class="grid gap-6">
         <ClinicCard
-          v-for="c in clinicsBySlug"
+          v-for="c in filteredByCity"
           :key="c.id"
           :clinic="c"
           :slug="slug"
         />
       </div>
-      <div class="mt-8 h-80 rounded-xl overflow-hidden border border-calming-200 bg-calming-50">
-        <ClientOnly>
-          <div ref="mapRef" class="w-full h-full" />
-        </ClientOnly>
+      <div class="mt-8">
+        <h2 class="text-lg font-semibold text-calming-900 mb-2">На карте</h2>
+        <div class="h-80 rounded-xl overflow-hidden border border-calming-200 bg-calming-50">
+          <ClientOnly>
+            <ClinicsMap :key="mapKey" :clinics="filteredByCity" />
+          </ClientOnly>
+        </div>
       </div>
     </div>
   </div>
@@ -30,7 +44,6 @@
 <script setup lang="ts">
 const route = useRoute()
 const slug = computed(() => (route.params.slug as string) || 'pechen')
-const mapRef = ref<HTMLElement | null>(null)
 
 const slugLabels: Record<string, string> = {
   pechen: 'Печень',
@@ -44,6 +57,8 @@ const { data } = await useFetch<{ clinics: Clinic[] }>('/api/clinics', {
   default: () => ({ clinics: [] }),
 })
 
+const cityFilter = ref('')
+
 const clinicsBySlug = computed(() => {
   const list = data.value?.clinics ?? []
   if (slug.value === 'obshiy') return list
@@ -52,21 +67,13 @@ const clinicsBySlug = computed(() => {
   )
 })
 
-onMounted(() => {
-  if (import.meta.client && mapRef.value) {
-    import('leaflet').then((L) => {
-      const map = L.map(mapRef.value!).setView([61.78, 34.35], 12)
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap',
-      }).addTo(map)
-      clinicsBySlug.value.forEach((c) => {
-        if (c.lat && c.lng) {
-          L.marker([c.lat, c.lng]).addTo(map).bindPopup(c.name)
-        }
-      })
-    })
-  }
+const filteredByCity = computed(() => {
+  const list = clinicsBySlug.value
+  if (!cityFilter.value) return list
+  return list.filter((c) => c.city === cityFilter.value)
 })
+
+const mapKey = computed(() => filteredByCity.value.map((c) => c.id).join(','))
 
 useHead({
   title: `Клиники ${slugLabel.value} — AntiOnko`,

@@ -4,14 +4,14 @@
       class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-calming-100 shadow-sm"
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-          <NuxtLink to="/" class="flex items-center gap-2 text-calming-700 font-bold text-xl">
-            <span class="text-2xl">🩺</span>
+        <div class="flex items-center h-16 gap-4">
+          <NuxtLink to="/" class="flex items-center gap-2 text-calming-700 font-bold text-xl shrink-0">
+            <AppIcon name="logo" size="lg" class="w-8 h-8 text-calming-600" />
             AntiOnko
           </NuxtLink>
-          <nav class="hidden md:flex items-center gap-6 text-sm">
+          <nav class="hidden md:flex flex-1 justify-center items-center gap-6 text-sm">
             <NuxtLink
-              v-for="link in navLinks"
+              v-for="link in centerNavLinks"
               :key="link.to"
               :to="link.to"
               class="text-calming-600 hover:text-calming-800 font-medium"
@@ -20,27 +20,52 @@
               {{ link.label }}
             </NuxtLink>
           </nav>
-          <div class="flex items-center gap-3">
-            <NuxtLink
-              to="/quiz"
-              class="btn-primary px-4 py-2 rounded-lg bg-calming-600 text-white hover:bg-calming-700 text-sm font-medium"
-            >
-              Начать опрос
-            </NuxtLink>
+          <div class="hidden md:flex items-center gap-3 shrink-0">
             <NuxtLink
               v-if="!patientStore.isLoggedIn"
               to="/login"
-              class="text-calming-600 hover:text-calming-800 text-sm"
+              class="text-calming-600 hover:text-calming-800 font-medium text-sm"
             >
-              Вход
+              Личный кабинет
             </NuxtLink>
-            <NuxtLink
-              v-else
-              to="/dashboard"
-              class="text-calming-600 hover:text-calming-800 text-sm font-medium"
-            >
-              Дашборд
-            </NuxtLink>
+            <template v-else>
+              <NuxtLink
+                to="/subscribe"
+                class="p-2 rounded-lg text-calming-600 hover:text-calming-800 hover:bg-calming-100"
+                aria-label="Уведомления"
+              >
+                <AppIcon name="bell" size="md" />
+              </NuxtLink>
+              <div ref="userMenuRef" class="relative">
+                <button
+                  type="button"
+                  class="flex items-center justify-center w-9 h-9 rounded-full bg-calming-600 text-white text-sm font-semibold hover:bg-calming-700 focus:outline-none focus:ring-2 focus:ring-calming-500 focus:ring-offset-2"
+                  aria-label="Меню пользователя"
+                  @click="userMenuOpen = !userMenuOpen"
+                >
+                  {{ userInitial }}
+                </button>
+                <div
+                  v-show="userMenuOpen"
+                  class="absolute right-0 mt-2 w-48 py-1 bg-white rounded-lg border border-calming-200 shadow-lg z-50"
+                >
+                  <NuxtLink
+                    to="/settings"
+                    class="block px-4 py-2 text-sm text-calming-700 hover:bg-calming-50"
+                    @click="userMenuOpen = false"
+                  >
+                    Настройки
+                  </NuxtLink>
+                  <button
+                    type="button"
+                    class="block w-full text-left px-4 py-2 text-sm text-calming-700 hover:bg-calming-50"
+                    @click="onLogout"
+                  >
+                    Выйти
+                  </button>
+                </div>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -54,16 +79,15 @@
           <div>
             <h3 class="font-bold text-lg mb-2">AntiOnko</h3>
             <p class="text-calming-200 text-sm">
-              Онко-платформа для оценки рисков и подбора клиник в Петрозаводске и Карелии.
+              Онко-платформа для оценки рисков и подбора клиник.
             </p>
           </div>
           <div>
             <h3 class="font-bold text-lg mb-2">Навигация</h3>
             <ul class="space-y-1 text-sm">
               <li><NuxtLink to="/quiz" class="hover:underline">Опрос</NuxtLink></li>
-              <li><NuxtLink to="/results" class="hover:underline">Результаты</NuxtLink></li>
               <li><NuxtLink to="/clinics" class="hover:underline">Клиники</NuxtLink></li>
-              <li><NuxtLink to="/news" class="hover:underline">Новости</NuxtLink></li>
+              <li><NuxtLink to="/methods" class="hover:underline">Методы лечения</NuxtLink></li>
             </ul>
           </div>
           <div>
@@ -83,12 +107,42 @@
 <script setup lang="ts">
 const patientStore = usePatientStore()
 
-const navLinks = [
-  { to: '/', label: 'Главная' },
-  { to: '/quiz', label: 'Опрос' },
-  { to: '/results', label: 'Результаты' },
-  { to: '/clinics', label: 'Клиники' },
-  { to: '/news', label: 'Новости' },
-  { to: '/dashboard', label: 'Дашборд' },
-]
+function onLogout() {
+  patientStore.logout()
+  navigateTo('/')
+}
+
+const centerNavLinks = computed(() => {
+  if (patientStore.isLoggedIn) {
+    return [
+      { to: '/dashboard', label: 'Дашборд' },
+      { to: '/methods', label: 'Методы лечения' },
+      { to: '/clinics', label: 'Клиники' },
+    ]
+  }
+  return [
+    { to: '/methods', label: 'Методы лечения' },
+    { to: '/clinics', label: 'Клиники' },
+  ]
+})
+
+const username = computed(() => {
+  const email = patientStore.user?.email
+  if (!email) return ''
+  const part = email.split('@')[0]
+  return part || email
+})
+
+const userInitial = computed(() => {
+  const name = patientStore.user?.name ?? username.value
+  const str = typeof name === 'string' ? name : ''
+  if (!str) return '?'
+  return str.slice(0, 1).toUpperCase()
+})
+
+const userMenuRef = ref<HTMLElement | null>(null)
+const userMenuOpen = ref(false)
+onClickOutside(userMenuRef, () => {
+  userMenuOpen.value = false
+})
 </script>

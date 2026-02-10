@@ -1,14 +1,117 @@
 <template>
   <div class="py-8 px-4 max-w-3xl mx-auto">
-    <NuxtLink to="/results" class="text-calming-600 hover:underline mb-4 inline-block">
-      ← К результатам
+    <NuxtLink to="/methods" class="text-calming-600 hover:underline mb-4 inline-flex items-center gap-1">
+      <AppIcon name="arrow-left" size="sm" /> К методам лечения
     </NuxtLink>
-    <div v-if="method" class="bg-white rounded-xl border border-calming-200 p-6">
-      <h1 class="text-2xl font-bold text-calming-900">{{ method.name }}</h1>
-      <p class="text-calming-600 text-sm">Тип: {{ method.type }}, источник: {{ method.source }}</p>
-      <p class="mt-2">Эффективность по данным: {{ method.success }}%</p>
-      <p class="mt-2 text-calming-700">{{ method.description || 'Метод применяется в современных протоколах лечения.' }}</p>
-    </div>
+    <article v-if="method" class="space-y-6">
+      <!-- Заголовок -->
+      <header>
+        <h1 class="text-2xl font-bold text-calming-900">
+          {{ methodTitle }}
+        </h1>
+        <p class="mt-2 text-sm text-calming-600">
+          <span>Дата: {{ method.date }}</span>
+          <span v-if="method.source?.name"> | Источник: {{ method.source.name }}</span>
+          <span v-if="method.verifiedDate"> | Верифицировано: {{ method.verifiedDate }}</span>
+        </p>
+      </header>
+
+      <!-- Для кого -->
+      <p class="text-calming-800">
+        <span class="font-medium text-calming-900">Для кого:</span> {{ method.forWhom || '—' }}
+      </p>
+
+      <!-- Эффект -->
+      <p class="text-calming-800">
+        <span class="font-medium text-calming-900">Эффект:</span> {{ method.effect || '—' }}
+      </p>
+
+      <!-- Основной текст -->
+      <p class="text-calming-700 leading-relaxed">{{ method.body || '—' }}</p>
+
+      <!-- ГДЕ ПОЛУЧИТЬ — единая структура как у dostarlimab -->
+      <section
+        class="rounded-xl border-2 border-calming-200 bg-calming-50/50 p-5 space-y-4"
+      >
+        <h2 class="text-sm font-semibold text-calming-800 uppercase tracking-wider">
+          Где получить{{ method.geographyLabel ? ` (${method.geographyLabel})` : '' }}
+        </h2>
+        <div class="space-y-3 text-sm text-calming-800">
+          <p class="flex items-center gap-2 font-medium">
+            <span aria-hidden="true">📍</span>
+            <NuxtLink
+              v-if="method.clinicId && wherePlaceName"
+              :to="`/clinic/${method.clinicId}`"
+              class="text-calming-600 hover:underline font-medium"
+            >
+              {{ wherePlaceName }}
+            </NuxtLink>
+            <span v-else>{{ wherePlaceName || '—' }}</span>
+          </p>
+          <p class="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span aria-hidden="true">👨‍⚕️</span>
+            <NuxtLink
+              v-if="method.doctorId && doctor"
+              :to="`/doctor/${method.doctorId}`"
+              class="text-calming-600 hover:underline font-medium"
+            >
+              Доктор {{ doctor.name }}{{ (doctor as { specialty?: string }).specialty ? ` (${(doctor as { specialty?: string }).specialty })` : '' }}
+            </NuxtLink>
+            <template v-else-if="doctor">
+              <span>Доктор {{ doctor.name }}{{ (doctor as { specialty?: string }).specialty ? ` (${(doctor as { specialty?: string }).specialty })` : '' }}</span>
+            </template>
+            <template v-else>
+              <span>—</span>
+            </template>
+            <span v-if="method.phone" class="text-calming-600">| ☎️ {{ method.phone }}</span>
+          </p>
+          <p class="flex items-center gap-2 text-calming-700">
+            <span aria-hidden="true">💰</span>
+            <span>Стоимость: {{ method.cost || 'по запросу' }}</span>
+          </p>
+          <div class="pt-1">
+            <span class="font-medium text-calming-900">Что сказать:</span>
+            <span class="text-calming-700"> {{ method.whatToSay ? `«${method.whatToSay}»` : '—' }}</span>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-3 pt-2">
+          <NuxtLink
+            v-if="method.clinicId"
+            :to="`/clinic/${method.clinicId}`"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-calming-600 text-white text-sm font-medium hover:bg-calming-700 transition"
+          >
+            Записаться
+          </NuxtLink>
+          <NuxtLink
+            v-else
+            to="/clinics"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-calming-600 text-white text-sm font-medium hover:bg-calming-700 transition"
+          >
+            Подобрать клинику
+          </NuxtLink>
+          <NuxtLink
+            to="/dashboard"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-calming-300 text-calming-700 text-sm font-medium hover:bg-calming-100 transition"
+          >
+            Сохранить
+          </NuxtLink>
+        </div>
+      </section>
+
+      <!-- Теги — всегда одна строка -->
+      <div class="flex flex-wrap gap-2 pt-2">
+        <template v-if="method.tags?.length">
+          <span
+            v-for="tag in method.tags"
+            :key="tag"
+            class="inline-flex rounded-full bg-calming-100 px-3 py-1 text-sm text-calming-700"
+          >
+            {{ tag }}
+          </span>
+        </template>
+        <span v-else class="text-sm text-calming-500">—</span>
+      </div>
+    </article>
     <p v-else class="text-calming-600">Метод не найден.</p>
   </div>
 </template>
@@ -16,25 +119,52 @@
 <script setup lang="ts">
 const route = useRoute()
 const slug = route.params.slug as string
+const { stripEmojis } = useStripEmojis()
 
-const { data: methodsData } = await useFetch<{ methods: MethodRecord[] }>('/api/methods', {
-  default: () => ({ methods: [] }),
-})
+const { data: method } = await useFetch<{
+  slug: string
+  title: string
+  date: string
+  topic: string
+  source?: { name: string; url: string }
+  tags?: string[]
+  body: string
+  clinicId?: number
+  doctorId?: number
+  verifiedDate?: string
+  forWhom?: string
+  effect?: string
+  geographyLabel?: string
+  placeName?: string
+  phone?: string
+  availability?: string
+  cost?: string
+  whatToSay?: string
+}>(`/api/articles/${slug}`)
 
-const method = computed(() =>
-  methodsData.value?.methods?.find((m) => m.slug === slug || m.name.toLowerCase().includes(slug)),
+const methodTitle = computed(() => stripEmojis(method.value?.title ?? ''))
+
+const clinicId = computed(() => method.value?.clinicId)
+const doctorId = computed(() => method.value?.doctorId)
+
+const { data: clinic } = await useFetch(
+  () => `/api/clinics/${clinicId.value ?? ''}`,
+  { default: () => null, watch: [clinicId] }
+)
+const { data: doctor } = await useFetch(
+  () => `/api/doctors/${doctorId.value ?? ''}`,
+  { default: () => null, watch: [doctorId] }
 )
 
-useHead({
-  title: method.value ? `${method.value.name} — AntiOnko` : 'Метод — AntiOnko',
+const wherePlaceName = computed(() => {
+  const m = method.value
+  if (m?.placeName) return m.placeName
+  const c = clinic.value
+  if (c?.name && c?.city) return `${c.name}, ${c.city}`
+  return c?.name ?? ''
 })
 
-interface MethodRecord {
-  slug?: string
-  name: string
-  type: string
-  success: number
-  source: string
-  description?: string
-}
+useHead({
+  title: `${methodTitle.value || 'Метод'} — AntiOnko`,
+})
 </script>

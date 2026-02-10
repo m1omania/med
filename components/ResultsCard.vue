@@ -1,13 +1,5 @@
 <template>
   <div class="space-y-6">
-    <div class="bg-white rounded-xl border border-calming-200 p-6">
-      <h2 class="text-lg font-semibold text-calming-800 mb-4">Оценка рисков</h2>
-      <div class="h-64">
-        <ClientOnly>
-          <ResultsChart :risks="result.risks" />
-        </ClientOnly>
-      </div>
-    </div>
     <div v-if="result.recommendations?.length" class="bg-white rounded-xl border border-calming-200 p-6">
       <h2 class="text-lg font-semibold text-calming-800 mb-4">Рекомендации</h2>
       <ul class="list-disc list-inside text-calming-700 space-y-1">
@@ -34,7 +26,7 @@
               <td class="py-2">
                 <NuxtLink
                   v-if="m.slug"
-                  :to="`/methods/${m.slug}`"
+                  :to="`/method/${m.slug}`"
                   class="text-calming-600 hover:underline"
                 >
                   {{ m.name }}
@@ -45,7 +37,7 @@
               <td class="py-2">
                 <NuxtLink
                   v-if="m.slug"
-                  :to="`/methods/${m.slug}`"
+                  :to="`/method/${m.slug}`"
                   class="text-calming-600 hover:underline"
                 >
                   Подробнее

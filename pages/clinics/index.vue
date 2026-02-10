@@ -1,14 +1,16 @@
 <template>
   <div class="py-8 px-4">
     <div class="max-w-6xl mx-auto">
-      <h1 class="text-2xl font-bold text-calming-900 mb-6">Клиники Петрозаводска и Карелии</h1>
-      <div class="flex flex-wrap gap-4 mb-6">
+      <h1 class="text-2xl font-bold text-calming-900 mb-6">Клиники</h1>
+      <div class="flex flex-wrap items-center gap-4 mb-6">
         <select
           v-model="city"
           class="rounded-lg border border-calming-300 px-3 py-2 text-sm"
         >
           <option value="">Все города</option>
           <option value="Петрозаводск">Петрозаводск</option>
+          <option value="Москва">Москва</option>
+          <option value="Санкт-Петербург">Санкт-Петербург</option>
         </select>
         <select
           v-model="service"
@@ -20,8 +22,26 @@
           <option value="МРТ">МРТ</option>
           <option value="Маммография">Маммография</option>
         </select>
+        <div class="ml-auto flex rounded-lg border border-calming-300 p-0.5 bg-calming-100">
+          <button
+            type="button"
+            class="px-4 py-2 text-sm font-medium rounded-md transition"
+            :class="viewMode === 'list' ? 'bg-white text-calming-900 shadow-sm' : 'text-calming-600 hover:text-calming-900'"
+            @click="viewMode = 'list'"
+          >
+            Список
+          </button>
+          <button
+            type="button"
+            class="px-4 py-2 text-sm font-medium rounded-md transition"
+            :class="viewMode === 'map' ? 'bg-white text-calming-900 shadow-sm' : 'text-calming-600 hover:text-calming-900'"
+            @click="viewMode = 'map'"
+          >
+            Карта
+          </button>
+        </div>
       </div>
-      <div class="grid md:grid-cols-2 gap-6">
+      <div v-if="viewMode === 'list'" class="grid md:grid-cols-2 gap-6">
         <ClinicCard
           v-for="c in filteredClinics"
           :key="c.id"
@@ -29,9 +49,9 @@
           slug="all"
         />
       </div>
-      <div class="mt-8 h-96 rounded-xl overflow-hidden border border-calming-200 bg-calming-50">
+      <div v-else class="h-[28rem] rounded-xl overflow-hidden border border-calming-200 bg-calming-50">
         <ClientOnly>
-          <div ref="mapRef" class="w-full h-full" />
+          <ClinicsMap :key="mapKey" :clinics="filteredClinics" />
         </ClientOnly>
       </div>
     </div>
@@ -41,7 +61,7 @@
 <script setup lang="ts">
 const city = ref('')
 const service = ref('')
-const mapRef = ref<HTMLElement | null>(null)
+const viewMode = ref<'list' | 'map'>('list')
 
 const { data: clinics } = await useFetch<ClinicsResponse>('/api/clinics', {
   default: () => ({ clinics: [] }),
@@ -56,23 +76,8 @@ const filteredClinics = computed(() => {
   })
 })
 
-onMounted(() => {
-  if (import.meta.client && mapRef.value && typeof window !== 'undefined') {
-    import('leaflet').then((L) => {
-      const map = L.map(mapRef.value!).setView([61.78, 34.35], 12)
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap',
-      }).addTo(map)
-      filteredClinics.value.forEach((c) => {
-        if (c.lat && c.lng) {
-          L.marker([c.lat, c.lng])
-            .addTo(map)
-            .bindPopup(c.name)
-        }
-      })
-    })
-  }
-})
+const mapKey = computed(() => filteredClinics.value.map((c) => c.id).join(','))
+
 
 useHead({
   title: 'Клиники — AntiOnko',

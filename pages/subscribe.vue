@@ -2,7 +2,7 @@
   <div class="py-12 px-4 max-w-lg mx-auto">
     <h1 class="text-2xl font-bold text-calming-900 mb-2">Подписка и уведомления</h1>
     <p class="text-calming-600 mb-6">
-      Настройте напоминания о скрининге и новости от AntiOnko.
+      Настройте напоминания о скрининге и уведомления о методах лечения.
     </p>
     <form class="space-y-4" @submit.prevent="onSubmit">
       <div>
@@ -21,7 +21,7 @@
       </label>
       <label class="flex items-center gap-2">
         <input v-model="news" type="checkbox" class="rounded border-calming-300" />
-        <span class="text-sm text-calming-700">Новости и статьи</span>
+        <span class="text-sm text-calming-700">Методы лечения</span>
       </label>
       <button
         type="submit"

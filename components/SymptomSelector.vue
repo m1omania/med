@@ -5,14 +5,13 @@
         v-for="s in symptomOptions"
         :key="s"
         type="button"
-        class="px-4 py-2 rounded-lg border text-sm transition"
-        :class="modelValue?.includes(s) ? 'border-calming-600 bg-calming-100 text-calming-800' : 'border-calming-200 hover:border-calming-400'"
+        class="px-4 py-2 rounded-xl border-2 text-sm font-medium transition"
+        :class="modelValue?.includes(s) ? 'border-calming-600 bg-calming-50 text-calming-800' : 'border-calming-200 hover:border-calming-300 hover:bg-calming-50/50 text-calming-700'"
         @click="toggle(s)"
       >
         {{ s }}
       </button>
     </div>
-    <p class="text-xs text-calming-500">Выбрано: {{ (modelValue || []).join(', ') || 'ничего' }}</p>
   </div>
 </template>
 

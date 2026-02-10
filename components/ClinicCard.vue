@@ -1,5 +1,8 @@
 <template>
-  <div class="bg-white rounded-xl border border-calming-200 p-6 hover:shadow-md transition">
+  <NuxtLink
+    :to="`/clinic/${clinic.id}`"
+    class="block bg-white rounded-xl border border-calming-200 p-6 hover:shadow-md transition cursor-pointer"
+  >
     <h3 class="font-semibold text-calming-900">{{ clinic.name }}</h3>
     <p class="text-sm text-calming-600 mt-1">{{ clinic.city }}</p>
     <div v-if="clinic.services?.length" class="flex flex-wrap gap-1 mt-2">
@@ -11,14 +14,12 @@
         {{ s }}
       </span>
     </div>
-    <p v-if="clinic.doctor" class="text-sm text-calming-600 mt-2">Врач: {{ clinic.doctor }}</p>
-    <NuxtLink
-      :to="`/clinics/${slug}`"
-      class="mt-4 inline-block text-sm font-medium text-calming-600 hover:text-calming-800"
-    >
-      Записаться →
-    </NuxtLink>
-  </div>
+    <div class="mt-4">
+      <span class="text-sm font-medium text-calming-600">
+        Доктора и Методы <AppIcon name="arrow-right" size="sm" class="inline" />
+      </span>
+    </div>
+  </NuxtLink>
 </template>
 
 <script setup lang="ts">
@@ -27,6 +28,8 @@ defineProps<{
     id: number
     name: string
     city: string
+    lat?: number
+    lng?: number
     services?: string[]
     doctor?: string
   }

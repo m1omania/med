@@ -12,21 +12,13 @@
           placeholder="you@example.com"
         />
       </div>
-      <div>
-        <label class="block text-sm font-medium text-calming-700 mb-1">Пароль</label>
-        <input
-          v-model="password"
-          type="password"
-          required
-          minlength="6"
-          class="w-full rounded-lg border border-calming-300 px-3 py-2"
-        />
-      </div>
+      <p class="text-sm text-calming-500">Регистрация по email. Пароль не требуется (мок).</p>
       <button
         type="submit"
-        class="w-full py-3 rounded-lg bg-calming-600 text-white font-medium hover:bg-calming-700"
+        class="w-full py-3 rounded-lg bg-calming-600 text-white font-medium hover:bg-calming-700 disabled:opacity-50"
+        :disabled="loading"
       >
-        Зарегистрироваться
+        {{ loading ? 'Отправка...' : 'Зарегистрироваться' }}
       </button>
     </form>
     <p class="mt-4 text-sm text-calming-600">
@@ -37,15 +29,27 @@
 
 <script setup lang="ts">
 const email = ref('')
-const password = ref('')
-const router = useRouter()
+const loading = ref(false)
 const patientStore = usePatientStore()
 const { showToast } = useToast()
 
-function onSubmit() {
-  patientStore.login({ email: email.value, password: password.value })
-  showToast('Регистрация успешна. Добро пожаловать!')
-  router.push('/dashboard')
+async function onSubmit() {
+  if (!email.value?.trim()) return
+  loading.value = true
+  try {
+    await $fetch('/api/register', {
+      method: 'POST',
+      body: { email: email.value.trim() },
+    })
+    patientStore.login({ email: email.value.trim() })
+    showToast('Регистрация успешна. Добро пожаловать!')
+    await navigateTo('/dashboard')
+  } catch (e: unknown) {
+    const msg = e && typeof e === 'object' && 'data' in e ? String((e as { data?: unknown }).data) : 'Ошибка регистрации'
+    showToast(msg, 'error')
+  } finally {
+    loading.value = false
+  }
 }
 
 useHead({

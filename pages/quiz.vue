@@ -1,9 +1,8 @@
 <template>
   <div class="min-h-[80vh] py-8 px-4">
     <div class="max-w-3xl mx-auto">
-      <h1 class="text-2xl font-bold text-calming-900 mb-2">Персональный онко-скрининг</h1>
-      <p class="text-calming-600 mb-6">Ответьте на 7 шагов. Данные сохраняются автоматически.</p>
       <QuizWizard @complete="onQuizComplete" />
+      <p class="text-sm text-calming-500 mt-6 text-center">Анонимно. Бесплатно. Без регистрации</p>
     </div>
   </div>
 </template>
