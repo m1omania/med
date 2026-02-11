@@ -1,6 +1,6 @@
 <template>
   <div class="py-8 px-4">
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-4xl mx-auto">
       <div class="mb-6">
         <h1 class="text-2xl font-bold text-calming-900 mb-2">Ваш дашборд</h1>
         <p class="text-calming-600 text-sm">

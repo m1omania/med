@@ -1,6 +1,6 @@
 <template>
   <div class="py-12 px-4">
-    <div class="max-w-3xl mx-auto">
+    <div class="max-w-4xl mx-auto">
       <h1 class="text-3xl font-bold text-calming-900 mb-6">О проекте</h1>
 
       <div class="prose prose-calming max-w-none space-y-6 text-calming-700">

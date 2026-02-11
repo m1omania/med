@@ -1,6 +1,6 @@
 <template>
   <div class="py-8 px-4">
-    <div class="max-w-5xl mx-auto">
+    <div class="max-w-4xl mx-auto">
       <template v-if="doctor">
         <DoctorProfileCard :doctor="doctor" :clinic="clinic ?? undefined" :methods="doctorMethods" />
       </template>

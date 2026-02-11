@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-[80vh] py-8 px-4">
-    <div class="max-w-5xl mx-auto">
+  <div class="min-h-[80vh] py-12 md:py-16 px-4">
+    <div class="max-w-4xl mx-auto">
       <!-- Общий блок: две колонки — вопрос/ответы и счётчики -->
       <div class="rounded-2xl overflow-hidden shadow-sm border border-calming-100 flex flex-col lg:flex-row lg:h-[72vh]">
         <div class="min-w-0 lg:flex-[1.6] bg-white overflow-hidden flex flex-col">

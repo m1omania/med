@@ -6,7 +6,7 @@
           Передовые методы лечения рака
         </h1>
         <p class="text-lg text-calming-700 mb-8 max-w-2xl mx-auto">
-          Пройдите короткий опрос — получите проверенные рекомендации, список клиник и докторов.
+          Пройдите короткий опрос — получите проверенные методы лечения, список клиник и докторов.
         </p>
         <NuxtLink
           to="/quiz"
@@ -77,6 +77,75 @@
           />
         </div>
         <p v-if="latestMethods.length === 0" class="text-calming-500 text-sm">Методов пока нет.</p>
+      </div>
+    </section>
+
+    <section class="py-16 bg-white">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+          <div>
+            <h2 class="text-2xl md:text-3xl font-bold text-calming-900 mb-6">
+              Тщательно отбираем врачей в команду
+            </h2>
+            <ul class="space-y-4">
+              <li class="flex items-start gap-3">
+                <span class="mt-1.5 w-4 h-4 rounded-full border-2 border-red-500 shrink-0" aria-hidden="true" />
+                <span class="text-calming-800">Средний стаж — 7 лет</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-1.5 w-4 h-4 rounded-full border-2 border-red-500 shrink-0" aria-hidden="true" />
+                <span class="text-calming-800">Средняя оценка — 4,9 <span class="text-amber-400">⭐</span></span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-1.5 w-4 h-4 rounded-full border-2 border-red-500 shrink-0" aria-hidden="true" />
+                <span class="text-calming-800">Из ведущих клиник России</span>
+              </li>
+            </ul>
+          </div>
+          <div class="relative flex items-center gap-3">
+            <button
+              type="button"
+              class="shrink-0 w-10 h-10 rounded-full bg-calming-100 text-calming-700 hover:bg-calming-200 flex items-center justify-center transition"
+              aria-label="Предыдущий врач"
+              :disabled="carouselDoctorIndex <= 0"
+              @click="carouselDoctorIndex = Math.max(0, carouselDoctorIndex - 1)"
+            >
+              <AppIcon name="arrow-left" size="sm" />
+            </button>
+            <NuxtLink
+              v-if="carouselDoctor"
+              :to="`/doctor/${carouselDoctor.id}`"
+              class="flex-1 block bg-white rounded-2xl shadow-sm border border-calming-100 p-6 hover:shadow-md transition overflow-hidden"
+            >
+              <div class="flex gap-6">
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-red-600 mb-1">{{ carouselDoctor.specialty }}</p>
+                  <h3 class="text-xl font-bold text-calming-900 mb-2">{{ carouselDoctor.name }}</h3>
+                  <p class="text-sm text-calming-700 mb-2">Опыт работы: {{ carouselDoctor.experience || '—' }}</p>
+                  <p class="text-sm text-calming-600 line-clamp-3">{{ doctorEducationText(carouselDoctor) }}</p>
+                </div>
+                <div class="w-24 h-24 rounded-full overflow-hidden shrink-0 bg-calming-100 flex items-center justify-center">
+                  <img
+                    v-if="carouselDoctor.photo"
+                    :src="carouselDoctor.photo"
+                    :alt="carouselDoctor.name"
+                    class="w-full h-full object-cover"
+                  >
+                  <span v-else class="text-2xl font-semibold text-calming-500">{{ doctorInitials(carouselDoctor) }}</span>
+                </div>
+              </div>
+            </NuxtLink>
+            <button
+              type="button"
+              class="shrink-0 w-10 h-10 rounded-full bg-calming-100 text-calming-700 hover:bg-calming-200 flex items-center justify-center transition"
+              aria-label="Следующий врач"
+              :disabled="carouselDoctorIndex >= (doctorsData?.doctors?.length ?? 1) - 1"
+              @click="carouselDoctorIndex = Math.min((doctorsData?.doctors?.length ?? 1) - 1, carouselDoctorIndex + 1)"
+            >
+              <AppIcon name="arrow-right" size="sm" />
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -234,7 +303,9 @@ const { data: methodsData } = await useFetch<{
   methods: { slug: string; title: string; date: string; clinicId?: number; clinicIds?: number[] }[]
 }>('/api/articles')
 const { data: clinicsData } = await useFetch<{ clinics: { id: number; name: string; city: string }[] }>('/api/clinics')
-const { data: doctorsData } = await useFetch<{ doctors: { id: number; name: string; specialty: string; photo?: string; clinicId?: number }[] }>('/api/doctors')
+const { data: doctorsData } = await useFetch<{
+  doctors: { id: number; name: string; specialty: string; photo?: string; clinicId?: number; experience?: string; bio?: { title: string; institution: string; years?: string }[] }[]
+}>('/api/doctors')
 const { data: forumData } = await useFetch<{ threads: { id: string; title: string; author?: string; date?: string }[]; posts?: Record<string, unknown[]> }>('/api/forum')
 
 const clinicsMap = computed(() => {
@@ -264,6 +335,27 @@ const latestDoctors = computed(() => {
   const list = doctorsData.value?.doctors ?? []
   return list.slice(0, 4)
 })
+
+const carouselDoctorIndex = ref(0)
+const carouselDoctor = computed(() => {
+  const list = doctorsData.value?.doctors ?? []
+  return list[carouselDoctorIndex.value] ?? null
+})
+
+function doctorEducationText(doctor: { bio?: { title: string; institution: string; years?: string }[] }) {
+  const bio = doctor.bio
+  if (!Array.isArray(bio) || !bio.length) return '—'
+  const first = bio[0]
+  const parts = [first.title, first.institution].filter(Boolean)
+  return parts.length ? `Образование: ${parts.join(', ')}.` : '—'
+}
+
+function doctorInitials(doctor: { name?: string }) {
+  const name = doctor?.name ?? ''
+  const parts = String(name).split(/\s+/).filter(Boolean)
+  if (parts.length >= 2) return ((parts[0][0] ?? '') + (parts[1][0] ?? '')).toUpperCase()
+  return String(name).slice(0, 2).toUpperCase()
+}
 
 function getDoctorAddress(doctor: { clinicId?: number }) {
   const clinic = doctor.clinicId != null ? clinicsMap.value[doctor.clinicId] : undefined

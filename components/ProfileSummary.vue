@@ -1,20 +1,22 @@
 <template>
   <section class="mb-10">
-    <div class="p-4 rounded-xl bg-white">
-      <p
-        v-for="(line, i) in summaryLines"
-        :key="i"
-        class="font-semibold text-calming-900 leading-relaxed"
-        :class="i > 0 ? 'mt-1' : ''"
-      >
-        {{ line }}
-      </p>
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+      <h2 class="text-lg font-semibold text-calming-900">Данные опроса</h2>
       <NuxtLink
         to="/quiz"
-        class="mt-3 inline-flex items-center px-4 py-2 rounded-lg border border-neutral-200 text-calming-700 text-sm font-medium hover:bg-neutral-50 transition"
+        class="text-sm font-medium text-calming-600 hover:text-calming-800 hover:underline"
       >
         Изменить данные
       </NuxtLink>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <span
+        v-for="(line, i) in summaryLines"
+        :key="i"
+        class="inline-flex items-center h-9 px-4 rounded-full text-sm font-medium bg-white border-2 border-calming-200 text-calming-800"
+      >
+        {{ line }}
+      </span>
     </div>
   </section>
 </template>
@@ -42,6 +44,6 @@ const summaryLines = computed(() => {
   if (p.stage) lines.push(`Стадия: ${p.stage}`)
   if (p.geography) lines.push(`Город: ${p.geography}`)
   if (!lines.length) return [`Направление: ${p.diagnosisLabel}. Клиники ниже — только в вашем регионе.`]
-  return lines
+  return lines.filter(Boolean)
 })
 </script>

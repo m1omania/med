@@ -1,8 +1,8 @@
 <template>
-  <div class="py-8 px-4 max-w-3xl mx-auto">
-    <article v-if="method" class="space-y-6">
+  <div class="py-8 px-4 max-w-4xl mx-auto">
+    <article v-if="method">
       <!-- Заголовок -->
-      <header>
+      <header class="mb-10">
         <h1 class="text-2xl font-bold text-calming-900">
           {{ methodTitle }}
         </h1>
@@ -14,7 +14,7 @@
       </header>
 
       <!-- Основной текст -->
-      <p class="text-calming-700 leading-relaxed">{{ method.body || '—' }}</p>
+      <p class="text-calming-700 leading-relaxed mb-10">{{ method.body || '—' }}</p>
 
       <!-- Клиники (как на странице результатов) -->
       <section class="mb-10">
@@ -46,27 +46,29 @@
       </section>
 
       <!-- Обсудить в сообществе -->
-      <section class="rounded-xl bg-white border border-calming-100 p-5 mt-6">
-        <h2 class="text-sm font-semibold text-calming-800 uppercase tracking-wider mb-3">Обсудить в сообществе</h2>
-        <p class="text-sm text-calming-700 mb-3">Почитайте опыт других или задайте вопрос в форуме.</p>
-        <ul v-if="communityThreads.length" class="space-y-2">
-          <li v-for="t in communityThreads" :key="t.id">
-            <NuxtLink :to="`/community/thread/${t.id}`" class="text-calming-600 hover:underline font-medium">
-              {{ t.title }}
-            </NuxtLink>
-          </li>
-        </ul>
-        <NuxtLink
-          to="/community"
-          class="inline-flex items-center gap-1 text-sm font-medium text-calming-600 hover:underline mt-2"
-        >
-          Все обсуждения
-          <AppIcon name="arrow-right" size="sm" />
-        </NuxtLink>
+      <section class="mb-10">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-3">
+          <h2 class="text-sm font-semibold text-calming-800 uppercase tracking-wider">Обсудить в сообществе</h2>
+          <NuxtLink
+            to="/community"
+            class="inline-flex items-center gap-1 text-sm font-medium text-calming-600 hover:underline"
+          >
+            Все обсуждения
+            <AppIcon name="arrow-right" size="sm" />
+          </NuxtLink>
+        </div>
+        <div v-if="communityThreads.length" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <CommunityThreadCard
+            v-for="t in communityThreads"
+            :key="t.id"
+            :thread="t"
+          />
+        </div>
+        <p v-else class="text-sm text-calming-500 py-2">Пока нет обсуждений по теме.</p>
       </section>
 
       <!-- Теги — всегда одна строка -->
-      <div class="flex flex-wrap gap-2 pt-2">
+      <div class="flex flex-wrap gap-2 pt-2 mb-10">
         <template v-if="method.tags?.length">
           <span
             v-for="tag in method.tags"

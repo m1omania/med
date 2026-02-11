@@ -1,6 +1,6 @@
 <template>
   <div class="py-8 px-4">
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-4xl mx-auto">
       <h1 class="text-2xl font-bold text-calming-900 mb-6">Клиники</h1>
       <div class="flex flex-wrap items-center gap-4 mb-6">
         <select

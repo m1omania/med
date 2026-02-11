@@ -83,21 +83,21 @@
 
         <!-- 4.5 Обсуждения в сообществе -->
         <section class="mb-10">
-          <h2 class="text-lg font-semibold text-calming-900 mb-4">Обсуждения в сообществе</h2>
-          <div class="rounded-xl bg-white border border-calming-100 p-5">
-            <p class="text-sm text-calming-700 mb-3">Почитайте опыт других или задайте вопрос на форуме.</p>
-            <ul v-if="communityThreads.length" class="space-y-2 mb-3">
-              <li v-for="t in communityThreads" :key="t.id">
-                <NuxtLink :to="`/community/thread/${t.id}`" class="text-calming-600 hover:underline font-medium">
-                  {{ t.title }}
-                </NuxtLink>
-              </li>
-            </ul>
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <h2 class="text-lg font-semibold text-calming-900">Обсуждения в сообществе</h2>
             <NuxtLink to="/community" class="inline-flex items-center gap-1 text-sm font-medium text-calming-600 hover:underline">
               Все обсуждения
               <AppIcon name="arrow-right" size="sm" />
             </NuxtLink>
           </div>
+          <div v-if="communityThreads.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <CommunityThreadCard
+              v-for="t in communityThreads"
+              :key="t.id"
+              :thread="t"
+            />
+          </div>
+          <p v-else class="text-sm text-calming-500 py-2">Пока нет обсуждений по теме.</p>
         </section>
 
         <!-- 5. Призыв к регистрации / Дашборд — загрузка, затем контент -->

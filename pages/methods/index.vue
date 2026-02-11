@@ -1,5 +1,5 @@
 <template>
-  <div class="py-8 px-4 max-w-6xl mx-auto">
+  <div class="py-8 px-4 max-w-4xl mx-auto">
     <h1 class="text-2xl font-bold text-calming-900 mb-2">Методы лечения</h1>
     <p class="text-calming-600 text-sm mb-8">Все методы верифицированы специалистами с медицинским образованием</p>
 

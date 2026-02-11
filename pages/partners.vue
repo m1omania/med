@@ -1,6 +1,6 @@
 <template>
   <div class="py-12 px-4">
-    <div class="max-w-3xl mx-auto">
+    <div class="max-w-4xl mx-auto">
       <h1 class="text-3xl font-bold text-calming-900 mb-2">Для партнёров</h1>
       <p class="text-lg text-calming-600 mb-8">
         B2B-сотрудничество: клиники, фонды и организации

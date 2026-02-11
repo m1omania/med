@@ -1,5 +1,5 @@
 <template>
-  <div class="py-8 px-4 max-w-3xl mx-auto">
+  <div class="py-8 px-4 max-w-4xl mx-auto">
     <div v-if="method" class="bg-white rounded-xl border border-calming-200 p-6">
       <h1 class="text-2xl font-bold text-calming-900">{{ method.name }}</h1>
       <p class="text-calming-600 text-sm">Тип: {{ method.type }}, источник: {{ method.source }}</p>
