@@ -1,0 +1,14 @@
+{
+  "methods": [
+    {"slug": "lenvatinib", "name": "Ленватиниб", "type": "печень", "success": 70, "source": "onguide.ru", "description": "Таргетный препарат при гепатоцеллюлярной карциноме."},
+    {"slug": "pembrolizumab", "name": "Пембролизумаб", "type": "иммуно", "success": 65, "source": "onguide.ru", "description": "Иммунотерапия (ингибитор PD-1)."},
+    {"slug": "herceptin", "name": "Трастузумаб (Herceptin)", "type": "грудь", "success": 75, "source": "onguide.ru", "description": "Таргетная терапия при HER2+ раке молочной железы."},
+    {"slug": "mammotest", "name": "Маммотест", "type": "диагностика", "success": 90, "source": "onguide.ru", "description": "Современная маммография и биопсия под контролем."},
+    {"slug": "screening", "name": "Скрининг ОМС", "type": "профилактика", "success": 85, "source": "onguide.ru", "description": "Профилактические осмотры по полису ОМС."},
+    {"slug": "sorafenib", "name": "Сорафениб", "type": "печень", "success": 68, "source": "onguide.ru", "description": "Таргетный препарат при первичном раке печени."},
+    {"slug": "atezolizumab", "name": "Атезолизумаб", "type": "иммуно", "success": 62, "source": "onguide.ru", "description": "Иммунотерапия в комбинации с химиотерапией."},
+    {"slug": "pertuzumab", "name": "Пертузумаб", "type": "грудь", "success": 72, "source": "onguide.ru", "description": "Таргетная терапия при HER2+ раке молочной железы."},
+    {"slug": "ct-screening", "name": "КТ-скрининг лёгких", "type": "диагностика", "success": 88, "source": "onguide.ru", "description": "Низкодозовая КТ для групп риска."},
+    {"slug": "colonoscopy", "name": "Колоноскопия", "type": "диагностика", "success": 92, "source": "onguide.ru", "description": "Скрининг колоректального рака."}
+  ]
+}

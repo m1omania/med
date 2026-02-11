@@ -1,6 +1,5 @@
 import { nanoid } from 'nanoid'
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import clinicsData from '../data/clinics.json'
 
 interface QuizBody {
   age?: number
@@ -92,17 +91,7 @@ function mockAnalyze(body: QuizBody) {
 }
 
 function getClinicsForSlug(slug: string, city?: string): { id: number; name: string; city: string; services?: string[] }[] {
-  let fullList: { id: number; name: string; city: string; services?: string[]; tags?: string[] }[] = []
-  try {
-    const filePath = join(process.cwd(), 'public', 'data', 'clinics.json')
-    const raw = readFileSync(filePath, 'utf-8')
-    fullList = JSON.parse(raw).clinics || []
-  } catch (_) {
-    fullList = [
-      { id: 1, name: 'Респ. больница №1', city: 'Город А', services: ['УЗИ', 'КТ'] },
-      { id: 2, name: 'Городская больница', city: 'Город Б', services: ['УЗИ', 'Маммография'] },
-    ]
-  }
+  const fullList: { id: number; name: string; city: string; services?: string[]; tags?: string[] }[] = clinicsData.clinics || []
   let list = fullList
   if (slug !== 'obshiy' && slug !== 'kishechnik') {
     const bySlug = fullList.filter((c: { tags?: string[] }) => c.tags?.some((t: string) => t.toLowerCase().includes(slug)))

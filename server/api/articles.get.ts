@@ -1,5 +1,4 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import data from '../data/articles.json'
 
 interface Method {
   slug: string
@@ -20,15 +19,7 @@ export default defineEventHandler((event) => {
   const topic = (query.topic as string)?.trim()
   const clinicId = query.clinicId != null ? Number(query.clinicId) : undefined
   const doctorId = query.doctorId != null ? Number(query.doctorId) : undefined
-  let methods: Method[] = []
-  try {
-    const path = join(process.cwd(), 'public', 'data', 'articles.json')
-    const raw = readFileSync(path, 'utf-8')
-    const data = JSON.parse(raw)
-    methods = (data.articles || []).filter((a: Method) => a.treatmentMethod === true)
-  } catch (_) {
-    return { methods: [] }
-  }
+  let methods: Method[] = (data.articles || []).filter((a: Method) => a.treatmentMethod === true)
   if (topic) {
     methods = methods.filter((a) => a.topic?.toLowerCase() === topic.toLowerCase())
   }
