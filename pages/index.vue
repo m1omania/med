@@ -85,22 +85,8 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
           <div>
             <h2 class="text-2xl md:text-3xl font-bold text-calming-900 mb-6">
-              Тщательно отбираем врачей в команду
+              Все методы верифицированы специалистами с медицинским образованием
             </h2>
-            <ul class="space-y-4">
-              <li class="flex items-start gap-3">
-                <span class="mt-1.5 w-4 h-4 rounded-full border-2 border-red-500 shrink-0" aria-hidden="true" />
-                <span class="text-calming-800">Средний стаж — 7 лет</span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="mt-1.5 w-4 h-4 rounded-full border-2 border-red-500 shrink-0" aria-hidden="true" />
-                <span class="text-calming-800">Средняя оценка — 4,9 <span class="text-amber-400">⭐</span></span>
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="mt-1.5 w-4 h-4 rounded-full border-2 border-red-500 shrink-0" aria-hidden="true" />
-                <span class="text-calming-800">Из ведущих клиник России</span>
-              </li>
-            </ul>
           </div>
           <div class="relative flex items-center gap-3">
             <button
@@ -161,7 +147,7 @@
             Показать все
           </NuxtLink>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <ClinicCard
             v-for="c in latestClinics"
             :key="c.id"
@@ -328,7 +314,7 @@ const latestMethods = computed(() => {
 
 const latestClinics = computed(() => {
   const list = clinicsData.value?.clinics ?? []
-  return list.slice(0, 4)
+  return list.slice(0, 3)
 })
 
 const latestDoctors = computed(() => {

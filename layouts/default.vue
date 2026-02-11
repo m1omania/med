@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col bg-calming-50">
     <header
-      class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-calming-100 shadow-sm"
+      class="sticky top-0 z-[1100] bg-white/95 backdrop-blur border-b border-calming-100 shadow-sm"
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center h-16 gap-4">
@@ -22,23 +22,29 @@
           <div class="hidden md:flex items-center gap-3 shrink-0">
             <NuxtLink
               v-if="!patientStore.isLoggedIn"
-              to="/login"
+              :to="loginLink"
               class="text-calming-600 hover:text-calming-800 font-medium text-sm"
             >
-              Личный кабинет
+              Войти
             </NuxtLink>
             <template v-else>
-              <NuxtLink
-                to="/subscribe"
-                class="p-2 rounded-lg text-calming-600 hover:text-calming-800 hover:bg-calming-100"
-                aria-label="Уведомления"
+              <div
+                ref="userMenuRef"
+                class="relative flex items-center gap-3"
+                @mouseenter="onUserMenuEnter"
+                @mouseleave="onUserMenuLeave"
               >
-                <AppIcon name="bell" size="md" />
-              </NuxtLink>
-              <div ref="userMenuRef" class="relative">
                 <button
                   type="button"
-                  class="flex items-center justify-center w-9 h-9 rounded-full bg-calming-600 text-white text-sm font-semibold hover:bg-calming-700 focus:outline-none focus:ring-2 focus:ring-calming-500 focus:ring-offset-2"
+                  class="text-calming-600 text-sm truncate max-w-[12rem] text-left bg-transparent border-none cursor-pointer hover:text-calming-800 p-0"
+                  :title="patientStore.user?.email"
+                  @click="userMenuOpen = !userMenuOpen"
+                >
+                  {{ patientStore.user?.email }}
+                </button>
+                <button
+                  type="button"
+                  class="flex items-center justify-center w-9 h-9 rounded-full bg-calming-600 text-white text-sm font-semibold hover:bg-calming-700 focus:outline-none focus:ring-2 focus:ring-calming-500 focus:ring-offset-2 shrink-0"
                   aria-label="Меню пользователя"
                   @click="userMenuOpen = !userMenuOpen"
                 >
@@ -46,8 +52,39 @@
                 </button>
                 <div
                   v-show="userMenuOpen"
-                  class="absolute right-0 mt-2 w-48 py-1 bg-white rounded-lg border border-neutral-200 shadow-lg z-50"
+                  class="absolute right-0 top-full pt-2 z-[1100]"
+                  @mouseenter="onUserMenuEnter"
+                  @mouseleave="onUserMenuLeave"
                 >
+                  <div class="w-48 py-1 bg-white rounded-lg border border-neutral-200 shadow-lg">
+                  <NuxtLink
+                    to="/my-results"
+                    class="block px-4 py-2 text-sm text-calming-700 hover:bg-calming-50"
+                    @click="userMenuOpen = false"
+                  >
+                    Мои результаты
+                  </NuxtLink>
+                  <NuxtLink
+                    to="/my-methods"
+                    class="block px-4 py-2 text-sm text-calming-700 hover:bg-calming-50"
+                    @click="userMenuOpen = false"
+                  >
+                    Мои методы
+                  </NuxtLink>
+                  <NuxtLink
+                    to="/my-clinics"
+                    class="block px-4 py-2 text-sm text-calming-700 hover:bg-calming-50"
+                    @click="userMenuOpen = false"
+                  >
+                    Мои клиники
+                  </NuxtLink>
+                  <NuxtLink
+                    to="/my-doctors"
+                    class="block px-4 py-2 text-sm text-calming-700 hover:bg-calming-50"
+                    @click="userMenuOpen = false"
+                  >
+                    Мои врачи
+                  </NuxtLink>
                   <NuxtLink
                     to="/settings"
                     class="block px-4 py-2 text-sm text-calming-700 hover:bg-calming-50"
@@ -62,6 +99,7 @@
                   >
                     Выйти
                   </button>
+                  </div>
                 </div>
               </div>
             </template>
@@ -109,7 +147,14 @@
 </template>
 
 <script setup lang="ts">
+const route = useRoute()
 const patientStore = usePatientStore()
+
+const loginLink = computed(() => {
+  const path = route.fullPath
+  if (path === '/login' || path === '/register') return '/login'
+  return `/login?redirect=${encodeURIComponent(path)}`
+})
 
 function onLogout() {
   patientStore.logout()
@@ -119,7 +164,6 @@ function onLogout() {
 const centerNavLinks = computed(() => {
   if (patientStore.isLoggedIn) {
     return [
-      { to: '/dashboard', label: 'Дашборд' },
       { to: '/methods', label: 'Методы лечения' },
       { to: '/clinics', label: 'Клиники' },
       { to: '/community', label: 'Сообщество' },
@@ -148,6 +192,23 @@ const userInitial = computed(() => {
 
 const userMenuRef = ref<HTMLElement | null>(null)
 const userMenuOpen = ref(false)
+let menuCloseTimeout: ReturnType<typeof setTimeout> | null = null
+
+function onUserMenuEnter() {
+  if (menuCloseTimeout) {
+    clearTimeout(menuCloseTimeout)
+    menuCloseTimeout = null
+  }
+  userMenuOpen.value = true
+}
+
+function onUserMenuLeave() {
+  menuCloseTimeout = setTimeout(() => {
+    userMenuOpen.value = false
+    menuCloseTimeout = null
+  }, 150)
+}
+
 onClickOutside(userMenuRef, () => {
   userMenuOpen.value = false
 })

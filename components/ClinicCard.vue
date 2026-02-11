@@ -1,14 +1,22 @@
 <template>
   <NuxtLink
     :to="`/clinic/${clinic.id}`"
-    class="block bg-white rounded-xl p-6 transition cursor-pointer hover:shadow-lg hover:scale-[1.02]"
+    class="flex gap-4 bg-white rounded-xl p-6 border border-calming-200 shadow-sm transition hover:shadow-md hover:border-calming-300"
   >
-    <h3 class="font-semibold text-calming-900">{{ clinic.name }}</h3>
-    <p class="text-sm text-calming-600 mt-1">{{ clinic.city }}</p>
-    <div class="mt-4">
-      <span class="text-sm font-medium text-calming-600">
-        Доктора и Методы <AppIcon name="arrow-right" size="sm" class="inline" />
-      </span>
+    <div class="min-w-0 flex-1">
+      <h3 class="font-bold text-calming-900">{{ clinic.name }}</h3>
+      <p class="text-calming-600 mt-1">{{ clinic.city }}</p>
+    </div>
+    <div
+      v-if="clinic.lat != null && clinic.lng != null"
+      class="shrink-0 w-32 h-32 rounded-lg overflow-hidden"
+    >
+      <ClinicMap
+        :lat="clinic.lat"
+        :lng="clinic.lng"
+        :name="clinic.name"
+        compact
+      />
     </div>
   </NuxtLink>
 </template>
@@ -24,6 +32,6 @@ defineProps<{
     services?: string[]
     doctor?: string
   }
-  slug: string
+  slug?: string
 }>()
 </script>

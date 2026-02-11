@@ -3,15 +3,30 @@
     <article v-if="method">
       <!-- Заголовок -->
       <header class="mb-10">
-        <h1 class="text-2xl font-bold text-calming-900">
-          {{ methodTitle }}
-        </h1>
-        <p class="mt-2 text-sm text-calming-600">
-          <span>Дата: {{ formatMethodDate(method.date) }}</span>
-          <span v-if="method.source?.name"> | Источник: {{ method.source.name }}</span>
-          <span v-if="method.verifiedDate"> | Верифицировано: {{ method.verifiedDate }}</span>
-        </p>
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 class="text-2xl font-bold text-calming-900">
+              {{ methodTitle }}
+            </h1>
+            <p class="mt-2 text-sm text-calming-600">
+              <span>Дата: {{ formatMethodDate(method.date) }}</span>
+              <span v-if="method.source?.name"> | Источник: {{ method.source.name }}</span>
+              <span v-if="method.verifiedDate"> | Верифицировано: {{ method.verifiedDate }}</span>
+            </p>
+          </div>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition shrink-0"
+            :class="isFavorite ? 'bg-calming-100 text-calming-700 hover:bg-calming-200' : 'bg-calming-600 text-white hover:bg-calming-700'"
+            @click="onFavoriteClick"
+          >
+            <AppIcon name="star" size="sm" :class="{ 'fill-current': isFavorite }" />
+            {{ isFavorite ? 'Убрать из избранного' : 'Добавить в избранное' }}
+          </button>
+        </div>
       </header>
+
+      <RegisterPromptModal v-model="showRegisterPrompt" />
 
       <!-- Основной текст -->
       <p class="text-calming-700 leading-relaxed mb-10">{{ method.body || '—' }}</p>
@@ -88,7 +103,19 @@
 <script setup lang="ts">
 const route = useRoute()
 const slug = route.params.slug as string
+const patientStore = usePatientStore()
 const { stripEmojis } = useStripEmojis()
+
+const isFavorite = computed(() => patientStore.isFavoriteMethod(slug))
+const showRegisterPrompt = ref(false)
+
+function onFavoriteClick() {
+  if (!patientStore.isLoggedIn) {
+    showRegisterPrompt.value = true
+    return
+  }
+  patientStore.toggleFavoriteMethod(slug)
+}
 const { formatMethodDate } = useFormatMethodDate()
 
 const { data: method } = await useFetch<{

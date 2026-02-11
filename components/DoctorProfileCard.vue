@@ -17,19 +17,22 @@
           </div>
         </div>
 
-        <NuxtLink
-          v-if="clinic?.id"
-          :to="`/clinic/${clinic.id}`"
-          class="w-full py-3 rounded-xl bg-calming-600 text-white text-sm font-semibold hover:bg-calming-700 transition text-center"
-        >
-          Записаться на приём
-        </NuxtLink>
-        <span
-          v-else
-          class="w-full py-3 rounded-xl bg-calming-200 text-calming-600 text-sm font-medium text-center block"
-        >
-          Запись в клинике
-        </span>
+        <div class="flex flex-col gap-2">
+          <NuxtLink
+            v-if="clinic?.id"
+            :to="`/clinic/${clinic.id}`"
+            class="w-full py-3 rounded-xl bg-calming-600 text-white text-sm font-semibold hover:bg-calming-700 transition text-center"
+          >
+            Записаться на приём
+          </NuxtLink>
+          <span
+            v-else
+            class="w-full py-3 rounded-xl bg-calming-200 text-calming-600 text-sm font-medium text-center block"
+          >
+            Запись в клинике
+          </span>
+          <slot name="after-book" />
+        </div>
 
         <div class="rounded-xl overflow-hidden border border-neutral-200 bg-calming-100 min-h-[8rem]">
           <ClientOnly>

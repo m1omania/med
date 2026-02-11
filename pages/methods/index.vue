@@ -52,7 +52,7 @@
     <!-- Список методов -->
     <section>
       <h2 class="sr-only">Список методов</h2>
-      <div v-if="filteredMethods.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div v-if="filteredMethods.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <MethodCard
           v-for="item in filteredMethods"
           :key="item.slug"

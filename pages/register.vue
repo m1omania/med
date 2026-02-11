@@ -28,6 +28,7 @@
 </template>
 
 <script setup lang="ts">
+const route = useRoute()
 const email = ref('')
 const loading = ref(false)
 const patientStore = usePatientStore()
@@ -43,7 +44,12 @@ async function onSubmit() {
     })
     patientStore.login({ email: email.value.trim() })
     showToast('Регистрация успешна. Добро пожаловать!')
-    await navigateTo('/dashboard')
+    const redirect = route.query.redirect
+    const path =
+      typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//')
+        ? redirect
+        : '/dashboard'
+    await navigateTo(path)
   } catch (e: unknown) {
     const msg = e && typeof e === 'object' && 'data' in e ? String((e as { data?: unknown }).data) : 'Ошибка регистрации'
     showToast(msg, 'error')

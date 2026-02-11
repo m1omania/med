@@ -3,34 +3,34 @@
     <div class="max-w-4xl mx-auto">
       <h1 class="text-2xl font-bold text-calming-900 mb-2">Запись на приём</h1>
       <p v-if="clinic" class="text-calming-600 text-sm mb-6">{{ clinic.name }}, {{ clinic.city }}</p>
-      <div class="space-y-3">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <a
           href="https://gosuslugi.ru"
           target="_blank"
           rel="noopener noreferrer"
-          class="flex items-center gap-4 p-4 rounded-xl bg-white border-2 border-calming-200 hover:border-calming-400 hover:bg-calming-50/50 transition text-left"
+          class="flex items-center gap-3 p-4 rounded-xl bg-white border-2 border-calming-200 hover:border-calming-400 hover:bg-calming-50/50 transition text-left min-w-0"
         >
-          <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-calming-100 text-calming-600">
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-calming-100 text-calming-600">
             <AppIcon name="clipboard" size="lg" />
           </span>
-          <div>
-            <span class="font-semibold text-calming-900">Через Госуслуги</span>
-            <p class="text-sm text-calming-600 mt-0.5">Запись к врачу на gosuslugi.ru</p>
+          <div class="min-w-0 flex-1">
+            <span class="font-semibold text-calming-900 block truncate">Через Госуслуги</span>
+            <p class="text-xs text-calming-600 mt-0.5 truncate">Запись к врачу на gosuslugi.ru</p>
           </div>
-          <span class="ml-auto text-calming-400 shrink-0">
+          <span class="shrink-0 text-calming-400">
             <AppIcon name="arrow-right" size="sm" />
           </span>
         </a>
         <a
           :href="`tel:${displayPhone}`"
-          class="flex items-center gap-4 p-4 rounded-xl bg-white border-2 border-calming-200 hover:border-calming-400 hover:bg-calming-50/50 transition text-left"
+          class="flex items-center gap-3 p-4 rounded-xl bg-white border-2 border-calming-200 hover:border-calming-400 hover:bg-calming-50/50 transition text-left min-w-0"
         >
-          <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-calming-100 text-calming-600 text-xl" aria-hidden="true">📞</span>
-          <div>
-            <span class="font-semibold text-calming-900">По телефону</span>
-            <p class="text-sm text-calming-600 mt-0.5">{{ displayPhone }}</p>
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-calming-100 text-calming-600 text-xl" aria-hidden="true">📞</span>
+          <div class="min-w-0 flex-1">
+            <span class="font-semibold text-calming-900 block truncate">По телефону</span>
+            <p class="text-xs text-calming-600 mt-0.5 truncate">{{ displayPhone }}</p>
           </div>
-          <span class="ml-auto text-calming-400 shrink-0">
+          <span class="shrink-0 text-calming-400">
             <AppIcon name="arrow-right" size="sm" />
           </span>
         </a>
@@ -38,14 +38,14 @@
           :href="displayWebsite"
           target="_blank"
           rel="noopener noreferrer"
-          class="flex items-center gap-4 p-4 rounded-xl bg-white border-2 border-calming-200 hover:border-calming-400 hover:bg-calming-50/50 transition text-left"
+          class="flex items-center gap-3 p-4 rounded-xl bg-white border-2 border-calming-200 hover:border-calming-400 hover:bg-calming-50/50 transition text-left min-w-0"
         >
-          <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-calming-100 text-calming-600 text-xl" aria-hidden="true">🌐</span>
-          <div>
-            <span class="font-semibold text-calming-900">На сайте клиники</span>
-            <p class="text-sm text-calming-600 mt-0.5">Перейти на сайт</p>
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-calming-100 text-calming-600 text-xl" aria-hidden="true">🌐</span>
+          <div class="min-w-0 flex-1">
+            <span class="font-semibold text-calming-900 block truncate">На сайте клиники</span>
+            <p class="text-xs text-calming-600 mt-0.5 truncate">Перейти на сайт</p>
           </div>
-          <span class="ml-auto text-calming-400 shrink-0">
+          <span class="shrink-0 text-calming-400">
             <AppIcon name="arrow-right" size="sm" />
           </span>
         </a>

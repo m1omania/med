@@ -36,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+const route = useRoute()
 const email = ref('')
 const password = ref('')
 const patientStore = usePatientStore()
@@ -44,7 +45,12 @@ const { showToast } = useToast()
 function onSubmit() {
   patientStore.login({ email: email.value, password: password.value })
   showToast('Вход выполнен.')
-  navigateTo('/dashboard')
+  const redirect = route.query.redirect
+  const path =
+    typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//')
+      ? redirect
+      : '/dashboard'
+  navigateTo(path)
 }
 
 useHead({

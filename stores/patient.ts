@@ -62,9 +62,17 @@ export const usePatientStore = defineStore('patient', {
     reminders: [] as ReminderEntry[],
     visits: [] as VisitEntry[],
     myDoctorId: null as number | null,
+    favoriteMethodSlugs: [] as string[],
+    favoriteResultIds: [] as string[],
+    favoriteClinicIds: [] as number[],
+    favoriteDoctorIds: [] as number[],
   }),
 
   getters: {
+    isFavoriteMethod: (state) => (slug: string) => state.favoriteMethodSlugs.includes(slug),
+    isFavoriteResult: (state) => (id: string) => state.favoriteResultIds.includes(id),
+    isFavoriteClinic: (state) => (id: number) => state.favoriteClinicIds.includes(id),
+    isFavoriteDoctor: (state) => (id: number) => state.favoriteDoctorIds.includes(id),
     isLoggedIn(): boolean {
       return !!this.user
     },
@@ -199,6 +207,62 @@ export const usePatientStore = defineStore('patient', {
       }
     },
 
+    toggleFavoriteMethod(slug: string) {
+      const i = this.favoriteMethodSlugs.indexOf(slug)
+      if (i >= 0) {
+        this.favoriteMethodSlugs.splice(i, 1)
+      } else {
+        this.favoriteMethodSlugs.push(slug)
+      }
+      if (import.meta.client) {
+        try {
+          localStorage.setItem('antionko_favorite_methods', JSON.stringify(this.favoriteMethodSlugs))
+        } catch (_) {}
+      }
+    },
+
+    toggleFavoriteResult(id: string) {
+      const i = this.favoriteResultIds.indexOf(id)
+      if (i >= 0) {
+        this.favoriteResultIds.splice(i, 1)
+      } else {
+        this.favoriteResultIds.push(id)
+      }
+      if (import.meta.client) {
+        try {
+          localStorage.setItem('antionko_favorite_results', JSON.stringify(this.favoriteResultIds))
+        } catch (_) {}
+      }
+    },
+
+    toggleFavoriteClinic(id: number) {
+      const i = this.favoriteClinicIds.indexOf(id)
+      if (i >= 0) {
+        this.favoriteClinicIds.splice(i, 1)
+      } else {
+        this.favoriteClinicIds.push(id)
+      }
+      if (import.meta.client) {
+        try {
+          localStorage.setItem('antionko_favorite_clinics', JSON.stringify(this.favoriteClinicIds))
+        } catch (_) {}
+      }
+    },
+
+    toggleFavoriteDoctor(id: number) {
+      const i = this.favoriteDoctorIds.indexOf(id)
+      if (i >= 0) {
+        this.favoriteDoctorIds.splice(i, 1)
+      } else {
+        this.favoriteDoctorIds.push(id)
+      }
+      if (import.meta.client) {
+        try {
+          localStorage.setItem('antionko_favorite_doctors', JSON.stringify(this.favoriteDoctorIds))
+        } catch (_) {}
+      }
+    },
+
     login(credentials: { email: string; password?: string }) {
       this.user = { email: credentials.email }
       if (import.meta.client) {
@@ -260,6 +324,26 @@ export const usePatientStore = defineStore('patient', {
           if (myDoc) {
             const n = parseInt(myDoc, 10)
             if (!Number.isNaN(n)) this.myDoctorId = n
+          }
+          const fav = localStorage.getItem('antionko_favorite_methods')
+          if (fav) {
+            const parsed = JSON.parse(fav)
+            this.favoriteMethodSlugs = Array.isArray(parsed) ? parsed : []
+          }
+          const favRes = localStorage.getItem('antionko_favorite_results')
+          if (favRes) {
+            const parsed = JSON.parse(favRes)
+            this.favoriteResultIds = Array.isArray(parsed) ? parsed : []
+          }
+          const favClinics = localStorage.getItem('antionko_favorite_clinics')
+          if (favClinics) {
+            const parsed = JSON.parse(favClinics)
+            this.favoriteClinicIds = Array.isArray(parsed) ? parsed.map(Number).filter((n) => !Number.isNaN(n)) : []
+          }
+          const favDoctors = localStorage.getItem('antionko_favorite_doctors')
+          if (favDoctors) {
+            const parsed = JSON.parse(favDoctors)
+            this.favoriteDoctorIds = Array.isArray(parsed) ? parsed.map(Number).filter((n) => !Number.isNaN(n)) : []
           }
         } catch (_) {}
       }

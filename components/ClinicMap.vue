@@ -25,9 +25,11 @@ async function initMap() {
   const L = (await import('leaflet')).default
   const lat = props.lat
   const lng = props.lng
-  const map = L.map(mapRoot.value).setView([lat, lng], 15)
+  const map = L.map(mapRoot.value, {
+    zoomControl: false,
+    attributionControl: false,
+  }).setView([lat, lng], 15)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     maxZoom: 19,
   }).addTo(map)
   L.marker([lat, lng]).addTo(map).bindPopup(props.name || 'Клиника')

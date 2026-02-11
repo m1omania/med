@@ -2,7 +2,20 @@
   <div class="py-8 px-4">
     <div class="max-w-4xl mx-auto">
       <template v-if="result">
-        <h1 class="text-2xl font-bold text-calming-900 mb-8">Методы лечения и клиники</h1>
+        <div class="flex flex-wrap items-start justify-between gap-4 mb-8">
+          <h1 class="text-2xl font-bold text-calming-900">Методы лечения и клиники</h1>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition shrink-0"
+            :class="isFavorite ? 'bg-calming-100 text-calming-700 hover:bg-calming-200' : 'bg-calming-600 text-white hover:bg-calming-700'"
+            @click="onFavoriteClick"
+          >
+            <AppIcon name="star" size="sm" :class="{ 'fill-current': isFavorite }" />
+            {{ isFavorite ? 'Убрать из избранного' : 'Добавить в избранное' }}
+          </button>
+        </div>
+
+        <RegisterPromptModal v-model="showRegisterPrompt" />
 
         <!-- 1. Блок с данными — показываем сразу -->
         <ProfileSummary :profile="profile" />
@@ -23,7 +36,7 @@
               />
             </div>
             <p v-else class="p-4 rounded-xl bg-calming-50 text-calming-700 text-sm">
-              Подборка методов по вашему направлению появится после сохранения ответов. Пока можно посмотреть <NuxtLink to="/methods" class="text-calming-600 hover:underline">все методы лечения</NuxtLink>.
+              Подборка методов по вашему направлению появится после сохранения ответов.
             </p>
           </div>
         </section>
@@ -140,6 +153,16 @@ const route = useRoute()
 const patientStore = usePatientStore()
 
 const id = computed(() => route.params.id as string)
+const isFavorite = computed(() => patientStore.isFavoriteResult(id.value))
+const showRegisterPrompt = ref(false)
+
+function onFavoriteClick() {
+  if (!patientStore.isLoggedIn) {
+    showRegisterPrompt.value = true
+    return
+  }
+  patientStore.toggleFavoriteResult(id.value)
+}
 
 const result = computed(() => patientStore.getResultById(id.value) ?? null)
 
@@ -249,10 +272,12 @@ const displayClinics = computed(() => {
 
 const userGeography = computed(() => (result.value?.geography as string) || '')
 
+/** Только клиники, в которых есть указанные методы лечения, и только в регионе пользователя */
 const clinicsInUserLocation = computed(() => {
   const geo = userGeography.value
-  if (!geo) return displayClinics.value
-  return displayClinics.value.filter((c) => (c.city as string) === geo)
+  const fromMethods = Array.isArray(clinicsFromMethods.value) ? clinicsFromMethods.value : []
+  if (!geo) return fromMethods
+  return fromMethods.filter((c) => (c as { city?: string }).city === geo)
 })
 
 const clinicsOtherLocations = computed(() => {

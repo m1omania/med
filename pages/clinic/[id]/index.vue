@@ -7,15 +7,6 @@
             <div>
               <h1 class="text-2xl font-bold text-calming-900">{{ clinic.name }}</h1>
               <p class="text-calming-600 mt-1">{{ clinic.city }}</p>
-              <div v-if="clinic.services?.length" class="flex flex-wrap gap-2 mt-4">
-                <span
-                  v-for="s in clinic.services"
-                  :key="s"
-                  class="text-sm px-3 py-1 rounded-lg bg-calming-100 text-calming-700"
-                >
-                  {{ s }}
-                </span>
-              </div>
             </div>
 
             <div>
@@ -27,12 +18,23 @@
               </ul>
             </div>
 
-            <NuxtLink
-              :to="`/clinic/${id}/book`"
-              class="inline-flex items-center justify-center py-3 px-6 rounded-xl bg-calming-600 text-white text-sm font-semibold hover:bg-calming-700 transition w-full"
-            >
-              Записаться на приём
-            </NuxtLink>
+            <div class="flex flex-col gap-2">
+              <NuxtLink
+                :to="`/clinic/${id}/book`"
+                class="inline-flex items-center justify-center py-3 px-6 rounded-xl bg-calming-600 text-white text-sm font-semibold hover:bg-calming-700 transition w-full"
+              >
+                Записаться на приём
+              </NuxtLink>
+              <button
+                type="button"
+                class="inline-flex items-center justify-center gap-2 py-3 px-6 rounded-xl text-sm font-medium transition w-full"
+                :class="isFavoriteClinic ? 'bg-calming-100 text-calming-700 hover:bg-calming-200' : 'bg-white border-2 border-calming-300 text-calming-700 hover:border-calming-400'"
+                @click="onFavoriteClinicClick"
+              >
+                <AppIcon name="star" size="sm" :class="{ 'fill-current': isFavoriteClinic }" />
+                {{ isFavoriteClinic ? 'Убрать из избранного' : 'Добавить в избранное' }}
+              </button>
+            </div>
           </div>
 
           <div
@@ -54,21 +56,17 @@
         <section v-if="clinicMethods.length" class="mb-10">
           <h2 class="text-lg font-semibold text-calming-900 mb-4">Методы лечения</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <NuxtLink
+            <MethodCard
               v-for="m in clinicMethods"
               :key="m.slug"
-              :to="`/methods/${m.slug}`"
-              class="block rounded-xl bg-white p-4 transition hover:shadow-lg hover:scale-[1.02]"
-            >
-              <p class="font-semibold text-calming-900 line-clamp-2">{{ stripEmojis(m.title) }}</p>
-              <p v-if="m.date" class="text-sm text-calming-500 mt-2">{{ m.date }}</p>
-              <span class="mt-3 inline-flex items-center gap-1 text-sm text-calming-600 font-medium">
-                К методу
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-              </span>
-            </NuxtLink>
+              :method="m"
+              :clinic="clinic"
+            />
           </div>
         </section>
+
+        <RegisterPromptModal v-model="showRegisterPrompt" />
+
         <div id="doctors">
           <section v-if="doctors.length" class="mb-10">
             <h2 class="text-lg font-semibold text-calming-900 mb-4">Врачи клиники</h2>
@@ -92,11 +90,26 @@
 <script setup lang="ts">
 const route = useRoute()
 const id = computed(() => route.params.id as string)
-const { stripEmojis } = useStripEmojis()
+const patientStore = usePatientStore()
+const showRegisterPrompt = ref(false)
 
 const { data: clinic } = await useFetch(() => `/api/clinics/${id.value}`, {
   default: () => null,
 })
+
+const clinicIdNum = computed(() => {
+  const c = clinic.value as { id?: number } | null
+  return c && typeof c.id === 'number' ? c.id : null
+})
+const isFavoriteClinic = computed(() => clinicIdNum.value != null && patientStore.isFavoriteClinic(clinicIdNum.value))
+
+function onFavoriteClinicClick() {
+  if (!patientStore.isLoggedIn) {
+    showRegisterPrompt.value = true
+    return
+  }
+  if (clinicIdNum.value != null) patientStore.toggleFavoriteClinic(clinicIdNum.value)
+}
 
 const { data: doctorsData } = await useFetch(() => `/api/doctors?clinicId=${id.value}`, {
   default: () => ({ doctors: [] }),
