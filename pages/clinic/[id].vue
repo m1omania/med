@@ -5,7 +5,7 @@
         <AppIcon name="arrow-left" size="sm" /> Все клиники
       </NuxtLink>
       <div v-if="clinic" class="space-y-8">
-        <div class="bg-white rounded-2xl border border-calming-200 overflow-hidden flex flex-col lg:flex-row">
+        <div class="bg-white rounded-2xl overflow-hidden flex flex-col lg:flex-row shadow-sm">
           <div class="p-6 lg:w-80 xl:w-96 shrink-0 flex flex-col gap-6">
             <div>
               <h1 class="text-2xl font-bold text-calming-900">{{ clinic.name }}</h1>
@@ -31,7 +31,7 @@
             </div>
 
             <NuxtLink
-              to="#doctors"
+              :to="`/clinic/${id}/book`"
               class="inline-flex items-center justify-center py-3 px-6 rounded-xl bg-calming-600 text-white text-sm font-semibold hover:bg-calming-700 transition w-full"
             >
               Записаться на приём
@@ -40,7 +40,7 @@
 
           <div
             v-if="clinic.lat != null && clinic.lng != null"
-            class="flex-1 min-h-[16rem] lg:min-h-0 lg:min-w-[18rem] border-t lg:border-t-0 lg:border-l border-calming-200"
+            class="flex-1 min-h-[16rem] lg:min-h-0 lg:min-w-[18rem] border-t lg:border-t-0 lg:border-l border-neutral-200"
           >
             <ClinicMap
               :lat="clinic.lat"
@@ -61,7 +61,7 @@
               v-for="m in clinicMethods"
               :key="m.slug"
               :to="`/methods/${m.slug}`"
-              class="block rounded-xl border-2 border-calming-200 bg-white p-4 hover:border-calming-400 hover:bg-calming-50/50 transition"
+              class="block rounded-xl bg-white p-4 transition hover:shadow-lg hover:scale-[1.02]"
             >
               <p class="font-semibold text-calming-900 line-clamp-2">{{ stripEmojis(m.title) }}</p>
               <p v-if="m.date" class="text-sm text-calming-500 mt-2">{{ m.date }}</p>

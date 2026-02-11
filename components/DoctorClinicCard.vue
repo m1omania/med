@@ -1,14 +1,14 @@
 <template>
   <NuxtLink
     :to="`/doctor/${doctor.id}`"
-    class="block bg-white rounded-xl border-2 shadow-sm overflow-hidden transition hover:shadow-md"
-    :class="selected ? 'border-sky-400' : 'border-calming-200'"
+    class="block bg-white rounded-xl shadow-sm overflow-hidden transition hover:shadow-lg hover:scale-[1.02]"
+    :class="selected ? 'ring-2 ring-neutral-400' : ''"
   >
     <div class="p-4 flex flex-col items-center text-center">
       <div class="relative w-full flex justify-end mb-2">
         <button
           type="button"
-          class="w-8 h-8 rounded-lg border border-calming-200 flex items-center justify-center text-calming-500 hover:bg-calming-50"
+          class="w-8 h-8 rounded-lg border border-neutral-200 flex items-center justify-center text-calming-500 hover:bg-neutral-50"
           aria-label="Добавить"
           @click.prevent="$emit('add')"
         >

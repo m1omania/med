@@ -92,25 +92,30 @@ function mockAnalyze(body: QuizBody) {
 }
 
 function getClinicsForSlug(slug: string, city?: string): { id: number; name: string; city: string; services?: string[] }[] {
-  let list: { id: number; name: string; city: string; services?: string[]; tags?: string[] }[] = []
+  let fullList: { id: number; name: string; city: string; services?: string[]; tags?: string[] }[] = []
   try {
     const filePath = join(process.cwd(), 'public', 'data', 'clinics.json')
     const raw = readFileSync(filePath, 'utf-8')
-    list = JSON.parse(raw).clinics || []
+    fullList = JSON.parse(raw).clinics || []
   } catch (_) {
-    list = [
+    fullList = [
       { id: 1, name: 'Респ. больница №1', city: 'Город А', services: ['УЗИ', 'КТ'] },
       { id: 2, name: 'Городская больница', city: 'Город Б', services: ['УЗИ', 'Маммография'] },
     ]
   }
+  let list = fullList
+  if (slug !== 'obshiy' && slug !== 'kishechnik') {
+    const bySlug = fullList.filter((c: { tags?: string[] }) => c.tags?.some((t: string) => t.toLowerCase().includes(slug)))
+    list = bySlug.length ? bySlug : fullList.slice(0, 5)
+  } else {
+    list = list.slice(0, 8)
+  }
   if (city) {
-    list = list.filter((c: { city: string }) => c.city === city)
+    const inCity = list.filter((c: { city: string }) => c.city === city)
+    if (inCity.length > 0) return inCity
+    return list
   }
-  if (slug === 'obshiy' || slug === 'kishechnik') {
-    return list.slice(0, 8)
-  }
-  const filtered = list.filter((c: { tags?: string[] }) => c.tags?.some((t: string) => t.toLowerCase().includes(slug)))
-  return filtered.length ? filtered : list.slice(0, 5)
+  return list
 }
 
 export default defineEventHandler(async (event) => {

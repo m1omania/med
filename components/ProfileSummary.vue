@@ -1,10 +1,20 @@
 <template>
   <section class="mb-10">
-    <h2 class="text-lg font-semibold text-calming-900 mb-3">Кто вы и с чем вы</h2>
-    <div class="p-4 rounded-xl bg-calming-50 border border-calming-200 text-calming-700 text-sm">
-      <p class="leading-relaxed">
-        {{ summary }}
+    <div class="p-4 rounded-xl bg-white">
+      <p
+        v-for="(line, i) in summaryLines"
+        :key="i"
+        class="font-semibold text-calming-900 leading-relaxed"
+        :class="i > 0 ? 'mt-1' : ''"
+      >
+        {{ line }}
       </p>
+      <NuxtLink
+        to="/quiz"
+        class="mt-3 inline-flex items-center px-4 py-2 rounded-lg border border-neutral-200 text-calming-700 text-sm font-medium hover:bg-neutral-50 transition"
+      >
+        Изменить данные
+      </NuxtLink>
     </div>
   </section>
 </template>
@@ -22,16 +32,14 @@ const props = defineProps<{
   profile: Profile
 }>()
 
-const summary = computed(() => {
+const summaryLines = computed(() => {
   const p = props.profile
-  const parts: string[] = []
-  if (p.age) parts.push(`Возраст ${p.age} лет`)
-  if (p.gender) parts.push(p.gender === 'M' ? 'мужской пол' : p.gender === 'F' ? 'женский пол' : '')
-  if (p.diagnosisLabel) parts.push(`направление: ${p.diagnosisLabel}`)
-  if (p.geography) parts.push(`город: ${p.geography}`)
-  if (p.diagnosisStatus) parts.push(p.diagnosisStatus)
-  const filtered = parts.filter(Boolean)
-  if (!filtered.length) return `Направление: ${p.diagnosisLabel}. Клиники ниже — только в вашем регионе.`
-  return filtered.join('. ') + '.'
+  const lines: string[] = []
+  if (p.age) lines.push(`Возраст ${p.age} лет`)
+  if (p.gender) lines.push(p.gender === 'M' ? 'Мужской пол' : p.gender === 'F' ? 'Женский пол' : '')
+  if (p.diagnosisLabel) lines.push(`Направление: ${p.diagnosisLabel}`)
+  if (p.geography) lines.push(`Город: ${p.geography}`)
+  if (!lines.length) return [`Направление: ${p.diagnosisLabel}. Клиники ниже — только в вашем регионе.`]
+  return lines
 })
 </script>

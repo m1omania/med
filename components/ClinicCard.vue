@@ -1,7 +1,7 @@
 <template>
   <NuxtLink
     :to="`/clinic/${clinic.id}`"
-    class="block bg-white rounded-xl border border-calming-200 p-6 hover:shadow-md transition cursor-pointer"
+    class="block bg-white rounded-xl p-6 transition cursor-pointer hover:shadow-lg hover:scale-[1.02]"
   >
     <h3 class="font-semibold text-calming-900">{{ clinic.name }}</h3>
     <p class="text-sm text-calming-600 mt-1">{{ clinic.city }}</p>

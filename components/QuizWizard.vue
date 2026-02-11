@@ -1,13 +1,13 @@
 <template>
-  <div class="bg-white rounded-2xl border border-calming-200 shadow-sm overflow-hidden">
+  <div class="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
     <div class="px-6 py-4 bg-calming-50 border-b border-calming-100">
       <div class="mb-2">
-        <span class="text-sm font-medium text-calming-700">Шаг {{ currentStep + 1 }} из 10</span>
+        <span class="text-sm font-medium text-calming-700">Шаг {{ currentStep + 1 }} из 6</span>
       </div>
       <div class="h-2 bg-calming-200 rounded-full overflow-hidden">
         <div
           class="h-full bg-calming-600 transition-all duration-300"
-          :style="{ width: `${((currentStep + 1) / 10) * 100}%` }"
+          :style="{ width: `${((currentStep + 1) / 6) * 100}%` }"
         />
       </div>
     </div>
@@ -53,13 +53,8 @@
           </button>
         </div>
       </div>
-      <!-- Step 2: symptoms -->
+      <!-- Step 2: localization -->
       <div v-else-if="currentStep === 2" class="space-y-4">
-        <h2 class="text-lg font-semibold text-calming-900">Симптомы (можно несколько)</h2>
-        <SymptomSelector v-model="local.symptoms" @update:model-value="saveStep" />
-      </div>
-      <!-- Step 3: localization -->
-      <div v-else-if="currentStep === 3" class="space-y-4">
         <h2 class="text-lg font-semibold text-calming-900">Тип опухоли / локализация</h2>
         <div class="flex flex-col gap-2">
           <button
@@ -74,8 +69,8 @@
           </button>
         </div>
       </div>
-      <!-- Step 4: stage -->
-      <div v-else-if="currentStep === 4" class="space-y-4">
+      <!-- Step 3: stage -->
+      <div v-else-if="currentStep === 3" class="space-y-4">
         <h2 class="text-lg font-semibold text-calming-900">Стадия известна?</h2>
         <div class="flex flex-col gap-2">
           <button
@@ -90,57 +85,8 @@
           </button>
         </div>
       </div>
-      <!-- Step 5: treatment plan -->
-      <div v-else-if="currentStep === 5" class="space-y-4">
-        <h2 class="text-lg font-semibold text-calming-900">План лечения?</h2>
-        <p class="text-sm text-calming-600">Можно выбрать несколько</p>
-        <div class="flex flex-wrap gap-2">
-          <button
-            v-for="opt in treatmentPlanOptions"
-            :key="opt"
-            type="button"
-            class="px-4 py-2 rounded-xl border-2 text-sm font-medium transition"
-            :class="local.treatmentPlan?.includes(opt) ? 'border-calming-600 bg-calming-50 text-calming-800' : 'border-calming-200 hover:border-calming-300 hover:bg-calming-50/50 text-calming-700'"
-            @click="toggleTreatmentPlan(opt)"
-          >
-            {{ opt }}
-          </button>
-        </div>
-      </div>
-      <!-- Step 6: family history -->
-      <div v-else-if="currentStep === 6" class="space-y-4">
-        <h2 class="text-lg font-semibold text-calming-900">Семейная история</h2>
-        <div class="flex flex-col gap-2">
-          <button
-            v-for="opt in familyHistoryOptions"
-            :key="opt.value"
-            type="button"
-            class="px-4 py-3 rounded-xl border-2 text-sm font-medium transition text-left"
-            :class="local.familyHistory === opt.value ? 'border-calming-600 bg-calming-50 text-calming-800' : 'border-calming-200 hover:border-calming-300 hover:bg-calming-50/50 text-calming-700'"
-            @click="local.familyHistory = opt.value; saveStep()"
-          >
-            {{ opt.label }}
-          </button>
-        </div>
-      </div>
-      <!-- Step 5: lifestyle -->
-      <div v-else-if="currentStep === 7" class="space-y-4">
-        <h2 class="text-lg font-semibold text-calming-900">Образ жизни (можно несколько)</h2>
-        <div class="flex flex-wrap gap-2">
-          <button
-            v-for="opt in lifestyleOptions"
-            :key="opt"
-            type="button"
-            class="px-4 py-2 rounded-xl border-2 text-sm font-medium transition"
-            :class="local.lifestyle?.includes(opt) ? 'border-calming-600 bg-calming-50 text-calming-800' : 'border-calming-200 hover:border-calming-300 hover:bg-calming-50/50 text-calming-700'"
-            @click="toggleLifestyle(opt)"
-          >
-            {{ opt }}
-          </button>
-        </div>
-      </div>
-      <!-- Step 6: geography -->
-      <div v-else-if="currentStep === 8" class="space-y-4">
+      <!-- Step 4: geography -->
+      <div v-else-if="currentStep === 4" class="space-y-4">
         <h2 class="text-lg font-semibold text-calming-900">География</h2>
         <div class="flex flex-col gap-2">
           <button
@@ -155,24 +101,21 @@
           </button>
         </div>
       </div>
-      <!-- Step 9: confirm -->
-      <div v-else-if="currentStep === 9" class="space-y-4">
+      <!-- Step 5: confirm -->
+      <div v-else-if="currentStep === 5" class="space-y-4">
         <h2 class="text-lg font-semibold text-calming-900">Проверьте данные</h2>
         <ul class="text-calming-700 space-y-1 text-sm">
           <li>Возраст: {{ local.age || '—' }}</li>
           <li>Пол: {{ local.gender === 'M' ? 'Мужской' : local.gender === 'F' ? 'Женский' : '—' }}</li>
-          <li>Симптомы: {{ (local.symptoms || []).join(', ') || '—' }}</li>
           <li>Тип / локализация: {{ local.localization || '—' }}</li>
           <li>Стадия: {{ local.stage || '—' }}</li>
-          <li>План лечения: {{ (local.treatmentPlan || []).join(', ') || '—' }}</li>
           <li>География: {{ local.geography || '—' }}</li>
-          <li>Семья: {{ local.familyHistory || '—' }}</li>
         </ul>
       </div>
     </div>
     <div class="px-6 py-4 bg-calming-50 border-t border-calming-100 flex justify-between">
       <button
-        v-if="currentStep > 0 && currentStep < 9"
+        v-if="currentStep > 0 && currentStep < 5"
         type="button"
         class="px-4 py-2 text-calming-600 hover:text-calming-800 font-medium inline-flex items-center gap-1"
         @click="prev"
@@ -180,7 +123,7 @@
         <AppIcon name="arrow-left" size="sm" /> Назад
       </button>
       <button
-        v-else-if="currentStep === 9"
+        v-else-if="currentStep === 5"
         type="button"
         class="px-4 py-2 text-calming-600 hover:text-calming-800 font-medium inline-flex items-center gap-1"
         @click="goToFirstStep"
@@ -189,7 +132,7 @@
       </button>
       <div v-else />
       <button
-        v-if="currentStep < 9"
+        v-if="currentStep < 5"
         type="button"
         class="px-4 py-2 rounded-lg bg-calming-600 text-white font-medium hover:bg-calming-700 disabled:opacity-50 inline-flex items-center gap-1"
         :disabled="!canNext"
@@ -198,7 +141,7 @@
         Далее <AppIcon name="arrow-right" size="sm" />
       </button>
       <button
-        v-else-if="currentStep === 9"
+        v-else-if="currentStep === 5"
         type="button"
         class="px-4 py-2 rounded-lg bg-calming-600 text-white font-medium hover:bg-calming-700 disabled:opacity-50 inline-flex items-center gap-1"
         :disabled="submitting"
@@ -224,10 +167,7 @@ const local = reactive({
   symptoms: (patientStore.quizData?.symptoms ?? []) as string[],
   localization: patientStore.quizData?.localization ?? '',
   stage: patientStore.quizData?.stage ?? '',
-  treatmentPlan: (patientStore.quizData?.treatmentPlan ?? []) as string[],
   geography: patientStore.quizData?.geography ?? '',
-  familyHistory: patientStore.quizData?.familyHistory ?? '',
-  lifestyle: (patientStore.quizData?.lifestyle ?? []) as string[],
 })
 
 const localizationOptions = [
@@ -236,13 +176,6 @@ const localizationOptions = [
   { value: 'legkie', label: 'Лёгкие' },
   { value: 'kishechnik', label: 'Кишечник' },
   { value: 'obshiy', label: 'Общее / профилактика' },
-]
-
-const familyHistoryOptions = [
-  { value: '', label: 'Нет случаев в семье' },
-  { value: 'mother', label: 'У мамы был рак груди' },
-  { value: 'father', label: 'У отца был рак' },
-  { value: 'other', label: 'Другие случаи в семье' },
 ]
 
 const stageOptions = [
@@ -254,46 +187,23 @@ const stageOptions = [
   { value: 'метастазы', label: 'Метастазы' },
 ]
 
-const treatmentPlanOptions = ['операция', 'химия', 'лучевая', 'таргет', 'иммуно', 'не назначен']
-
 const geographyOptions = [
   { value: 'Петрозаводск', label: 'Петрозаводск' },
   { value: 'Москва', label: 'Москва' },
   { value: 'Санкт-Петербург', label: 'Санкт-Петербург' },
 ]
 
-const lifestyleOptions = ['Курение', 'Алкоголь', 'Спорт', 'ЗОЖ']
-
-function toggleLifestyle(opt: string) {
-  const arr = [...(local.lifestyle || [])]
-  const idx = arr.indexOf(opt)
-  if (idx >= 0) arr.splice(idx, 1)
-  else arr.push(opt)
-  local.lifestyle = arr
-  saveStep()
-}
-
-function toggleTreatmentPlan(opt: string) {
-  const arr = [...(local.treatmentPlan || [])]
-  const idx = arr.indexOf(opt)
-  if (idx >= 0) arr.splice(idx, 1)
-  else arr.push(opt)
-  local.treatmentPlan = arr
-  saveStep()
-}
-
 onMounted(() => {
   patientStore.hydrateFromStorage()
-  currentStep.value = patientStore.quizData?.step ?? 0
+  currentStep.value = Math.min(patientStore.quizData?.step ?? 0, 5)
 })
 
 const canNext = computed(() => {
   if (currentStep.value === 0) return !!local.age
   if (currentStep.value === 1) return !!local.gender
-  if (currentStep.value === 2) return true
-  if (currentStep.value === 3) return !!local.localization
-  if (currentStep.value === 4) return !!local.stage
-  if (currentStep.value === 8) return !!local.geography
+  if (currentStep.value === 2) return !!local.localization
+  if (currentStep.value === 3) return !!local.stage
+  if (currentStep.value === 4) return !!local.geography
   return true
 })
 
@@ -305,15 +215,15 @@ function saveStep() {
     symptoms: local.symptoms,
     localization: local.localization,
     stage: local.stage,
-    treatmentPlan: local.treatmentPlan,
+    treatmentPlan: [],
     geography: local.geography,
-    familyHistory: local.familyHistory,
-    lifestyle: local.lifestyle,
+    familyHistory: '',
+    lifestyle: [],
   })
 }
 
 function next() {
-  if (currentStep.value >= 9) return
+  if (currentStep.value >= 5) return
   saveStep()
   currentStep.value++
   setStep(currentStep.value)
@@ -339,10 +249,10 @@ async function submit() {
     symptoms: local.symptoms ?? [],
     localization: local.localization,
     stage: local.stage,
-    treatmentPlan: local.treatmentPlan ?? [],
+    treatmentPlan: [],
     geography: local.geography,
-    familyHistory: local.familyHistory,
-    lifestyle: local.lifestyle ?? [],
+    familyHistory: '',
+    lifestyle: [],
   }
   try {
     const res = await submitQuiz(payload)

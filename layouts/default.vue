@@ -47,7 +47,7 @@
                 </button>
                 <div
                   v-show="userMenuOpen"
-                  class="absolute right-0 mt-2 w-48 py-1 bg-white rounded-lg border border-calming-200 shadow-lg z-50"
+                  class="absolute right-0 mt-2 w-48 py-1 bg-white rounded-lg border border-neutral-200 shadow-lg z-50"
                 >
                   <NuxtLink
                     to="/settings"

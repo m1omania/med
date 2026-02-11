@@ -1,11 +1,9 @@
 <template>
   <div class="py-8 px-4 max-w-6xl mx-auto">
     <h1 class="text-2xl font-bold text-calming-900 mb-2">Методы лечения</h1>
-    <p class="text-calming-600 text-sm mb-8">Диагностика, скрининг и лечение по типу заболевания</p>
+    <p class="text-calming-600 text-sm mb-8">Все методы верифицированы специалистами с медицинским образованием</p>
 
-    <!-- Лента фильтров: тип заболевания (10 категорий по дорожной карте) -->
     <section class="mb-8">
-      <h2 class="text-sm font-semibold text-calming-700 uppercase tracking-wider mb-3">Тип заболевания</h2>
       <div class="flex flex-wrap gap-2">
         <button
           v-for="cat in diseaseCategories"
@@ -14,7 +12,7 @@
           class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition shrink-0"
           :class="selectedDisease === cat.slug
             ? 'bg-calming-600 text-white ring-2 ring-calming-200 ring-offset-2'
-            : 'bg-white border-2 border-calming-200 text-calming-800 hover:border-calming-400 hover:bg-calming-50'"
+            : 'bg-white text-calming-800 hover:bg-neutral-50'"
           @click="toggleDisease(cat.slug)"
         >
           {{ cat.title }}
@@ -59,16 +57,18 @@
           v-for="item in filteredMethods"
           :key="item.slug"
           :to="`/methods/${item.slug}`"
-          class="block p-4 rounded-xl border-2 border-calming-200 bg-white hover:border-calming-300 hover:shadow-md transition min-h-0"
+          class="block p-5 rounded-xl bg-white transition min-h-[15rem] hover:shadow-lg hover:scale-[1.02] flex flex-col"
         >
-          <h2 class="font-semibold text-calming-800 line-clamp-2">{{ stripEmojis(item.title) }}</h2>
-          <p class="text-sm text-calming-600 mt-2">{{ item.date }}</p>
-          <p class="text-sm text-calming-500 mt-1">
-            <span class="font-medium">Тема:</span> {{ item.topic }}
-          </p>
-          <p v-if="item.source?.name" class="text-sm text-calming-500 mt-0.5">
-            <span class="font-medium">Источник:</span> {{ item.source.name }}
-          </p>
+          <h2 class="font-semibold text-calming-800">{{ stripEmojis(item.title) }}</h2>
+          <p class="text-sm text-calming-600 mt-2">{{ formatMethodDate(item.date) }}</p>
+          <div v-if="getClinicForMethod(item)" class="mt-auto pt-4">
+            <p class="text-sm text-calming-500">
+              <span class="font-medium">Город:</span> {{ getClinicForMethod(item)?.city }}
+            </p>
+            <p class="text-sm text-calming-500 mt-0.5">
+              <span class="font-medium">Клиника:</span> {{ getClinicForMethod(item)?.name }}
+            </p>
+          </div>
         </NuxtLink>
       </div>
       <p v-else class="text-calming-600">Нет методов по выбранному типу заболевания.</p>
@@ -86,6 +86,13 @@ interface Method {
   tags?: string[]
   body?: string
   treatmentMethod?: boolean
+  clinicId?: number
+}
+
+interface Clinic {
+  id: number
+  name: string
+  city: string
 }
 
 interface DiseaseCategory {
@@ -96,10 +103,21 @@ interface DiseaseCategory {
 }
 
 const { stripEmojis } = useStripEmojis()
+const { formatMethodDate } = useFormatMethodDate()
 const { data: methodsData } = await useFetch<{ methods: Method[] }>('/api/articles')
 const { data: diseaseData } = await useFetch<{ categories: DiseaseCategory[] }>('/api/disease-types')
+const { data: clinicsData } = await useFetch<{ clinics: Clinic[] }>('/api/clinics')
 
 const methods = computed(() => methodsData.value?.methods ?? [])
+const clinicsMap = computed(() => {
+  const list = clinicsData.value?.clinics ?? []
+  return Object.fromEntries(list.map((c) => [c.id, c]))
+})
+function getClinicForMethod(method: Method): Clinic | undefined {
+  const id = method.clinicId
+  if (id == null) return undefined
+  return clinicsMap.value[id]
+}
 
 const diseaseCategories = computed(() => diseaseData.value?.categories ?? [])
 

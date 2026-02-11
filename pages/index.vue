@@ -73,7 +73,7 @@
             v-for="item in latestMethods"
             :key="item.slug"
             :to="`/methods/${item.slug}`"
-            class="block min-w-0 p-4 rounded-xl border border-calming-200 bg-white hover:border-calming-300 hover:shadow-md transition"
+            class="block min-w-0 p-4 rounded-xl bg-white transition hover:shadow-lg hover:scale-[1.02]"
           >
             <p class="font-medium text-calming-800 line-clamp-2">{{ item.title }}</p>
             <p class="text-sm text-calming-500 mt-2">{{ item.date }}</p>

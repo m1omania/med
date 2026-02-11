@@ -10,7 +10,7 @@
           {{ methodTitle }}
         </h1>
         <p class="mt-2 text-sm text-calming-600">
-          <span>Дата: {{ method.date }}</span>
+          <span>Дата: {{ formatMethodDate(method.date) }}</span>
           <span v-if="method.source?.name"> | Источник: {{ method.source.name }}</span>
           <span v-if="method.verifiedDate"> | Верифицировано: {{ method.verifiedDate }}</span>
         </p>
@@ -31,7 +31,7 @@
 
       <!-- ГДЕ ПОЛУЧИТЬ — единая структура как у dostarlimab -->
       <section
-        class="rounded-xl border-2 border-calming-200 bg-calming-50/50 p-5 space-y-4"
+        class="rounded-xl bg-white p-5 space-y-4"
       >
         <h2 class="text-sm font-semibold text-calming-800 uppercase tracking-wider">
           Где получить{{ method.geographyLabel ? ` (${method.geographyLabel})` : '' }}
@@ -90,7 +90,7 @@
             Подобрать клинику
           </NuxtLink>
           <NuxtLink
-            to="/dashboard"
+            to="/register"
             class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-calming-300 text-calming-700 text-sm font-medium hover:bg-calming-100 transition"
           >
             Сохранить
@@ -120,6 +120,7 @@
 const route = useRoute()
 const slug = route.params.slug as string
 const { stripEmojis } = useStripEmojis()
+const { formatMethodDate } = useFormatMethodDate()
 
 const { data: method } = await useFetch<{
   slug: string

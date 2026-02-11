@@ -1,8 +1,8 @@
 <template>
-  <article class="bg-white rounded-2xl border border-calming-200 overflow-hidden shadow-sm">
+  <article class="bg-white rounded-2xl overflow-hidden shadow-sm">
     <div class="flex flex-col lg:flex-row">
       <!-- Левая колонка: фото, контакты, карта, часы, отзывы -->
-      <aside class="lg:w-72 shrink-0 border-b lg:border-b-0 lg:border-r border-calming-200 bg-calming-50/50 p-6 flex flex-col gap-6">
+      <aside class="lg:w-72 shrink-0 border-b lg:border-b-0 lg:border-r border-neutral-200 bg-calming-50/50 p-6 flex flex-col gap-6">
         <div class="flex flex-col items-center">
           <div
             class="w-52 h-52 sm:w-64 sm:h-64 rounded-2xl overflow-hidden bg-calming-200 flex items-center justify-center text-5xl font-semibold text-calming-600 shrink-0"
@@ -31,7 +31,7 @@
           Запись в клинике
         </span>
 
-        <div class="rounded-xl overflow-hidden border border-calming-200 bg-calming-100 min-h-[8rem]">
+        <div class="rounded-xl overflow-hidden border border-neutral-200 bg-calming-100 min-h-[8rem]">
           <ClientOnly>
             <ClinicMap
               :lat="mapLat"
@@ -127,7 +127,7 @@
                 v-for="m in methods"
                 :key="m.slug"
                 :to="`/methods/${m.slug}`"
-                class="block rounded-xl border-2 border-calming-200 bg-white p-4 hover:border-calming-400 hover:bg-calming-50/50 transition"
+                class="block rounded-xl bg-white p-4 transition hover:shadow-lg hover:scale-[1.02]"
               >
                 <p class="font-semibold text-calming-900 line-clamp-2 text-sm">{{ stripEmojis(m.title) }}</p>
                 <p v-if="m.date" class="text-xs text-calming-500 mt-1.5">{{ m.date }}</p>

@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   },
   modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt', '@vueuse/nuxt'],
   app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       title: 'AntiOnko — онко-скрининг и рекомендации',
       meta: [

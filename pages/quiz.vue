@@ -11,10 +11,10 @@
 const patientStore = usePatientStore()
 const { showToast } = useToast()
 
-async function onQuizComplete(resultId: string) {
-  showToast('Вы на правильном пути! Результаты готовы.')
+function onQuizComplete(resultId: string) {
   patientStore.setLastResultId(resultId)
-  await navigateTo(`/results/${resultId}`)
+  showToast('Вы на правильном пути! Результаты готовы.')
+  navigateTo(`/results/${resultId}`)
 }
 
 useHead({

@@ -1,80 +1,119 @@
 <template>
   <div class="py-8 px-4">
     <div class="max-w-4xl mx-auto">
-      <NuxtLink to="/quiz" class="text-calming-600 hover:underline mb-4 inline-flex items-center gap-1">
-        <AppIcon name="arrow-left" size="sm" /> К опросу
-      </NuxtLink>
       <template v-if="result">
-        <h1 class="text-2xl font-bold text-calming-900 mb-8">Ваши результаты</h1>
+        <h1 class="text-2xl font-bold text-calming-900 mb-8">Методы лечения и клиники</h1>
 
-        <!-- 1. Кто вы и с чем вы -->
+        <!-- 1. Блок с данными — показываем сразу -->
         <ProfileSummary :profile="profile" />
 
-        <!-- 2. Прорывные возможности по вашему типу рака -->
-        <section v-if="breakthroughMethods.length" class="mb-10">
-          <h2 class="text-lg font-semibold text-calming-900 mb-4">Прорывные возможности по вашему типу рака</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            <NuxtLink
-              v-for="m in breakthroughMethods"
-              :key="m.slug"
-              :to="`/methods/${m.slug}`"
-              class="block rounded-xl border-2 border-calming-200 p-4 hover:border-calming-400 hover:bg-calming-50/50 transition"
-            >
-              <p class="font-semibold text-calming-900 line-clamp-2">{{ m.title }}</p>
-              <p v-if="m.date" class="text-sm text-calming-500 mt-2">{{ m.date }}</p>
-              <span class="mt-3 inline-flex items-center gap-1 text-sm text-calming-600 font-medium">
-                К методу
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-              </span>
-            </NuxtLink>
-          </div>
-        </section>
-        <section v-else class="mb-10 p-4 rounded-xl bg-calming-50 border border-calming-200 text-calming-700 text-sm">
-          Подборка методов по вашему направлению появится после сохранения ответов. Пока можно посмотреть <NuxtLink to="/methods" class="text-calming-600 hover:underline">все методы лечения</NuxtLink>.
-        </section>
-
-        <!-- 3. Клиники по рекомендованным методам -->
+        <!-- 2. Методы лечения — загрузка, затем контент с анимацией -->
         <section class="mb-10">
-          <h2 class="text-lg font-semibold text-calming-900 mb-2">Клиники</h2>
-          <p class="text-sm text-calming-600 mb-4">
-            {{ displayClinics.length ? (result.geography ? `Клиники по направлению и в вашем регионе (${result.geography})` : 'Клиники, связанные с рекомендованными методами и по вашему направлению') : 'Клиники по вашему направлению.' }}
-          </p>
-          <div v-if="displayClinics.length" class="grid gap-4">
-            <ClinicCard
-              v-for="clinic in displayClinics"
-              :key="clinic.id"
-              :clinic="clinic"
-              :slug="result.primaryRisk?.slug || 'obshiy'"
-            />
-            <NuxtLink
-              :to="`/clinics/${result.primaryRisk?.slug || 'obshiy'}`"
-              class="mt-2 inline-flex items-center gap-1 text-calming-600 hover:text-calming-800 font-medium"
-            >
-              Все клиники по направлению <AppIcon name="arrow-right" size="sm" class="inline" />
-            </NuxtLink>
+          <h2 class="text-lg font-semibold text-calming-900 mb-4">Методы лечения</h2>
+          <div v-if="!sectionReady.methods" class="rounded-xl bg-calming-100 p-8 flex items-center justify-center min-h-[12rem]">
+            <span class="h-8 w-8 rounded-full border-2 border-calming-600 border-t-transparent animate-spin" aria-hidden="true" />
           </div>
-          <div v-else class="p-4 rounded-xl bg-calming-50 border border-calming-200">
-            <p class="text-sm text-calming-700 mb-2">В базе пока нет клиник по этому направлению.</p>
-            <NuxtLink
-              :to="`/clinics/${result.primaryRisk?.slug || 'obshiy'}`"
-              class="text-calming-600 hover:underline font-medium"
-            >
-              Открыть список клиник <AppIcon name="arrow-right" size="sm" class="inline" />
-            </NuxtLink>
+          <div v-show="sectionReady.methods" ref="methodsBlockRef">
+            <div v-if="breakthroughMethods.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <NuxtLink
+                v-for="m in breakthroughMethods"
+                :key="m.slug"
+                :to="`/methods/${m.slug}`"
+                class="block rounded-xl bg-white p-4 transition hover:shadow-lg hover:scale-[1.02]"
+              >
+                <p class="font-semibold text-calming-900 line-clamp-2">{{ m.title }}</p>
+                <p v-if="m.date" class="text-sm text-calming-500 mt-2">{{ formatMethodDate(m.date) }}</p>
+                <span class="mt-3 inline-flex items-center gap-1 text-sm text-calming-600 font-medium">
+                  К методу
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </span>
+              </NuxtLink>
+            </div>
+            <p v-else class="p-4 rounded-xl bg-calming-50 text-calming-700 text-sm">
+              Подборка методов по вашему направлению появится после сохранения ответов. Пока можно посмотреть <NuxtLink to="/methods" class="text-calming-600 hover:underline">все методы лечения</NuxtLink>.
+            </p>
           </div>
         </section>
 
-        <!-- 4. Инструменты поддержки -->
-        <ToolsSection :hide-methods="true" />
+        <!-- 3. Клиники в вашем регионе — загрузка, затем контент -->
+        <section class="mb-10">
+          <h2 v-if="result.geography" class="text-lg font-semibold text-calming-900 mb-4">Клиники в вашем регионе ({{ result.geography }})</h2>
+          <h2 v-else class="text-lg font-semibold text-calming-900 mb-4">Клиники</h2>
+          <div v-if="!sectionReady.clinicsRegion" class="rounded-xl bg-calming-100 p-8 flex items-center justify-center min-h-[10rem]">
+            <span class="h-8 w-8 rounded-full border-2 border-calming-600 border-t-transparent animate-spin" aria-hidden="true" />
+          </div>
+          <div v-show="sectionReady.clinicsRegion" ref="clinicsRegionBlockRef">
+            <template v-if="result.geography">
+              <div v-if="clinicsInUserLocation.length" class="grid md:grid-cols-2 gap-6">
+                <ClinicCard
+                  v-for="clinic in clinicsInUserLocation"
+                  :key="clinic.id"
+                  :clinic="clinic"
+                  :slug="result.primaryRisk?.slug || 'obshiy'"
+                />
+              </div>
+              <p v-else class="text-sm text-calming-600 py-2">В вашем регионе клиник по направлению не найдено.</p>
+            </template>
+            <template v-else>
+              <p class="text-sm text-calming-600 mb-4">Клиники, связанные с рекомендованными методами.</p>
+              <div v-if="displayClinics.length" class="grid md:grid-cols-2 gap-6">
+                <ClinicCard
+                  v-for="clinic in displayClinics"
+                  :key="clinic.id"
+                  :clinic="clinic"
+                  :slug="result.primaryRisk?.slug || 'obshiy'"
+                />
+              </div>
+              <p v-else class="text-sm text-calming-600 py-2">В базе пока нет клиник по этому направлению.</p>
+            </template>
+          </div>
+        </section>
 
-        <div v-if="patientStore.isLoggedIn" class="mt-8">
-          <NuxtLink
-            to="/dashboard"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-calming-600 text-white text-sm font-medium hover:bg-calming-700"
-          >
-            Сохранить в дашборд
-          </NuxtLink>
-        </div>
+        <!-- 4. Клиники в соседних локациях — загрузка, затем контент -->
+        <section v-if="result.geography" class="mb-10">
+          <h2 class="text-lg font-semibold text-calming-900 mb-4">Клиники в соседних локациях</h2>
+          <div v-if="!sectionReady.clinicsOther" class="rounded-xl bg-calming-100 p-8 flex items-center justify-center min-h-[8rem]">
+            <span class="h-8 w-8 rounded-full border-2 border-calming-600 border-t-transparent animate-spin" aria-hidden="true" />
+          </div>
+          <div v-show="sectionReady.clinicsOther" ref="clinicsOtherBlockRef">
+            <div v-if="clinicsOtherLocations.length" class="grid md:grid-cols-2 gap-6">
+              <ClinicCard
+                v-for="clinic in clinicsOtherLocations"
+                :key="clinic.id"
+                :clinic="clinic"
+                :slug="result.primaryRisk?.slug || 'obshiy'"
+              />
+            </div>
+            <p v-else class="text-sm text-calming-600 py-2">В соседних локациях клиник не найдено.</p>
+          </div>
+        </section>
+
+        <!-- 5. Призыв к регистрации / Дашборд — загрузка, затем контент -->
+        <section class="mb-10">
+          <div v-if="!sectionReady.cta" class="rounded-xl bg-calming-100 p-8 flex items-center justify-center min-h-[6rem]">
+            <span class="h-8 w-8 rounded-full border-2 border-calming-600 border-t-transparent animate-spin" aria-hidden="true" />
+          </div>
+          <div v-show="sectionReady.cta" ref="ctaBlockRef">
+            <div v-if="!patientStore.isLoggedIn" class="p-4 rounded-xl bg-calming-600 shadow-sm">
+              <p class="font-semibold text-white mb-2">Зарегистрируйтесь, чтобы не потерять результаты.</p>
+              <p class="text-sm text-white/90 mb-4">Это полностью анонимно, данные никому не передаются.</p>
+              <NuxtLink
+                to="/register"
+                class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-white text-calming-600 text-sm font-medium hover:bg-white/90 transition"
+              >
+                Регистрация
+              </NuxtLink>
+            </div>
+            <div v-else>
+              <NuxtLink
+                to="/dashboard"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-calming-600 text-white text-sm font-medium hover:bg-calming-700"
+              >
+                Сохранить в дашборд
+              </NuxtLink>
+            </div>
+          </div>
+        </section>
       </template>
       <div v-else class="text-center py-12 text-calming-600">
         <p class="mb-4">Результаты не найдены или устарели.</p>
@@ -87,6 +126,7 @@
 <script setup lang="ts">
 const route = useRoute()
 const patientStore = usePatientStore()
+const { formatMethodDate } = useFormatMethodDate()
 
 const id = computed(() => route.params.id as string)
 
@@ -176,8 +216,59 @@ const displayClinics = computed(() => {
   return out
 })
 
+const userGeography = computed(() => (result.value?.geography as string) || '')
+
+const clinicsInUserLocation = computed(() => {
+  const geo = userGeography.value
+  if (!geo) return displayClinics.value
+  return displayClinics.value.filter((c) => (c.city as string) === geo)
+})
+
+const clinicsOtherLocations = computed(() => {
+  const geo = userGeography.value
+  if (!geo) return []
+  return displayClinics.value.filter((c) => (c.city as string) !== geo)
+})
+
+const sectionReady = reactive({
+  methods: false,
+  clinicsRegion: false,
+  clinicsOther: false,
+  cta: false,
+})
+
+const STAGE_DELAY_MS = 1200
+
+const methodsBlockRef = ref<HTMLElement | null>(null)
+const clinicsRegionBlockRef = ref<HTMLElement | null>(null)
+const clinicsOtherBlockRef = ref<HTMLElement | null>(null)
+const ctaBlockRef = ref<HTMLElement | null>(null)
+
+function animateBlock(el: HTMLElement | null) {
+  if (!el || !import.meta.client) return
+  const gsap = useGsap()
+  gsap.from(el, { opacity: 0, y: 24, duration: 0.5, ease: 'power2.out' })
+}
+
 onMounted(() => {
   patientStore.hydrateFromStorage()
+  if (!import.meta.client || !result.value) return
+  setTimeout(() => {
+    sectionReady.methods = true
+    nextTick(() => animateBlock(methodsBlockRef.value))
+  }, STAGE_DELAY_MS)
+  setTimeout(() => {
+    sectionReady.clinicsRegion = true
+    nextTick(() => animateBlock(clinicsRegionBlockRef.value))
+  }, STAGE_DELAY_MS * 2)
+  setTimeout(() => {
+    sectionReady.clinicsOther = true
+    nextTick(() => animateBlock(clinicsOtherBlockRef.value))
+  }, STAGE_DELAY_MS * 3)
+  setTimeout(() => {
+    sectionReady.cta = true
+    nextTick(() => animateBlock(ctaBlockRef.value))
+  }, STAGE_DELAY_MS * 4)
 })
 
 useHead({

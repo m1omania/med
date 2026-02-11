@@ -49,7 +49,7 @@
           slug="all"
         />
       </div>
-      <div v-else class="h-[28rem] rounded-xl overflow-hidden border border-calming-200 bg-calming-50">
+      <div v-else class="h-[28rem] rounded-xl overflow-hidden border border-neutral-200 bg-calming-50">
         <ClientOnly>
           <ClinicsMap :key="mapKey" :clinics="filteredClinics" />
         </ClientOnly>
