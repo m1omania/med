@@ -91,7 +91,7 @@
         <!-- 4.5 Обсуждения в сообществе -->
         <section class="mb-10">
           <h2 class="text-lg font-semibold text-calming-900 mb-4">Обсуждения в сообществе</h2>
-          <div class="rounded-xl bg-calming-50 border border-calming-100 p-5">
+          <div class="rounded-xl bg-white border border-calming-100 p-5">
             <p class="text-sm text-calming-700 mb-3">Почитайте опыт других или задайте вопрос на форуме.</p>
             <ul v-if="communityThreads.length" class="space-y-2 mb-3">
               <li v-for="t in communityThreads" :key="t.id">

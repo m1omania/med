@@ -99,7 +99,7 @@
       </section>
 
       <!-- Обсудить в сообществе -->
-      <section class="rounded-xl bg-calming-50 border border-calming-100 p-5 mt-6">
+      <section class="rounded-xl bg-white border border-calming-100 p-5 mt-6">
         <h2 class="text-sm font-semibold text-calming-800 uppercase tracking-wider mb-3">Обсудить в сообществе</h2>
         <p class="text-sm text-calming-700 mb-3">Почитайте опыт других или задайте вопрос в форуме.</p>
         <ul v-if="communityThreads.length" class="space-y-2">
