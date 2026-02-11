@@ -11,6 +11,7 @@
         <NuxtLink
           to="/quiz"
           class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-calming-600 text-white font-semibold text-lg hover:bg-calming-700 shadow-lg transition"
+          @click="startQuizFromScratch"
         >
           Начать опрос
           <AppIcon name="arrow-right" class="w-5 h-5" />
@@ -108,6 +109,12 @@
 </template>
 
 <script setup lang="ts">
+const patientStore = usePatientStore()
+
+function startQuizFromScratch() {
+  patientStore.resetQuiz()
+}
+
 const { data: stats } = await useFetch<{ requests: number; users: number; methods: number; clinics: number }>('/api/stats', {
   default: () => null,
 })

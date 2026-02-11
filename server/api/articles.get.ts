@@ -10,8 +10,15 @@ interface Method {
   body: string
   treatmentMethod?: boolean
   clinicId?: number
+  clinicIds?: number[]
   doctorId?: number
   [key: string]: unknown
+}
+
+function getMethodClinicIds(a: Method): number[] {
+  if (Array.isArray(a.clinicIds) && a.clinicIds.length) return a.clinicIds
+  if (a.clinicId != null && a.clinicId > 0) return [a.clinicId]
+  return []
 }
 
 export default defineEventHandler((event) => {
@@ -24,7 +31,7 @@ export default defineEventHandler((event) => {
     methods = methods.filter((a) => a.topic?.toLowerCase() === topic.toLowerCase())
   }
   if (clinicId != null && !Number.isNaN(clinicId)) {
-    methods = methods.filter((a) => a.clinicId === clinicId)
+    methods = methods.filter((a) => getMethodClinicIds(a).includes(clinicId))
   }
   if (doctorId != null && !Number.isNaN(doctorId)) {
     methods = methods.filter((a) => a.doctorId === doctorId)

@@ -26,6 +26,7 @@ export interface Profile {
   diagnosisLabel: string
   geography?: string
   diagnosisStatus?: string
+  stage?: string
 }
 
 const props = defineProps<{
@@ -38,6 +39,7 @@ const summaryLines = computed(() => {
   if (p.age) lines.push(`Возраст ${p.age} лет`)
   if (p.gender) lines.push(p.gender === 'M' ? 'Мужской пол' : p.gender === 'F' ? 'Женский пол' : '')
   if (p.diagnosisLabel) lines.push(`Направление: ${p.diagnosisLabel}`)
+  if (p.stage) lines.push(`Стадия: ${p.stage}`)
   if (p.geography) lines.push(`Город: ${p.geography}`)
   if (!lines.length) return [`Направление: ${p.diagnosisLabel}. Клиники ниже — только в вашем регионе.`]
   return lines

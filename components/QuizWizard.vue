@@ -107,7 +107,7 @@
         <ul class="text-calming-700 space-y-1 text-sm">
           <li>Возраст: {{ local.age || '—' }}</li>
           <li>Пол: {{ local.gender === 'M' ? 'Мужской' : local.gender === 'F' ? 'Женский' : '—' }}</li>
-          <li>Тип / локализация: {{ local.localization || '—' }}</li>
+          <li>Тип / локализация: {{ localizationLabel }}</li>
           <li>Стадия: {{ local.stage || '—' }}</li>
           <li>География: {{ local.geography || '—' }}</li>
         </ul>
@@ -192,6 +192,13 @@ const geographyOptions = [
   { value: 'Москва', label: 'Москва' },
   { value: 'Санкт-Петербург', label: 'Санкт-Петербург' },
 ]
+
+const localizationLabel = computed(() => {
+  const v = local.localization
+  if (!v) return '—'
+  const opt = localizationOptions.find((o) => o.value === v)
+  return opt?.label ?? v
+})
 
 function syncLocalFromStore() {
   const d = patientStore.quizData

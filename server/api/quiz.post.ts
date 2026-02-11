@@ -22,7 +22,8 @@ function mockAnalyze(body: QuizBody) {
   const hasLiver = body.localization === 'pechen' || (body.symptoms?.includes('Усталость') && body.symptoms?.includes('Боль'))
   const hasBreast = body.localization === 'grudi' || body.symptoms?.includes('Уплотнение') || body.familyHistory === 'mother'
   const hasIntestine = body.localization === 'kishechnik'
-  const general = body.localization === 'obshiy' || (!hasLiver && !hasBreast && !hasIntestine)
+  const hasLungs = body.localization === 'legkie'
+  const general = body.localization === 'obshiy' || (!hasLiver && !hasBreast && !hasIntestine && !hasLungs)
 
   if (hasLiver) {
     risks['Печень'] = 80
@@ -41,6 +42,12 @@ function mockAnalyze(body: QuizBody) {
     risks['Общий'] = 30
     if (!primaryRisk) primaryRisk = { slug: 'kishechnik', label: 'Кишечник' }
     recommendations.push('Колоноскопия (скрининг колоректального рака)', 'Консультация гастроэнтеролога или онколога', 'При показаниях — эндоскопия и гистология')
+  }
+  if (hasLungs) {
+    risks['Лёгкие'] = 65
+    risks['Общий'] = 25
+    if (!primaryRisk) primaryRisk = { slug: 'legkie', label: 'Лёгкие' }
+    recommendations.push('Низкодозовая КТ лёгких при показаниях', 'Консультация пульмонолога/онколога', 'Скрининг при факторах риска')
   }
   if (general && Object.keys(risks).length === 0) {
     risks['Общий скрининг'] = 30
@@ -66,6 +73,10 @@ function mockAnalyze(body: QuizBody) {
   if (hasIntestine) {
     methods.push({ name: 'Колоноскопия', slug: 'colonoscopy', type: 'диагностика' })
     methods.push({ name: 'Скрининг колоректального рака', slug: 'screening', type: 'профилактика' })
+  }
+  if (hasLungs) {
+    methods.push({ name: 'КТ-скрининг лёгких', slug: 'ct-screening', type: 'диагностика' })
+    methods.push({ name: 'Скрининг ОМС', slug: 'screening', type: 'профилактика' })
   }
   if (methods.length === 0) {
     methods.push({ name: 'Скрининг ОМС', slug: 'screening', type: 'профилактика' })

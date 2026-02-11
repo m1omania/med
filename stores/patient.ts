@@ -100,6 +100,15 @@ export const usePatientStore = defineStore('patient', {
       }
     },
 
+    resetQuiz() {
+      this.quizData = null
+      if (import.meta.client) {
+        try {
+          localStorage.removeItem('antionko_quiz')
+        } catch (_) {}
+      }
+    },
+
     setLastResultId(id: string) {
       this.lastResultId = id
       if (import.meta.client) {

@@ -40,8 +40,8 @@
           <p class="flex items-center gap-2 font-medium">
             <span aria-hidden="true">📍</span>
             <NuxtLink
-              v-if="method.clinicId && wherePlaceName"
-              :to="`/clinic/${method.clinicId}`"
+              v-if="firstClinicId && wherePlaceName"
+              :to="`/clinic/${firstClinicId}`"
               class="text-calming-600 hover:underline font-medium"
             >
               {{ wherePlaceName }}
@@ -76,8 +76,8 @@
         </div>
         <div class="flex flex-wrap gap-3 pt-2">
           <NuxtLink
-            v-if="method.clinicId"
-            :to="`/clinic/${method.clinicId}`"
+            v-if="firstClinicId"
+            :to="`/clinic/${firstClinicId}`"
             class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-calming-600 text-white text-sm font-medium hover:bg-calming-700 transition"
           >
             Записаться
@@ -151,6 +151,7 @@ const { data: method } = await useFetch<{
   tags?: string[]
   body: string
   clinicId?: number
+  clinicIds?: number[]
   doctorId?: number
   verifiedDate?: string
   forWhom?: string
@@ -165,12 +166,15 @@ const { data: method } = await useFetch<{
 
 const methodTitle = computed(() => stripEmojis(method.value?.title ?? ''))
 
-const clinicId = computed(() => method.value?.clinicId)
+const firstClinicId = computed(() => {
+  const m = method.value
+  return (m?.clinicIds && m.clinicIds[0]) ?? m?.clinicId
+})
 const doctorId = computed(() => method.value?.doctorId)
 
 const { data: clinic } = await useFetch(
-  () => `/api/clinics/${clinicId.value ?? ''}`,
-  { default: () => null, watch: [clinicId] }
+  () => `/api/clinics/${firstClinicId.value ?? ''}`,
+  { default: () => null, watch: [firstClinicId] }
 )
 const { data: doctor } = await useFetch(
   () => `/api/doctors/${doctorId.value ?? ''}`,

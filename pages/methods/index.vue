@@ -53,23 +53,12 @@
     <section>
       <h2 class="sr-only">Список методов</h2>
       <div v-if="filteredMethods.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <NuxtLink
+        <MethodCard
           v-for="item in filteredMethods"
           :key="item.slug"
-          :to="`/methods/${item.slug}`"
-          class="block p-5 rounded-xl bg-white transition min-h-[15rem] hover:shadow-lg hover:scale-[1.02] flex flex-col"
-        >
-          <h2 class="font-semibold text-calming-800">{{ stripEmojis(item.title) }}</h2>
-          <p class="text-sm text-calming-600 mt-2">{{ formatMethodDate(item.date) }}</p>
-          <div v-if="getClinicForMethod(item)" class="mt-auto pt-4">
-            <p class="text-sm text-calming-500">
-              <span class="font-medium">Город:</span> {{ getClinicForMethod(item)?.city }}
-            </p>
-            <p class="text-sm text-calming-500 mt-0.5">
-              <span class="font-medium">Клиника:</span> {{ getClinicForMethod(item)?.name }}
-            </p>
-          </div>
-        </NuxtLink>
+          :method="item"
+          :clinic="getClinicForMethod(item)"
+        />
       </div>
       <p v-else class="text-calming-600">Нет методов по выбранному типу заболевания.</p>
     </section>
@@ -87,6 +76,7 @@ interface Method {
   body?: string
   treatmentMethod?: boolean
   clinicId?: number
+  clinicIds?: number[]
 }
 
 interface Clinic {
@@ -102,8 +92,6 @@ interface DiseaseCategory {
   keywords: string[]
 }
 
-const { stripEmojis } = useStripEmojis()
-const { formatMethodDate } = useFormatMethodDate()
 const { data: methodsData } = await useFetch<{ methods: Method[] }>('/api/articles')
 const { data: diseaseData } = await useFetch<{ categories: DiseaseCategory[] }>('/api/disease-types')
 const { data: clinicsData } = await useFetch<{ clinics: Clinic[] }>('/api/clinics')
@@ -114,7 +102,7 @@ const clinicsMap = computed(() => {
   return Object.fromEntries(list.map((c) => [c.id, c]))
 })
 function getClinicForMethod(method: Method): Clinic | undefined {
-  const id = method.clinicId
+  const id = (method.clinicIds && method.clinicIds[0]) ?? method.clinicId
   if (id == null) return undefined
   return clinicsMap.value[id]
 }

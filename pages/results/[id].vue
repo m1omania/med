@@ -15,19 +15,12 @@
           </div>
           <div v-show="sectionReady.methods" ref="methodsBlockRef">
             <div v-if="breakthroughMethods.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <NuxtLink
+              <MethodCard
                 v-for="m in breakthroughMethods"
                 :key="m.slug"
-                :to="`/methods/${m.slug}`"
-                class="block rounded-xl bg-white p-4 transition hover:shadow-lg hover:scale-[1.02]"
-              >
-                <p class="font-semibold text-calming-900 line-clamp-2">{{ m.title }}</p>
-                <p v-if="m.date" class="text-sm text-calming-500 mt-2">{{ formatMethodDate(m.date) }}</p>
-                <span class="mt-3 inline-flex items-center gap-1 text-sm text-calming-600 font-medium">
-                  К методу
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
-                </span>
-              </NuxtLink>
+                :method="m"
+                :clinic="clinicsMapById[(m.clinicIds && m.clinicIds[0]) ?? m.clinicId ?? 0]"
+              />
             </div>
             <p v-else class="p-4 rounded-xl bg-calming-50 text-calming-700 text-sm">
               Подборка методов по вашему направлению появится после сохранения ответов. Пока можно посмотреть <NuxtLink to="/methods" class="text-calming-600 hover:underline">все методы лечения</NuxtLink>.
@@ -69,9 +62,9 @@
           </div>
         </section>
 
-        <!-- 4. Клиники в соседних локациях — загрузка, затем контент -->
+        <!-- 4. Клиники в других локациях — загрузка, затем контент -->
         <section v-if="result.geography" class="mb-10">
-          <h2 class="text-lg font-semibold text-calming-900 mb-4">Клиники в соседних локациях</h2>
+          <h2 class="text-lg font-semibold text-calming-900 mb-4">Клиники в других локациях</h2>
           <div v-if="!sectionReady.clinicsOther" class="rounded-xl bg-calming-100 p-8 flex items-center justify-center min-h-[8rem]">
             <span class="h-8 w-8 rounded-full border-2 border-calming-600 border-t-transparent animate-spin" aria-hidden="true" />
           </div>
@@ -84,7 +77,7 @@
                 :slug="result.primaryRisk?.slug || 'obshiy'"
               />
             </div>
-            <p v-else class="text-sm text-calming-600 py-2">В соседних локациях клиник не найдено.</p>
+            <p v-else class="text-sm text-calming-600 py-2">В других локациях клиник не найдено.</p>
           </div>
         </section>
 
@@ -145,7 +138,6 @@
 <script setup lang="ts">
 const route = useRoute()
 const patientStore = usePatientStore()
-const { formatMethodDate } = useFormatMethodDate()
 
 const id = computed(() => route.params.id as string)
 
@@ -163,6 +155,7 @@ const profile = computed(() => ({
   diagnosisLabel: diagnosisLabel.value,
   geography: result.value?.geography,
   diagnosisStatus: result.value?.diagnosisStatus,
+  stage: result.value?.stage,
 }))
 
 const diagnosisKeywords = computed(() => {
@@ -177,7 +170,7 @@ const diagnosisKeywords = computed(() => {
   return map[slug] || map.obshiy
 })
 
-const { data: methodsData } = await useFetch<{ methods: { slug: string; title: string; date: string; topic: string; tags?: string[]; clinicId?: number }[] }>('/api/articles')
+const { data: methodsData } = await useFetch<{ methods: { slug: string; title: string; date: string; topic: string; tags?: string[]; clinicId?: number; clinicIds?: number[] }[] }>('/api/articles')
 const allMethods = computed(() => methodsData.value?.methods ?? [])
 
 const methodsByDiagnosis = computed(() => {
@@ -210,7 +203,9 @@ const communityThreads = computed(() => {
 
 const clinicIdsFromMethods = computed(() => {
   const list = breakthroughMethods.value
-  const ids = list.map((m: { clinicId?: number }) => m.clinicId).filter((id): id is number => id != null && id > 0)
+  const ids = list.flatMap((m: { clinicId?: number; clinicIds?: number[] }) =>
+    Array.isArray(m.clinicIds) ? m.clinicIds : (m.clinicId != null ? [m.clinicId] : [])
+  ).filter((id): id is number => id > 0)
   return [...new Set(ids)]
 })
 
@@ -224,6 +219,11 @@ const { data: clinicsFromMethodsData } = await useAsyncData(
   { watch: [clinicIdsFromMethods] }
 )
 const clinicsFromMethods = computed(() => clinicsFromMethodsData.value?.clinics ?? [])
+
+const clinicsMapById = computed(() => {
+  const list = (clinicsFromMethodsData.value?.clinics ?? []) as { id: number; name: string; city: string }[]
+  return Object.fromEntries(list.map((c) => [c.id, c]))
+})
 
 const displayClinics = computed(() => {
   const fromMethods = Array.isArray(clinicsFromMethods.value) ? clinicsFromMethods.value : []
@@ -258,7 +258,9 @@ const clinicsInUserLocation = computed(() => {
 const clinicsOtherLocations = computed(() => {
   const geo = userGeography.value
   if (!geo) return []
-  return displayClinics.value.filter((c) => (c.city as string) !== geo)
+  // Показываем только клиники из других городов, у которых есть те же методы (привязаны к рекомендованным методам)
+  const fromMethods = Array.isArray(clinicsFromMethods.value) ? clinicsFromMethods.value : []
+  return fromMethods.filter((c) => (c as { city?: string }).city !== geo)
 })
 
 const sectionReady = reactive({
