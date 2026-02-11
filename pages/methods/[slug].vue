@@ -98,6 +98,26 @@
         </div>
       </section>
 
+      <!-- Обсудить в сообществе -->
+      <section class="rounded-xl bg-calming-50 border border-calming-100 p-5 mt-6">
+        <h2 class="text-sm font-semibold text-calming-800 uppercase tracking-wider mb-3">Обсудить в сообществе</h2>
+        <p class="text-sm text-calming-700 mb-3">Почитайте опыт других или задайте вопрос в форуме.</p>
+        <ul v-if="communityThreads.length" class="space-y-2">
+          <li v-for="t in communityThreads" :key="t.id">
+            <NuxtLink :to="`/community/thread/${t.id}`" class="text-calming-600 hover:underline font-medium">
+              {{ t.title }}
+            </NuxtLink>
+          </li>
+        </ul>
+        <NuxtLink
+          to="/community"
+          class="inline-flex items-center gap-1 text-sm font-medium text-calming-600 hover:underline mt-2"
+        >
+          Все обсуждения
+          <AppIcon name="arrow-right" size="sm" />
+        </NuxtLink>
+      </section>
+
       <!-- Теги — всегда одна строка -->
       <div class="flex flex-wrap gap-2 pt-2">
         <template v-if="method.tags?.length">
@@ -163,6 +183,12 @@ const wherePlaceName = computed(() => {
   const c = clinic.value
   if (c?.name && c?.city) return `${c.name}, ${c.city}`
   return c?.name ?? ''
+})
+
+const { data: forumData } = await useFetch<{ threads: { id: string; title: string; methodSlug?: string }[] }>('/api/forum')
+const communityThreads = computed(() => {
+  const list = forumData.value?.threads ?? []
+  return list.filter((t) => t.methodSlug === slug)
 })
 
 useHead({

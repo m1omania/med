@@ -48,26 +48,32 @@
         <div class="grid md:grid-cols-3 gap-8">
           <div class="text-center p-6 rounded-xl bg-calming-50 border border-calming-100">
             <div class="mb-3 flex justify-center"><AppIcon name="clipboard" size="lg" class="w-12 h-12 text-calming-600" /></div>
-            <h3 class="font-semibold text-calming-800 mb-2">1. Опрос</h3>
-            <p class="text-calming-600 text-sm">7 простых шагов: возраст, симптомы, локализация.</p>
+            <h3 class="font-semibold text-calming-800 mb-2">1. Пройдите короткий опрос</h3>
           </div>
           <div class="text-center p-6 rounded-xl bg-calming-50 border border-calming-100">
             <div class="mb-3 flex justify-center"><AppIcon name="chart" size="lg" class="w-12 h-12 text-calming-600" /></div>
-            <h3 class="font-semibold text-calming-800 mb-2">2. Результаты</h3>
-            <p class="text-calming-600 text-sm">График рисков, методы лечения, клиники рядом.</p>
+            <h3 class="font-semibold text-calming-800 mb-2">2. Получите рекомендации и список клиник.</h3>
           </div>
           <div class="text-center p-6 rounded-xl bg-calming-50 border border-calming-100">
             <div class="mb-3 flex justify-center"><AppIcon name="building" size="lg" class="w-12 h-12 text-calming-600" /></div>
-            <h3 class="font-semibold text-calming-800 mb-2">3. Клиники</h3>
-            <p class="text-calming-600 text-sm">Карта клиник, запись к врачу.</p>
+            <h3 class="font-semibold text-calming-800 mb-2">3. Запишитесь к врачу</h3>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="py-16 bg-white border-t border-calming-100">
+    <section class="py-16 bg-calming-50 border-t border-calming-100">
       <div class="max-w-6xl mx-auto px-4">
-        <h2 class="text-2xl font-bold text-calming-900 mb-6">Методы лечения</h2>
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <h2 class="text-2xl font-bold text-calming-900">Методы лечения</h2>
+          <NuxtLink
+            v-if="latestMethods.length"
+            to="/methods"
+            class="text-calming-600 hover:text-calming-800 font-medium hover:underline"
+          >
+            Показать все
+          </NuxtLink>
+        </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <NuxtLink
             v-for="item in latestMethods"
@@ -77,14 +83,6 @@
           >
             <p class="font-medium text-calming-800 line-clamp-2">{{ item.title }}</p>
             <p class="text-sm text-calming-500 mt-2">{{ item.date }}</p>
-          </NuxtLink>
-        </div>
-        <div v-if="latestMethods.length" class="mt-6 text-center">
-          <NuxtLink
-            to="/methods"
-            class="inline-block px-6 py-3 rounded-lg border-2 border-calming-500 text-calming-700 font-medium hover:bg-calming-50"
-          >
-            Показать все
           </NuxtLink>
         </div>
         <p v-if="latestMethods.length === 0" class="text-calming-500 text-sm">Методов пока нет.</p>

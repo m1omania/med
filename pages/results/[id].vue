@@ -88,6 +88,25 @@
           </div>
         </section>
 
+        <!-- 4.5 Обсуждения в сообществе -->
+        <section class="mb-10">
+          <h2 class="text-lg font-semibold text-calming-900 mb-4">Обсуждения в сообществе</h2>
+          <div class="rounded-xl bg-calming-50 border border-calming-100 p-5">
+            <p class="text-sm text-calming-700 mb-3">Почитайте опыт других или задайте вопрос на форуме.</p>
+            <ul v-if="communityThreads.length" class="space-y-2 mb-3">
+              <li v-for="t in communityThreads" :key="t.id">
+                <NuxtLink :to="`/community/thread/${t.id}`" class="text-calming-600 hover:underline font-medium">
+                  {{ t.title }}
+                </NuxtLink>
+              </li>
+            </ul>
+            <NuxtLink to="/community" class="inline-flex items-center gap-1 text-sm font-medium text-calming-600 hover:underline">
+              Все обсуждения
+              <AppIcon name="arrow-right" size="sm" />
+            </NuxtLink>
+          </div>
+        </section>
+
         <!-- 5. Призыв к регистрации / Дашборд — загрузка, затем контент -->
         <section class="mb-10">
           <div v-if="!sectionReady.cta" class="rounded-xl bg-calming-100 p-8 flex items-center justify-center min-h-[6rem]">
@@ -175,6 +194,18 @@ const methodsByDiagnosis = computed(() => {
 const breakthroughMethods = computed(() => {
   const list = Array.isArray(methodsByDiagnosis.value) ? methodsByDiagnosis.value : []
   return list.slice(0, 6)
+})
+
+const methodSlugs = computed(() => breakthroughMethods.value.map((m: { slug?: string }) => m.slug).filter(Boolean))
+const { data: forumData } = await useFetch<{ threads: { id: string; title: string; methodSlug?: string; categoryId?: string }[] }>('/api/forum')
+const communityThreads = computed(() => {
+  const list = forumData.value?.threads ?? []
+  const slugs = new Set(methodSlugs.value)
+  const byMethod = list.filter((t) => t.methodSlug && slugs.has(t.methodSlug))
+  const support = list.filter((t) => t.categoryId === 'support').slice(0, 2)
+  const seen = new Set(byMethod.map((t) => t.id))
+  support.forEach((t) => { if (!seen.has(t.id)) { byMethod.push(t); seen.add(t.id) } })
+  return byMethod.slice(0, 5)
 })
 
 const clinicIdsFromMethods = computed(() => {

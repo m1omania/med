@@ -25,38 +25,30 @@
           </span>
         </a>
         <a
-          :href="clinic?.phone ? `tel:${clinic.phone}` : '#'"
-          :class="[clinic?.phone ? 'cursor-pointer' : 'cursor-default opacity-70']"
+          :href="`tel:${displayPhone}`"
           class="flex items-center gap-4 p-4 rounded-xl bg-white border-2 border-calming-200 hover:border-calming-400 hover:bg-calming-50/50 transition text-left"
-          @click.prevent="clinic?.phone ? null : () => {}"
         >
           <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-calming-100 text-calming-600 text-xl" aria-hidden="true">📞</span>
           <div>
             <span class="font-semibold text-calming-900">По телефону</span>
-            <p class="text-sm text-calming-600 mt-0.5">
-              {{ clinic?.phone || 'Телефон уточняйте на сайте клиники' }}
-            </p>
+            <p class="text-sm text-calming-600 mt-0.5">{{ displayPhone }}</p>
           </div>
-          <span v-if="clinic?.phone" class="ml-auto text-calming-400 shrink-0">
+          <span class="ml-auto text-calming-400 shrink-0">
             <AppIcon name="arrow-right" size="sm" />
           </span>
         </a>
         <a
-          :href="clinic?.website || '#'"
-          :class="[clinic?.website ? 'cursor-pointer' : 'cursor-default opacity-70']"
+          :href="displayWebsite"
           target="_blank"
           rel="noopener noreferrer"
           class="flex items-center gap-4 p-4 rounded-xl bg-white border-2 border-calming-200 hover:border-calming-400 hover:bg-calming-50/50 transition text-left"
-          @click.prevent="clinic?.website ? null : () => {}"
         >
           <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-calming-100 text-calming-600 text-xl" aria-hidden="true">🌐</span>
           <div>
             <span class="font-semibold text-calming-900">На сайте клиники</span>
-            <p class="text-sm text-calming-600 mt-0.5">
-              {{ clinic?.website ? 'Перейти на сайт' : 'Сайт не указан' }}
-            </p>
+            <p class="text-sm text-calming-600 mt-0.5">Перейти на сайт</p>
           </div>
-          <span v-if="clinic?.website" class="ml-auto text-calming-400 shrink-0">
+          <span class="ml-auto text-calming-400 shrink-0">
             <AppIcon name="arrow-right" size="sm" />
           </span>
         </a>
@@ -73,6 +65,12 @@ const { data: clinic } = await useFetch<{ name: string; city: string; phone?: st
   () => `/api/clinics/${id.value}`,
   { default: () => null }
 )
+
+const MOCK_PHONE = '+7 (8142) 76-54-32'
+const MOCK_WEBSITE = 'https://example-clinic.ru'
+
+const displayPhone = computed(() => clinic.value?.phone || MOCK_PHONE)
+const displayWebsite = computed(() => clinic.value?.website || MOCK_WEBSITE)
 
 useHead({
   title: clinic.value ? `Запись — ${clinic.value.name} — AntiOnko` : 'Запись на приём — AntiOnko',

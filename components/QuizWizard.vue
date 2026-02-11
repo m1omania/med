@@ -193,13 +193,27 @@ const geographyOptions = [
   { value: 'Санкт-Петербург', label: 'Санкт-Петербург' },
 ]
 
+function syncLocalFromStore() {
+  const d = patientStore.quizData
+  if (d?.age != null) local.age = Number(d.age)
+  if (d?.gender) local.gender = d.gender
+  if (d?.localization) local.localization = d.localization
+  if (d?.stage) local.stage = d.stage
+  if (d?.geography) local.geography = d.geography
+  if (Array.isArray(d?.symptoms)) local.symptoms = d.symptoms
+}
+
 onMounted(() => {
   patientStore.hydrateFromStorage()
   currentStep.value = Math.min(patientStore.quizData?.step ?? 0, 5)
+  syncLocalFromStore()
 })
 
 const canNext = computed(() => {
-  if (currentStep.value === 0) return !!local.age
+  if (currentStep.value === 0) {
+    const age = Number(local.age)
+    return Number.isFinite(age) && age >= 18 && age <= 100
+  }
   if (currentStep.value === 1) return !!local.gender
   if (currentStep.value === 2) return !!local.localization
   if (currentStep.value === 3) return !!local.stage
@@ -233,11 +247,13 @@ function prev() {
   if (currentStep.value <= 0) return
   currentStep.value--
   setStep(currentStep.value)
+  syncLocalFromStore()
 }
 
 function goToFirstStep() {
   currentStep.value = 0
   setStep(0)
+  syncLocalFromStore()
 }
 
 async function submit() {
@@ -256,6 +272,10 @@ async function submit() {
   }
   try {
     const res = await submitQuiz(payload)
+    if (!res?.id) {
+      useToast().showToast('Сервер не вернул результат. Попробуйте ещё раз.', 'error')
+      return
+    }
     const resAny = res as {
       geography?: string
       age?: number
@@ -284,9 +304,10 @@ async function submit() {
     patientStore.addResult(resultSummary)
     emit('complete', res.id)
   } catch (e: unknown) {
-    const msg = e && typeof e === 'object' && 'data' in e
-      ? String((e as { data?: unknown }).data)
-      : e instanceof Error ? e.message : 'Ошибка отправки'
+    let msg = 'Ошибка отправки'
+    if (e instanceof Error) msg = e.message
+    else if (e && typeof e === 'object' && 'data' in e) msg = String((e as { data?: unknown }).data)
+    else if (e && typeof e === 'object' && 'message' in e) msg = String((e as { message?: unknown }).message)
     useToast().showToast(msg, 'error')
   } finally {
     submitting.value = false

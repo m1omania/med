@@ -79,7 +79,7 @@
           <div>
             <h3 class="font-bold text-lg mb-2">AntiOnko</h3>
             <p class="text-calming-200 text-sm">
-              Онко-платформа для оценки рисков и подбора клиник.
+              Онко-платформа для подбора методов лечения и клиник.
             </p>
           </div>
           <div>
@@ -88,6 +88,7 @@
               <li><NuxtLink to="/quiz" class="hover:underline">Опрос</NuxtLink></li>
               <li><NuxtLink to="/clinics" class="hover:underline">Клиники</NuxtLink></li>
               <li><NuxtLink to="/methods" class="hover:underline">Методы лечения</NuxtLink></li>
+              <li><NuxtLink to="/community" class="hover:underline">Сообщество</NuxtLink></li>
             </ul>
           </div>
           <div>
@@ -118,11 +119,13 @@ const centerNavLinks = computed(() => {
       { to: '/dashboard', label: 'Дашборд' },
       { to: '/methods', label: 'Методы лечения' },
       { to: '/clinics', label: 'Клиники' },
+      { to: '/community', label: 'Сообщество' },
     ]
   }
   return [
     { to: '/methods', label: 'Методы лечения' },
     { to: '/clinics', label: 'Клиники' },
+    { to: '/community', label: 'Сообщество' },
   ]
 })
 
