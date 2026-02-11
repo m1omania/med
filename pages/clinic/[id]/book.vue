@@ -1,9 +1,6 @@
 <template>
   <div class="py-8 px-4">
     <div class="max-w-lg mx-auto">
-      <NuxtLink :to="`/clinic/${id}`" class="text-calming-600 hover:underline mb-4 inline-flex items-center gap-1">
-        <AppIcon name="arrow-left" size="sm" /> Назад в клинику
-      </NuxtLink>
       <h1 class="text-2xl font-bold text-calming-900 mb-2">Запись на приём</h1>
       <p v-if="clinic" class="text-calming-600 text-sm mb-6">{{ clinic.name }}, {{ clinic.city }}</p>
       <div class="space-y-3">

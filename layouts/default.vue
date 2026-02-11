@@ -5,8 +5,7 @@
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center h-16 gap-4">
-          <NuxtLink to="/" class="flex items-center gap-2 text-calming-700 font-bold text-xl shrink-0">
-            <AppIcon name="logo" size="lg" class="w-8 h-8 text-calming-600" />
+          <NuxtLink to="/" class="text-calming-700 font-bold text-xl shrink-0">
             AntiOnko
           </NuxtLink>
           <nav class="hidden md:flex flex-1 justify-center items-center gap-6 text-sm">

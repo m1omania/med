@@ -1,9 +1,6 @@
 <template>
   <div class="py-8 px-4">
     <div class="max-w-5xl mx-auto">
-      <NuxtLink to="/clinics" class="text-calming-600 hover:underline mb-4 inline-flex items-center gap-1">
-        <AppIcon name="arrow-left" size="sm" /> Клиники
-      </NuxtLink>
       <template v-if="doctor">
         <DoctorProfileCard :doctor="doctor" :clinic="clinic ?? undefined" :methods="doctorMethods" />
       </template>

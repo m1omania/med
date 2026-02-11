@@ -1,12 +1,12 @@
 <template>
   <div>
-    <section class="relative py-20 md:py-28 bg-gradient-to-b from-calming-100 to-calming-50">
+    <section class="relative pt-28 pb-20 md:pt-36 md:pb-28 bg-gradient-to-b from-calming-100 to-calming-50">
       <div ref="heroRef" class="max-w-4xl mx-auto px-4 text-center">
         <h1 class="text-4xl md:text-5xl font-bold text-calming-900 mb-4">
           Передовые методы лечения рака
         </h1>
         <p class="text-lg text-calming-700 mb-8 max-w-2xl mx-auto">
-          Пройдите короткий опрос — получите рекомендации и список клиник.
+          Пройдите короткий опрос — получите проверенные рекомендации, список клиник и докторов.
         </p>
         <NuxtLink
           to="/quiz"
@@ -20,50 +20,43 @@
       </div>
     </section>
 
-    <section class="py-12 bg-white border-y border-calming-100">
+    <section class="py-12 bg-calming-50">
       <div class="max-w-5xl mx-auto px-4">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-0 md:gap-1">
           <div class="text-center">
-            <p class="text-3xl md:text-4xl font-bold text-calming-600">{{ stats?.requests ?? '—' }}</p>
-            <p class="text-sm text-calming-600 mt-1">запросов</p>
-          </div>
-          <div class="text-center">
-            <p class="text-3xl md:text-4xl font-bold text-calming-600">{{ stats?.users ?? '—' }}</p>
-            <p class="text-sm text-calming-600 mt-1">пользователей</p>
+            <span class="home-counter-block inline-flex items-baseline overflow-hidden justify-center">
+              <span
+                v-for="(digit, idx) in requestDigits"
+                :key="'r-' + idx"
+                class="home-digit-roller"
+              >
+                <span
+                  class="home-digit-strip text-calming-600"
+                  :style="{ transform: `translateY(-${digit * homeDigitHeightPx}px)` }"
+                >
+                  <span v-for="n in 10" :key="n" class="home-digit-cell">{{ n - 1 }}</span>
+                </span>
+              </span>
+            </span>
+            <p class="text-sm text-calming-600 mt-1">Обращения</p>
           </div>
           <div class="text-center">
             <p class="text-3xl md:text-4xl font-bold text-calming-600">{{ stats?.methods ?? '—' }}</p>
-            <p class="text-sm text-calming-600 mt-1">методов</p>
+            <p class="text-sm text-calming-600 mt-1">Методы</p>
           </div>
           <div class="text-center">
             <p class="text-3xl md:text-4xl font-bold text-calming-600">{{ stats?.clinics ?? '—' }}</p>
-            <p class="text-sm text-calming-600 mt-1">клиник</p>
+            <p class="text-sm text-calming-600 mt-1">Клиники</p>
+          </div>
+          <div class="text-center">
+            <p class="text-3xl md:text-4xl font-bold text-calming-600">{{ stats?.doctors ?? '—' }}</p>
+            <p class="text-sm text-calming-600 mt-1">Докторы</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="py-16 bg-white">
-      <div class="max-w-6xl mx-auto px-4">
-        <h2 class="text-2xl font-bold text-calming-900 mb-8 text-center">Как это работает</h2>
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="text-center p-6 rounded-xl bg-calming-50 border border-calming-100">
-            <div class="mb-3 flex justify-center"><AppIcon name="clipboard" size="lg" class="w-12 h-12 text-calming-600" /></div>
-            <h3 class="font-semibold text-calming-800 mb-2">1. Пройдите короткий опрос</h3>
-          </div>
-          <div class="text-center p-6 rounded-xl bg-calming-50 border border-calming-100">
-            <div class="mb-3 flex justify-center"><AppIcon name="chart" size="lg" class="w-12 h-12 text-calming-600" /></div>
-            <h3 class="font-semibold text-calming-800 mb-2">2. Получите рекомендации и список клиник.</h3>
-          </div>
-          <div class="text-center p-6 rounded-xl bg-calming-50 border border-calming-100">
-            <div class="mb-3 flex justify-center"><AppIcon name="building" size="lg" class="w-12 h-12 text-calming-600" /></div>
-            <h3 class="font-semibold text-calming-800 mb-2">3. Запишитесь к врачу</h3>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-16 bg-calming-50 border-t border-calming-100">
+    <section class="py-16 bg-calming-50">
       <div class="max-w-6xl mx-auto px-4">
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
           <h2 class="text-2xl font-bold text-calming-900">Методы лечения</h2>
@@ -76,36 +69,101 @@
           </NuxtLink>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <NuxtLink
+          <MethodCard
             v-for="item in latestMethods"
             :key="item.slug"
-            :to="`/methods/${item.slug}`"
-            class="block min-w-0 p-4 rounded-xl bg-white transition hover:shadow-lg hover:scale-[1.02]"
-          >
-            <p class="font-medium text-calming-800 line-clamp-2">{{ item.title }}</p>
-            <p class="text-sm text-calming-500 mt-2">{{ item.date }}</p>
-          </NuxtLink>
+            :method="item"
+            :clinic="getClinicForMethod(item)"
+          />
         </div>
         <p v-if="latestMethods.length === 0" class="text-calming-500 text-sm">Методов пока нет.</p>
       </div>
     </section>
 
     <section class="py-16 bg-calming-50">
-      <div class="max-w-4xl mx-auto px-4 text-center">
-        <p class="text-calming-700 mb-4">
-          Уже проходили опрос? Сохраните прогресс в дашборде.
-        </p>
-        <div class="flex flex-wrap justify-center gap-4">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <h2 class="text-2xl font-bold text-calming-900">Клиники</h2>
           <NuxtLink
-            to="/dashboard"
-            class="px-6 py-3 rounded-lg bg-calming-600 text-white font-medium hover:bg-calming-700"
+            v-if="latestClinics.length"
+            to="/clinics"
+            class="text-calming-600 hover:text-calming-800 font-medium hover:underline"
           >
-            Дашборд
+            Показать все
           </NuxtLink>
         </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <ClinicCard
+            v-for="c in latestClinics"
+            :key="c.id"
+            :clinic="c"
+            slug="all"
+          />
+        </div>
+        <p v-if="latestClinics.length === 0" class="text-calming-500 text-sm">Клиник пока нет.</p>
       </div>
     </section>
-  </div>
+
+    <section class="py-16 bg-calming-50">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <h2 class="text-2xl font-bold text-calming-900">Доктора</h2>
+          <NuxtLink
+            v-if="latestDoctors.length"
+            to="/clinics"
+            class="text-calming-600 hover:text-calming-800 font-medium hover:underline"
+          >
+            Показать все
+          </NuxtLink>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <DoctorClinicCard
+            v-for="d in latestDoctors"
+            :key="d.id"
+            :doctor="d"
+            :address="getDoctorAddress(d)"
+          />
+        </div>
+        <p v-if="latestDoctors.length === 0" class="text-calming-500 text-sm">Докторов пока нет.</p>
+      </div>
+    </section>
+
+    <section class="py-16 bg-calming-50">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <h2 class="text-2xl font-bold text-calming-900">Последние сообщения в сообществе</h2>
+          <NuxtLink
+            v-if="latestThreads.length"
+            to="/community"
+            class="text-calming-600 hover:text-calming-800 font-medium hover:underline"
+          >
+            Показать все
+          </NuxtLink>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <NuxtLink
+            v-for="thread in latestThreads"
+            :key="thread.id"
+            :to="`/community/thread/${thread.id}`"
+            class="block p-5 rounded-xl bg-white transition min-h-[15rem] hover:shadow-lg hover:scale-[1.02] flex flex-col"
+          >
+            <h2 class="font-semibold text-calming-800">{{ thread.title }}</h2>
+            <p v-if="thread.date" class="text-sm text-calming-600 mt-2">{{ formatThreadDate(thread.date) }}</p>
+            <div class="mt-auto pt-4">
+              <p class="text-sm text-calming-500">
+                <span class="font-medium">Автор:</span> {{ thread.author }}
+              </p>
+              <p class="text-sm text-calming-500 mt-0.5">
+                {{ getRepliesCount(thread.id) }} ответов
+              </p>
+            </div>
+          </NuxtLink>
+        </div>
+        <p v-if="latestThreads.length === 0" class="text-calming-500 text-sm">Пока нет обсуждений.</p>
+      </div>
+    </section>
+
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -115,11 +173,81 @@ function startQuizFromScratch() {
   patientStore.resetQuiz()
 }
 
-const { data: stats } = await useFetch<{ requests: number; users: number; methods: number; clinics: number }>('/api/stats', {
+const { data: stats } = await useFetch<{ requests: number; methods: number; clinics: number; doctors: number }>('/api/stats', {
   default: () => null,
 })
 
-const { data: methodsData } = await useFetch<{ methods: { slug: string; title: string; date: string }[] }>('/api/articles')
+/** Счётчик запросов: анимация прокрутки и +3 каждые 5 сек (размер как у соседних: text-4xl = 36px) */
+const homeDigitHeightPx = 36
+const animatedRequestsCount = ref(0)
+const requestTargetRef = ref(0)
+const requestsCancelId = { current: 0 }
+
+function runSequentialCount(
+  current: Ref<number>,
+  target: number,
+  options: { maxDurationMs?: number; minStepMs?: number; maxStepMs?: number; cancelToken?: { current: number } } = {}
+) {
+  const { maxDurationMs = 2200, minStepMs = 28, maxStepMs = 120, cancelToken } = options
+  if (cancelToken) cancelToken.current += 1
+  const myId = cancelToken ? cancelToken.current : 0
+  const start = current.value
+  if (start === target) return
+  const steps = Math.abs(target - start)
+  const totalDuration = Math.min(maxDurationMs, steps * 70)
+  const stepMs = Math.max(minStepMs, Math.min(maxStepMs, Math.round(totalDuration / steps)))
+  const step = target > start ? 1 : -1
+  const tick = () => {
+    if (cancelToken && myId !== cancelToken.current) return
+    const next = current.value + step
+    if ((step > 0 && next >= target) || (step < 0 && next <= target)) {
+      current.value = target
+      return
+    }
+    current.value = next
+    setTimeout(tick, stepMs)
+  }
+  setTimeout(tick, stepMs)
+}
+
+const requestDigits = computed(() =>
+  String(animatedRequestsCount.value)
+    .split('')
+    .map((c) => Number.parseInt(c, 10))
+)
+
+watch(
+  () => stats.value?.requests,
+  (n) => {
+    if (n == null || !Number.isFinite(n)) return
+    requestTargetRef.value = n
+    if (animatedRequestsCount.value === 0) {
+      animatedRequestsCount.value = n
+      return
+    }
+    runSequentialCount(animatedRequestsCount, n, { cancelToken: requestsCancelId })
+  },
+  { immediate: true }
+)
+
+const { data: methodsData } = await useFetch<{
+  methods: { slug: string; title: string; date: string; clinicId?: number; clinicIds?: number[] }[]
+}>('/api/articles')
+const { data: clinicsData } = await useFetch<{ clinics: { id: number; name: string; city: string }[] }>('/api/clinics')
+const { data: doctorsData } = await useFetch<{ doctors: { id: number; name: string; specialty: string; photo?: string; clinicId?: number }[] }>('/api/doctors')
+const { data: forumData } = await useFetch<{ threads: { id: string; title: string; author?: string; date?: string }[]; posts?: Record<string, unknown[]> }>('/api/forum')
+
+const clinicsMap = computed(() => {
+  const list = clinicsData.value?.clinics ?? []
+  return Object.fromEntries(list.map((c) => [c.id, c]))
+})
+
+function getClinicForMethod(method: { clinicId?: number; clinicIds?: number[] }) {
+  const id = (method.clinicIds && method.clinicIds[0]) ?? method.clinicId
+  if (id == null) return undefined
+  return clinicsMap.value[id]
+}
+
 const latestMethods = computed(() => {
   const list = methodsData.value?.methods ?? []
   return list
@@ -127,12 +255,60 @@ const latestMethods = computed(() => {
     .slice(0, 4)
 })
 
+const latestClinics = computed(() => {
+  const list = clinicsData.value?.clinics ?? []
+  return list.slice(0, 4)
+})
+
+const latestDoctors = computed(() => {
+  const list = doctorsData.value?.doctors ?? []
+  return list.slice(0, 4)
+})
+
+function getDoctorAddress(doctor: { clinicId?: number }) {
+  const clinic = doctor.clinicId != null ? clinicsMap.value[doctor.clinicId] : undefined
+  if (!clinic) return '—'
+  return `${clinic.name}, ${clinic.city}`
+}
+
+const latestThreads = computed(() => {
+  const list = forumData.value?.threads ?? []
+  return [...list]
+    .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+    .slice(0, 4)
+})
+
+function formatThreadDate(d: string) {
+  if (!d) return ''
+  const [y, m, day] = d.split('-')
+  const months = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь']
+  const mi = Number.parseInt(m || '0', 10) - 1
+  if (mi < 0 || mi >= 12) return d
+  return `${months[mi]} ${y || ''}`
+}
+
+function getRepliesCount(threadId: string) {
+  const posts = forumData.value?.posts as Record<string, unknown[]> | undefined
+  const arr = posts?.[threadId]
+  return Array.isArray(arr) ? arr.length : 0
+}
+
 const heroRef = ref<HTMLElement | null>(null)
+let requestsInterval: ReturnType<typeof setInterval> | null = null
 onMounted(() => {
   if (import.meta.client && heroRef.value) {
     const gsap = useGsap()
     gsap.from(heroRef.value, { opacity: 0, y: 24, duration: 0.6, ease: 'power2.out' })
   }
+  if (import.meta.client) {
+    requestsInterval = setInterval(() => {
+      requestTargetRef.value += 3
+      runSequentialCount(animatedRequestsCount, requestTargetRef.value, { cancelToken: requestsCancelId })
+    }, 5000)
+  }
+})
+onUnmounted(() => {
+  if (requestsInterval) clearInterval(requestsInterval)
 })
 
 useHead({
@@ -146,3 +322,32 @@ useHead({
   ],
 })
 </script>
+
+<style scoped>
+.home-counter-block {
+  min-width: 2rem;
+  vertical-align: middle;
+  height: 2.25rem;
+}
+.home-digit-roller {
+  display: inline-block;
+  overflow: hidden;
+  height: 2.25rem;
+  vertical-align: top;
+}
+.home-digit-strip {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.12s ease-out;
+}
+.home-digit-cell {
+  height: 2.25rem;
+  min-height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1;
+}
+</style>

@@ -1,9 +1,6 @@
 <template>
   <div class="py-8 px-4">
     <div class="max-w-5xl mx-auto">
-      <NuxtLink to="/clinics" class="text-calming-600 hover:underline mb-4 inline-flex items-center gap-1">
-        <AppIcon name="arrow-left" size="sm" /> Все клиники
-      </NuxtLink>
       <div v-if="clinic" class="space-y-8">
         <div class="bg-white rounded-2xl overflow-hidden flex flex-col lg:flex-row shadow-sm">
           <div class="p-6 lg:w-80 xl:w-96 shrink-0 flex flex-col gap-6">
@@ -73,18 +70,14 @@
           </div>
         </section>
         <div id="doctors">
-          <section v-if="doctors.length" class="space-y-4">
-            <h2 class="text-xl font-bold text-calming-900">Врачи клиники</h2>
+          <section v-if="doctors.length" class="mb-10">
+            <h2 class="text-lg font-semibold text-calming-900 mb-4">Врачи клиники</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <DoctorClinicCard
-                v-for="(d, i) in doctors"
+                v-for="d in doctors"
                 :key="d.id"
                 :doctor="d"
                 :address="clinicAddress"
-                :distance="doctorDistance(i)"
-                :selected="selectedDoctorId === d.id"
-                :show-book-icon="i === 0"
-                @add="onAddDoctor(d)"
               />
             </div>
           </section>
@@ -120,19 +113,6 @@ const clinicAddress = computed(() => {
   if (!c) return ''
   return `${c.name}, ${c.city}`
 })
-
-function doctorDistance(index: number) {
-  const km = (0.5 + index * 0.2).toFixed(1)
-  return `${km} км`
-}
-
-const patientStore = usePatientStore()
-const selectedDoctorId = computed(() => patientStore.myDoctorId)
-
-function onAddDoctor(doctor: { id: number }) {
-  const isSelected = selectedDoctorId.value === doctor.id
-  patientStore.setMyDoctorId(isSelected ? null : doctor.id)
-}
 
 useHead({
   title: clinic.value ? `${clinic.value.name} — AntiOnko` : 'Клиника — AntiOnko',

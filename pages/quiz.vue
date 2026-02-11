@@ -1,35 +1,17 @@
 <template>
   <div class="min-h-[80vh] py-8 px-4">
-    <div class="max-w-3xl mx-auto">
-      <QuizWizard @complete="onQuizComplete" />
-      <div class="mt-8 flex flex-wrap items-center justify-center gap-10 text-base">
-        <div class="flex items-baseline gap-2">
-          <span class="font-medium text-calming-900">Подходящие методы:</span>
-          <span class="counter-block inline-flex items-baseline overflow-hidden h-9">
-            <span
-              v-for="(digit, idx) in methodDigits"
-              :key="'m-' + idx"
-              class="digit-roller"
-            >
-              <span
-                class="digit-strip text-calming-800"
-                :style="{ transform: `translateY(-${digit * digitHeightPx}px)` }"
-              >
-                <span v-for="n in 10" :key="n" class="digit-cell">{{ n - 1 }}</span>
-              </span>
-            </span>
-          </span>
+    <div class="max-w-5xl mx-auto">
+      <!-- Общий блок: две колонки — вопрос/ответы и счётчики -->
+      <div class="rounded-2xl overflow-hidden shadow-sm border border-calming-100 flex flex-col lg:flex-row lg:h-[72vh]">
+        <div class="min-w-0 lg:flex-[1.6] bg-white overflow-hidden flex flex-col">
+          <QuizWizard class="min-h-0 flex-1" @complete="onQuizComplete" />
         </div>
-        <div class="flex items-baseline gap-2">
-          <span class="font-medium text-calming-900">Клиники:</span>
-          <span class="counter-block inline-flex items-baseline overflow-hidden h-9">
-            <template v-if="displayClinicsCountFormatted === '—'">
-              <span class="counter-value text-calming-800">—</span>
-            </template>
-            <template v-else>
+        <aside class="lg:flex-1 min-w-0 lg:border-l border-calming-200 px-8 pt-10 pb-8 flex flex-col gap-6 justify-start bg-calming-100">
+          <div class="flex flex-col items-start gap-1">
+            <span class="counter-block inline-flex items-baseline overflow-hidden h-12">
               <span
-                v-for="(digit, idx) in clinicDigits"
-                :key="'c-' + idx"
+                v-for="(digit, idx) in methodDigits"
+                :key="'m-' + idx"
                 class="digit-roller"
               >
                 <span
@@ -39,11 +21,55 @@
                   <span v-for="n in 10" :key="n" class="digit-cell">{{ n - 1 }}</span>
                 </span>
               </span>
-            </template>
-          </span>
-        </div>
+            </span>
+            <span class="font-medium text-calming-900 text-sm">Подходящие методы</span>
+          </div>
+          <div class="flex flex-col items-start gap-1">
+            <span class="counter-block inline-flex items-baseline overflow-hidden h-12">
+              <template v-if="displayClinicsCountFormatted === '—'">
+                <span class="counter-value text-calming-800">—</span>
+              </template>
+              <template v-else>
+                <span
+                  v-for="(digit, idx) in clinicDigits"
+                  :key="'c-' + idx"
+                  class="digit-roller"
+                >
+                  <span
+                    class="digit-strip text-calming-800"
+                    :style="{ transform: `translateY(-${digit * digitHeightPx}px)` }"
+                  >
+                    <span v-for="n in 10" :key="n" class="digit-cell">{{ n - 1 }}</span>
+                  </span>
+                </span>
+              </template>
+            </span>
+            <span class="font-medium text-calming-900 text-sm">Клиники</span>
+          </div>
+          <div class="flex flex-col items-start gap-1">
+            <span class="counter-block inline-flex items-baseline overflow-hidden h-12">
+              <template v-if="displayDoctorsCountFormatted === '—'">
+                <span class="counter-value text-calming-800">—</span>
+              </template>
+              <template v-else>
+                <span
+                  v-for="(digit, idx) in doctorDigits"
+                  :key="'d-' + idx"
+                  class="digit-roller"
+                >
+                  <span
+                    class="digit-strip text-calming-800"
+                    :style="{ transform: `translateY(-${digit * digitHeightPx}px)` }"
+                  >
+                    <span v-for="n in 10" :key="n" class="digit-cell">{{ n - 1 }}</span>
+                  </span>
+                </span>
+              </template>
+            </span>
+            <span class="font-medium text-calming-900 text-sm">Доктора</span>
+          </div>
+        </aside>
       </div>
-      <p class="text-sm text-calming-500 mt-4 text-center">Анонимно. Бесплатно. Без регистрации</p>
     </div>
   </div>
 </template>
@@ -109,7 +135,7 @@ const { data: methodsData } = await useFetch<{
 }>('/api/articles')
 const allMethods = computed(() => methodsData.value?.methods ?? [])
 
-const { data: stats } = await useFetch<{ methods: number; clinics: number }>('/api/stats', { default: () => null })
+const { data: stats } = await useFetch<{ methods: number; clinics: number; doctors: number }>('/api/stats', { default: () => null })
 
 const methodsByRelevance = computed(() => {
   const list = Array.isArray(allMethods.value) ? allMethods.value : []
@@ -209,6 +235,25 @@ const baseClinicsCountForDisplay = computed(() =>
   (clinicsDataForDisplay.value?.clinics ?? []).length
 )
 
+const clinicIdsForDoctorsDisplay = computed(() =>
+  (clinicsDataForDisplay.value?.clinics ?? []).map((c) => c.id).filter((id) => id > 0)
+)
+
+const { data: doctorsDataForDisplay } = await useAsyncData(
+  () => `quiz-doctors-by-clinics-${clinicIdsForDoctorsDisplay.value.join(',') || 'x'}`,
+  async () => {
+    const ids = clinicIdsForDoctorsDisplay.value
+    if (!ids.length) return { doctors: [] as { id: number }[] }
+    const res = await $fetch<{ doctors: { id: number }[] }>(`/api/doctors?clinicIds=${ids.join(',')}`)
+    return res
+  },
+  { watch: [clinicIdsForDoctorsDisplay] }
+)
+
+const baseDoctorsCountForDisplay = computed(() =>
+  (doctorsDataForDisplay.value?.doctors ?? []).length
+)
+
 /** Счётчики как на странице результатов: без коэффициента, методы — до 6 */
 const displayMethodsCount = computed(() => {
   if (committedStep.value <= 2) return allMethods.value.length
@@ -219,11 +264,18 @@ const displayClinicsCount = computed(() => {
   return baseClinicsCountForDisplay.value
 })
 
+const displayDoctorsCount = computed(() => {
+  if (committedStep.value <= 2) return stats.value?.doctors ?? '—'
+  return baseDoctorsCountForDisplay.value
+})
+
 /** Анимированные значения для пошаговой прокрутки (21 → 20 → … → 6) */
 const animatedMethodsCount = ref<number>(0)
 const animatedClinicsCount = ref<number>(0)
+const animatedDoctorsCount = ref<number>(0)
 const methodsCancelId = { current: 0 }
 const clinicsCancelId = { current: 0 }
+const doctorsCancelId = { current: 0 }
 
 function runSequentialCount(
   current: Ref<number>,
@@ -286,13 +338,32 @@ watch(
   { immediate: true }
 )
 
+watch(
+  displayDoctorsCount,
+  (target) => {
+    if (target === '—' || target == null) return
+    const n = Number(target)
+    if (!Number.isFinite(n)) return
+    if (animatedDoctorsCount.value === 0 && n > 0) {
+      animatedDoctorsCount.value = n
+      return
+    }
+    runSequentialCount(animatedDoctorsCount, n, { cancelToken: doctorsCancelId })
+  },
+  { immediate: true }
+)
+
 /** Для отображения: «—» если клиник ещё не выбрано, иначе анимированное число */
 const displayClinicsCountFormatted = computed(() =>
   displayClinicsCount.value === '—' ? '—' : animatedClinicsCount.value
 )
 
+const displayDoctorsCountFormatted = computed(() =>
+  displayDoctorsCount.value === '—' ? '—' : animatedDoctorsCount.value
+)
+
 /** Высота одной цифры в барабане (px) для translateY */
-const digitHeightPx = 36
+const digitHeightPx = 48
 /** Цифры для барабана: методы */
 const methodDigits = computed(() =>
   String(animatedMethodsCount.value)
@@ -302,6 +373,15 @@ const methodDigits = computed(() =>
 /** Цифры для барабана: клиники (только когда число) */
 const clinicDigits = computed(() => {
   const v = displayClinicsCountFormatted.value
+  if (typeof v !== 'number') return []
+  return String(v)
+    .split('')
+    .map((c) => Number.parseInt(c, 10))
+})
+
+/** Цифры для барабана: доктора */
+const doctorDigits = computed(() => {
+  const v = displayDoctorsCountFormatted.value
   if (typeof v !== 'number') return []
   return String(v)
     .split('')
@@ -322,21 +402,21 @@ useHead({
 
 <style scoped>
 .counter-block {
-  min-width: 2.5rem;
+  min-width: 3rem;
   vertical-align: middle;
 }
 .counter-value {
   display: inline-block;
-  font-size: 1.75rem;
+  font-size: 2.25rem;
   font-weight: 700;
-  line-height: 2.25rem;
+  line-height: 3rem;
 }
 
 /* Барабан счётчика: одна цифра — колонка 0–9, прокрутка снизу вверх */
 .digit-roller {
   display: inline-block;
   overflow: hidden;
-  height: 36px;
+  height: 48px;
   vertical-align: top;
 }
 .digit-strip {
@@ -345,12 +425,12 @@ useHead({
   transition: transform 0.12s ease-out;
 }
 .digit-cell {
-  height: 36px;
-  min-height: 36px;
+  height: 48px;
+  min-height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.75rem;
+  font-size: 2.25rem;
   font-weight: 700;
   line-height: 1;
 }

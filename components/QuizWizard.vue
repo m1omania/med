@@ -1,154 +1,170 @@
 <template>
-  <div class="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
-    <div class="px-6 py-4 bg-calming-50 border-b border-calming-100">
-      <div class="mb-2">
-        <span class="text-sm font-medium text-calming-700">Шаг {{ currentStep + 1 }} из 6</span>
+  <div class="flex flex-col min-h-0 h-full">
+    <!-- Прокручиваемая область: шаги/прогресс фиксированы, вопрос и ответы выезжают -->
+    <div class="flex-1 min-h-0 overflow-hidden flex flex-col">
+      <!-- Шаг и прогресс-бар — зафиксированы, не участвуют в анимации -->
+      <div class="shrink-0 bg-white px-6 pt-6 pb-2 lg:px-8 lg:pt-8 lg:pb-2">
+        <p class="text-sm font-medium text-calming-600 mb-2">Шаг {{ currentStep + 1 }} из 6</p>
+        <div class="h-2 bg-calming-200 rounded-full overflow-hidden">
+          <div
+            class="h-full bg-calming-600 transition-all duration-300 rounded-full"
+            :style="{ width: `${((currentStep + 1) / 6) * 100}%` }"
+          />
+        </div>
       </div>
-      <div class="h-2 bg-calming-200 rounded-full overflow-hidden">
-        <div
-          class="h-full bg-calming-600 transition-all duration-300"
-          :style="{ width: `${((currentStep + 1) / 6) * 100}%` }"
-        />
-      </div>
-    </div>
-    <div class="p-6 min-h-[320px]">
+
+      <div class="flex-1 min-h-0 relative">
+        <Transition :name="'slide-' + slideDirection">
+          <div
+            :key="currentStep"
+            class="absolute inset-0 overflow-auto flex flex-col w-full bg-white slide-panel"
+          >
+          <!-- Вопрос и подсказка — выезжают -->
+          <div class="sticky top-0 z-10 bg-white px-6 pt-2 pb-4 lg:px-8 lg:pt-4 lg:pb-6 shrink-0">
+            <h2 class="text-xl font-bold text-calming-900 mb-1">{{ stepTitle }}</h2>
+            <p class="text-sm text-calming-600 mb-0">{{ stepInstruction }}</p>
+          </div>
+
+          <!-- Ответы на белом фоне -->
+          <div class="bg-white px-6 pt-4 pb-6 lg:px-8 lg:pt-6 lg:pb-6 flex flex-col flex-1">
       <!-- Step 0: age -->
-      <div v-if="currentStep === 0" class="space-y-4">
-        <h2 class="text-lg font-semibold text-calming-900">Ваш возраст</h2>
+      <div v-if="currentStep === 0" class="space-y-4 flex-1">
         <input
           v-model.number="local.age"
           type="number"
           min="18"
           max="100"
-          class="w-full rounded-lg border border-calming-300 px-4 py-2 text-lg"
+          class="w-full max-w-xs rounded-xl border-2 border-calming-200 px-4 py-3 text-lg focus:border-calming-500 focus:outline-none focus:ring-2 focus:ring-calming-200"
           placeholder="45"
           @blur="saveStep"
         />
       </div>
       <!-- Step 1: gender -->
-      <div v-else-if="currentStep === 1" class="space-y-4">
-        <h2 class="text-lg font-semibold text-calming-900">Пол</h2>
-        <div class="grid grid-cols-2 gap-4">
-          <button
-            type="button"
-            class="flex flex-col items-center gap-3 p-6 rounded-xl border-2 transition"
-            :class="local.gender === 'M' ? 'border-calming-600 bg-calming-50' : 'border-calming-200 hover:border-calming-300 hover:bg-calming-50/50'"
-            @click="local.gender = 'M'; saveStep()"
+      <div v-else-if="currentStep === 1" class="flex flex-col gap-3 flex-1">
+        <label
+          v-for="opt in genderOptions"
+          :key="opt.value"
+          class="flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition"
+          :class="local.gender === opt.value ? 'border-calming-600 bg-calming-50' : 'border-calming-200 hover:border-calming-300 hover:bg-calming-50/30'"
+        >
+          <input
+            v-model="local.gender"
+            type="radio"
+            :value="opt.value"
+            name="gender"
+            class="w-5 h-5 text-calming-600 border-calming-300 focus:ring-calming-500"
+            @change="saveStep"
           >
-            <span class="w-14 h-14 rounded-full bg-calming-100 flex items-center justify-center text-calming-600">
-              <AppIcon name="user-male" size="lg" />
-            </span>
-            <span class="font-medium text-calming-800">Мужской</span>
-          </button>
-          <button
-            type="button"
-            class="flex flex-col items-center gap-3 p-6 rounded-xl border-2 transition"
-            :class="local.gender === 'F' ? 'border-calming-600 bg-calming-50' : 'border-calming-200 hover:border-calming-300 hover:bg-calming-50/50'"
-            @click="local.gender = 'F'; saveStep()"
-          >
-            <span class="w-14 h-14 rounded-full bg-calming-100 flex items-center justify-center text-calming-600">
-              <AppIcon name="user-female" size="lg" />
-            </span>
-            <span class="font-medium text-calming-800">Женский</span>
-          </button>
-        </div>
+          <span class="w-12 h-12 rounded-full bg-calming-100 flex items-center justify-center text-calming-600 shrink-0">
+            <AppIcon :name="opt.icon" size="lg" />
+          </span>
+          <span class="font-medium text-calming-800">{{ opt.label }}</span>
+        </label>
       </div>
-      <!-- Step 2: localization -->
-      <div v-else-if="currentStep === 2" class="space-y-4">
-        <h2 class="text-lg font-semibold text-calming-900">Тип опухоли / локализация</h2>
-        <div class="flex flex-col gap-2">
-          <button
-            v-for="opt in localizationOptions"
-            :key="opt.value"
-            type="button"
-            class="px-4 py-3 rounded-xl border-2 text-sm font-medium transition text-left"
-            :class="local.localization === opt.value ? 'border-calming-600 bg-calming-50 text-calming-800' : 'border-calming-200 hover:border-calming-300 hover:bg-calming-50/50 text-calming-700'"
-            @click="local.localization = opt.value; saveStep()"
-          >
-            {{ opt.label }}
-          </button>
-        </div>
+      <!-- Step 2: localization — теги как на странице Методы -->
+      <div v-else-if="currentStep === 2" class="flex flex-wrap gap-x-3 gap-y-2 content-start flex-1">
+        <button
+          v-for="opt in localizationOptions"
+          :key="opt.value"
+          type="button"
+          class="inline-flex items-center justify-center h-9 px-4 rounded-full text-sm font-medium transition shrink-0"
+          :class="local.localization === opt.value
+            ? 'bg-calming-600 text-white border-2 border-calming-600'
+            : 'bg-white text-calming-800 border-2 border-calming-200 hover:bg-calming-50'"
+          @click="local.localization = opt.value; saveStep()"
+        >
+          {{ opt.label }}
+        </button>
       </div>
-      <!-- Step 3: stage -->
-      <div v-else-if="currentStep === 3" class="space-y-4">
-        <h2 class="text-lg font-semibold text-calming-900">Стадия известна?</h2>
-        <div class="flex flex-col gap-2">
-          <button
-            v-for="opt in stageOptions"
-            :key="opt.value"
-            type="button"
-            class="px-4 py-3 rounded-xl border-2 text-sm font-medium transition text-left"
-            :class="local.stage === opt.value ? 'border-calming-600 bg-calming-50 text-calming-800' : 'border-calming-200 hover:border-calming-300 hover:bg-calming-50/50 text-calming-700'"
-            @click="local.stage = opt.value; saveStep()"
-          >
-            {{ opt.label }}
-          </button>
-        </div>
+      <!-- Step 3: stage — теги как на странице Методы -->
+      <div v-else-if="currentStep === 3" class="flex flex-wrap gap-x-3 gap-y-2 content-start flex-1">
+        <button
+          v-for="opt in stageOptions"
+          :key="opt.value"
+          type="button"
+          class="inline-flex items-center justify-center h-9 px-4 rounded-full text-sm font-medium transition shrink-0"
+          :class="local.stage === opt.value
+            ? 'bg-calming-600 text-white border-2 border-calming-600'
+            : 'bg-white text-calming-800 border-2 border-calming-200 hover:bg-calming-50'"
+          @click="local.stage = opt.value; saveStep()"
+        >
+          {{ opt.label }}
+        </button>
       </div>
       <!-- Step 4: geography -->
-      <div v-else-if="currentStep === 4" class="space-y-4">
-        <h2 class="text-lg font-semibold text-calming-900">География</h2>
-        <div class="flex flex-col gap-2">
-          <button
-            v-for="opt in geographyOptions"
-            :key="opt.value"
-            type="button"
-            class="px-4 py-3 rounded-xl border-2 text-sm font-medium transition text-left"
-            :class="local.geography === opt.value ? 'border-calming-600 bg-calming-50 text-calming-800' : 'border-calming-200 hover:border-calming-300 hover:bg-calming-50/50 text-calming-700'"
-            @click="local.geography = opt.value; saveStep()"
+      <div v-else-if="currentStep === 4" class="flex flex-col gap-3 flex-1">
+        <label
+          v-for="opt in geographyOptions"
+          :key="opt.value"
+          class="flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition"
+          :class="local.geography === opt.value ? 'border-calming-600 bg-calming-50' : 'border-calming-200 hover:border-calming-300 hover:bg-calming-50/30'"
+        >
+          <input
+            v-model="local.geography"
+            type="radio"
+            :value="opt.value"
+            name="geography"
+            class="w-5 h-5 text-calming-600 border-calming-300 focus:ring-calming-500"
+            @change="saveStep"
           >
-            {{ opt.label }}
-          </button>
-        </div>
+          <span class="font-medium text-calming-800">{{ opt.label }}</span>
+        </label>
       </div>
       <!-- Step 5: confirm -->
-      <div v-else-if="currentStep === 5" class="space-y-4">
-        <h2 class="text-lg font-semibold text-calming-900">Проверьте данные</h2>
-        <ul class="text-calming-700 space-y-1 text-sm">
-          <li>Возраст: {{ local.age || '—' }}</li>
-          <li>Пол: {{ local.gender === 'M' ? 'Мужской' : local.gender === 'F' ? 'Женский' : '—' }}</li>
-          <li>Тип / локализация: {{ localizationLabel }}</li>
-          <li>Стадия: {{ local.stage || '—' }}</li>
-          <li>География: {{ local.geography || '—' }}</li>
+      <div v-else-if="currentStep === 5" class="flex-1">
+        <ul class="text-calming-700 space-y-2 text-sm">
+          <li><span class="text-calming-500">Возраст:</span> {{ local.age || '—' }}</li>
+          <li><span class="text-calming-500">Пол:</span> {{ local.gender === 'M' ? 'Мужской' : local.gender === 'F' ? 'Женский' : '—' }}</li>
+          <li><span class="text-calming-500">Тип / локализация:</span> {{ localizationLabel }}</li>
+          <li><span class="text-calming-500">Стадия:</span> {{ local.stage || '—' }}</li>
+          <li><span class="text-calming-500">География:</span> {{ local.geography || '—' }}</li>
         </ul>
       </div>
+          </div>
+          </div>
+        </Transition>
+      </div>
     </div>
-    <div class="px-6 py-4 bg-calming-50 border-t border-calming-100 flex justify-between">
-      <button
-        v-if="currentStep > 0 && currentStep < 5"
-        type="button"
-        class="px-4 py-2 text-calming-600 hover:text-calming-800 font-medium inline-flex items-center gap-1"
-        @click="prev"
-      >
-        <AppIcon name="arrow-left" size="sm" /> Назад
-      </button>
-      <button
-        v-else-if="currentStep === 5"
-        type="button"
-        class="px-4 py-2 text-calming-600 hover:text-calming-800 font-medium inline-flex items-center gap-1"
-        @click="goToFirstStep"
-      >
-        Изменить данные
-      </button>
-      <div v-else />
-      <button
-        v-if="currentStep < 5"
-        type="button"
-        class="px-4 py-2 rounded-lg bg-calming-600 text-white font-medium hover:bg-calming-700 disabled:opacity-50 inline-flex items-center gap-1"
-        :disabled="!canNext"
-        @click="next"
-      >
-        Далее <AppIcon name="arrow-right" size="sm" />
-      </button>
-      <button
-        v-else-if="currentStep === 5"
-        type="button"
-        class="px-4 py-2 rounded-lg bg-calming-600 text-white font-medium hover:bg-calming-700 disabled:opacity-50 inline-flex items-center gap-1"
-        :disabled="submitting"
-        @click="submit"
-      >
-        {{ submitting ? 'Отправка...' : 'Получить результаты' }}
-      </button>
+
+    <!-- Кнопки навигации — зафиксированы внизу -->
+    <div class="shrink-0 min-h-[3.5rem] bg-white px-6 pb-6 pt-4 lg:px-8 lg:pb-8 lg:pt-6 border-t border-calming-100 flex justify-between items-center">
+        <div class="min-w-[8rem] flex justify-start">
+          <button
+            v-if="currentStep < 5"
+            type="button"
+            class="px-4 py-2.5 rounded-xl border-2 border-calming-200 text-calming-700 font-medium hover:bg-calming-50 inline-flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            :disabled="currentStep === 0"
+            @click="prev"
+          >
+            <AppIcon name="arrow-left" size="sm" /> Назад
+          </button>
+          <button
+            v-else-if="currentStep === 5"
+            type="button"
+            class="px-4 py-2.5 rounded-xl border-2 border-calming-200 text-calming-700 font-medium hover:bg-calming-50 inline-flex items-center gap-1"
+            @click="goToFirstStep"
+          >
+            Изменить данные
+          </button>
+        </div>
+        <button
+          v-if="currentStep < 5"
+          type="button"
+          class="px-5 py-2.5 rounded-xl bg-calming-600 text-white font-medium hover:bg-calming-700 disabled:opacity-50 inline-flex items-center gap-1"
+          :disabled="!canNext"
+          @click="next"
+        >
+          Далее <AppIcon name="arrow-right" size="sm" />
+        </button>
+        <button
+          v-else-if="currentStep === 5"
+          type="button"
+          class="px-5 py-2.5 rounded-xl bg-calming-600 text-white font-medium hover:bg-calming-700 disabled:opacity-50 inline-flex items-center gap-1"
+          :disabled="submitting"
+          @click="submit"
+        >
+          {{ submitting ? 'Отправка...' : 'Получить результаты' }}
+        </button>
     </div>
   </div>
 </template>
@@ -160,15 +176,41 @@ const patientStore = usePatientStore()
 
 const currentStep = ref(patientStore.quizData?.step ?? 0)
 const submitting = ref(false)
+/** Направление смены шага: для анимации выезда справа/слева */
+const slideDirection = ref<'next' | 'prev'>('next')
 
 const local = reactive({
-  age: patientStore.quizData?.age ?? undefined,
-  gender: patientStore.quizData?.gender ?? '',
+  age: patientStore.quizData?.age ?? 45,
+  gender: patientStore.quizData?.gender ?? 'M',
   symptoms: (patientStore.quizData?.symptoms ?? []) as string[],
   localization: patientStore.quizData?.localization ?? '',
   stage: patientStore.quizData?.stage ?? '',
-  geography: patientStore.quizData?.geography ?? '',
+  geography: patientStore.quizData?.geography ?? 'Москва',
 })
+
+const stepTitles: Record<number, string> = {
+  0: 'Ваш возраст',
+  1: 'Пол',
+  2: 'Тип опухоли / локализация',
+  3: 'Стадия заболевания',
+  4: 'География',
+  5: 'Проверьте данные',
+}
+const stepInstructions: Record<number, string> = {
+  0: 'Укажите возраст',
+  1: 'Выберите один ответ',
+  2: 'Выберите один ответ',
+  3: 'Выберите один ответ',
+  4: 'Выберите город',
+  5: 'При необходимости нажмите «Изменить данные»',
+}
+const stepTitle = computed(() => stepTitles[currentStep.value] ?? '')
+const stepInstruction = computed(() => stepInstructions[currentStep.value] ?? '')
+
+const genderOptions = [
+  { value: 'M', label: 'Мужской', icon: 'user-male' as const },
+  { value: 'F', label: 'Женский', icon: 'user-female' as const },
+]
 
 const localizationOptions = [
   { value: 'pechen', label: 'Печень' },
@@ -188,9 +230,9 @@ const stageOptions = [
 ]
 
 const geographyOptions = [
-  { value: 'Петрозаводск', label: 'Петрозаводск' },
   { value: 'Москва', label: 'Москва' },
   { value: 'Санкт-Петербург', label: 'Санкт-Петербург' },
+  { value: 'Петрозаводск', label: 'Петрозаводск' },
 ]
 
 const localizationLabel = computed(() => {
@@ -245,6 +287,7 @@ function saveStep() {
 
 function next() {
   if (currentStep.value >= 5) return
+  slideDirection.value = 'next'
   saveStep()
   currentStep.value++
   setStep(currentStep.value)
@@ -252,6 +295,7 @@ function next() {
 
 function prev() {
   if (currentStep.value <= 0) return
+  slideDirection.value = 'prev'
   currentStep.value--
   setStep(currentStep.value)
   syncLocalFromStore()
@@ -321,3 +365,42 @@ async function submit() {
   }
 }
 </script>
+
+<style scoped>
+/* Панель слайда: фиксированная область, только горизонтальное смещение */
+.slide-panel {
+  will-change: transform;
+}
+
+/* Вперёд: новый вопрос выезжает справа, старый уезжает влево */
+.slide-next-enter-active,
+.slide-next-leave-active {
+  transition: transform 0.28s ease-out;
+}
+.slide-next-enter-from {
+  transform: translateX(100%);
+}
+.slide-next-enter-to,
+.slide-next-leave-from {
+  transform: translateX(0);
+}
+.slide-next-leave-to {
+  transform: translateX(-100%);
+}
+
+/* Назад: новый вопрос выезжает слева, старый уезжает вправо */
+.slide-prev-enter-active,
+.slide-prev-leave-active {
+  transition: transform 0.28s ease-out;
+}
+.slide-prev-enter-from {
+  transform: translateX(-100%);
+}
+.slide-prev-enter-to,
+.slide-prev-leave-from {
+  transform: translateX(0);
+}
+.slide-prev-leave-to {
+  transform: translateX(100%);
+}
+</style>

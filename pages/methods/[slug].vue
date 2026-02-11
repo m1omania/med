@@ -1,8 +1,5 @@
 <template>
   <div class="py-8 px-4 max-w-3xl mx-auto">
-    <NuxtLink to="/methods" class="text-calming-600 hover:underline mb-4 inline-flex items-center gap-1">
-      <AppIcon name="arrow-left" size="sm" /> К методам лечения
-    </NuxtLink>
     <article v-if="method" class="space-y-6">
       <!-- Заголовок -->
       <header>
@@ -16,85 +13,35 @@
         </p>
       </header>
 
-      <!-- Для кого -->
-      <p class="text-calming-800">
-        <span class="font-medium text-calming-900">Для кого:</span> {{ method.forWhom || '—' }}
-      </p>
-
-      <!-- Эффект -->
-      <p class="text-calming-800">
-        <span class="font-medium text-calming-900">Эффект:</span> {{ method.effect || '—' }}
-      </p>
-
       <!-- Основной текст -->
       <p class="text-calming-700 leading-relaxed">{{ method.body || '—' }}</p>
 
-      <!-- ГДЕ ПОЛУЧИТЬ — единая структура как у dostarlimab -->
-      <section
-        class="rounded-xl bg-white p-5 space-y-4"
-      >
-        <h2 class="text-sm font-semibold text-calming-800 uppercase tracking-wider">
-          Где получить{{ method.geographyLabel ? ` (${method.geographyLabel})` : '' }}
-        </h2>
-        <div class="space-y-3 text-sm text-calming-800">
-          <p class="flex items-center gap-2 font-medium">
-            <span aria-hidden="true">📍</span>
-            <NuxtLink
-              v-if="firstClinicId && wherePlaceName"
-              :to="`/clinic/${firstClinicId}`"
-              class="text-calming-600 hover:underline font-medium"
-            >
-              {{ wherePlaceName }}
-            </NuxtLink>
-            <span v-else>{{ wherePlaceName || '—' }}</span>
-          </p>
-          <p class="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span aria-hidden="true">👨‍⚕️</span>
-            <NuxtLink
-              v-if="method.doctorId && doctor"
-              :to="`/doctor/${method.doctorId}`"
-              class="text-calming-600 hover:underline font-medium"
-            >
-              Доктор {{ doctor.name }}{{ (doctor as { specialty?: string }).specialty ? ` (${(doctor as { specialty?: string }).specialty })` : '' }}
-            </NuxtLink>
-            <template v-else-if="doctor">
-              <span>Доктор {{ doctor.name }}{{ (doctor as { specialty?: string }).specialty ? ` (${(doctor as { specialty?: string }).specialty })` : '' }}</span>
-            </template>
-            <template v-else>
-              <span>—</span>
-            </template>
-            <span v-if="method.phone" class="text-calming-600">| ☎️ {{ method.phone }}</span>
-          </p>
-          <p class="flex items-center gap-2 text-calming-700">
-            <span aria-hidden="true">💰</span>
-            <span>Стоимость: {{ method.cost || 'по запросу' }}</span>
-          </p>
-          <div class="pt-1">
-            <span class="font-medium text-calming-900">Что сказать:</span>
-            <span class="text-calming-700"> {{ method.whatToSay ? `«${method.whatToSay}»` : '—' }}</span>
-          </div>
+      <!-- Клиники (как на странице результатов) -->
+      <section class="mb-10">
+        <h2 class="text-lg font-semibold text-calming-900 mb-4">Клиники</h2>
+        <div v-if="methodClinics.length" class="grid md:grid-cols-2 gap-6">
+          <ClinicCard
+            v-for="c in methodClinics"
+            :key="c.id"
+            :clinic="c"
+            :slug="methodTagsSlug"
+          />
         </div>
-        <div class="flex flex-wrap gap-3 pt-2">
-          <NuxtLink
-            v-if="firstClinicId"
-            :to="`/clinic/${firstClinicId}`"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-calming-600 text-white text-sm font-medium hover:bg-calming-700 transition"
-          >
-            Записаться
-          </NuxtLink>
-          <NuxtLink
-            v-else
-            to="/clinics"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-calming-600 text-white text-sm font-medium hover:bg-calming-700 transition"
-          >
-            Подобрать клинику
-          </NuxtLink>
-          <NuxtLink
-            to="/register"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-calming-300 text-calming-700 text-sm font-medium hover:bg-calming-100 transition"
-          >
-            Сохранить
-          </NuxtLink>
+        <p v-else class="text-sm text-calming-600 py-2">Клиник по этому методу не найдено.</p>
+      </section>
+
+      <!-- Доктора практикующие этот метод -->
+      <section v-if="methodDoctors.length" class="mb-10">
+        <h2 class="text-lg font-semibold text-calming-900 mb-4">
+          Доктора практикующие этот метод
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <DoctorClinicCard
+            v-for="d in methodDoctors"
+            :key="d.id"
+            :doctor="d"
+            :address="doctorAddress(d)"
+          />
         </div>
       </section>
 
@@ -172,6 +119,14 @@ const firstClinicId = computed(() => {
 })
 const doctorId = computed(() => method.value?.doctorId)
 
+const clinicIdsFromMethod = computed(() => {
+  const m = method.value
+  if (!m) return []
+  if (Array.isArray(m.clinicIds) && m.clinicIds.length) return m.clinicIds
+  if (m.clinicId != null) return [m.clinicId]
+  return []
+})
+
 const { data: clinic } = await useFetch(
   () => `/api/clinics/${firstClinicId.value ?? ''}`,
   { default: () => null, watch: [firstClinicId] }
@@ -181,6 +136,69 @@ const { data: doctor } = await useFetch(
   { default: () => null, watch: [doctorId] }
 )
 
+const { data: doctorsByClinicsData } = await useFetch(
+  () =>
+    clinicIdsFromMethod.value.length
+      ? `/api/doctors?clinicIds=${clinicIdsFromMethod.value.join(',')}`
+      : null,
+  { default: () => ({ doctors: [] }), watch: [clinicIdsFromMethod] }
+)
+
+const { data: clinicsForDoctorsData } = await useFetch(
+  () =>
+    clinicIdsFromMethod.value.length
+      ? `/api/clinics?ids=${clinicIdsFromMethod.value.join(',')}`
+      : null,
+  { default: () => ({ clinics: [] }), watch: [clinicIdsFromMethod] }
+)
+
+const clinicsMapById = computed(() => {
+  const list = (clinicsForDoctorsData.value?.clinics ?? []) as { id: number; name: string; city?: string }[]
+  return Object.fromEntries(list.map((c) => [c.id, c]))
+})
+
+/** Клиники, где доступен этот метод (для карточек как на странице результатов) */
+const methodClinics = computed(() => {
+  const list = clinicsForDoctorsData.value?.clinics ?? []
+  return list as { id: number; name: string; city: string; services?: string[]; lat?: number; lng?: number; doctor?: string }[]
+})
+
+const methodTagsSlug = computed(() => {
+  const tags = method.value?.tags
+  if (Array.isArray(tags) && tags.length) {
+    const first = tags[0]
+    if (typeof first === 'string') return first
+  }
+  return 'obshiy'
+})
+
+const methodDoctors = computed(() => {
+  const fromClinics = (doctorsByClinicsData.value?.doctors ?? []) as { id: number; name: string; specialty: string; clinicId?: number; rating?: number; photo?: string }[]
+  const primaryId = method.value?.doctorId
+  const seen = new Set<number>()
+  const out: typeof fromClinics = []
+  if (primaryId != null && primaryId > 0) {
+    const primary = fromClinics.find((d) => d.id === primaryId) ?? doctor.value ?? null
+    if (primary) {
+      seen.add(primary.id)
+      out.push(primary)
+    }
+  }
+  fromClinics.forEach((d) => {
+    if (d.id != null && !seen.has(d.id)) {
+      seen.add(d.id)
+      out.push(d)
+    }
+  })
+  return out
+})
+
+function doctorAddress(d: { clinicId?: number }): string {
+  const c = d.clinicId != null ? clinicsMapById.value[d.clinicId] : null
+  if (!c) return ''
+  return c.city ? `${c.name}, ${c.city}` : c.name
+}
+
 const wherePlaceName = computed(() => {
   const m = method.value
   if (m?.placeName) return m.placeName
@@ -189,10 +207,13 @@ const wherePlaceName = computed(() => {
   return c?.name ?? ''
 })
 
-const { data: forumData } = await useFetch<{ threads: { id: string; title: string; methodSlug?: string }[] }>('/api/forum')
+const { data: forumData } = await useFetch<{ threads: { id: string; title: string; methodSlug?: string; categoryId?: string }[] }>('/api/forum')
+/** Темы, релевантные методу: сначала с methodSlug === slug, если нет — общие темы поддержки */
 const communityThreads = computed(() => {
   const list = forumData.value?.threads ?? []
-  return list.filter((t) => t.methodSlug === slug)
+  const forMethod = list.filter((t) => t.methodSlug === slug)
+  if (forMethod.length) return forMethod
+  return list.filter((t) => t.categoryId === 'support').slice(0, 5)
 })
 
 useHead({

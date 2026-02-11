@@ -1,9 +1,5 @@
 <template>
   <div class="py-8 px-4 max-w-3xl mx-auto">
-    <NuxtLink to="/community" class="text-calming-600 hover:underline mb-4 inline-flex items-center gap-1">
-      <AppIcon name="arrow-left" size="sm" /> К сообществу
-    </NuxtLink>
-
     <div v-if="pending" class="flex justify-center py-12">
       <span class="h-8 w-8 rounded-full border-2 border-calming-600 border-t-transparent animate-spin" aria-hidden="true" />
     </div>

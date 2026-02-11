@@ -1,8 +1,5 @@
 <template>
   <div class="py-8 px-4 max-w-3xl mx-auto">
-    <NuxtLink to="/methods" class="text-calming-600 hover:underline mb-4 inline-flex items-center gap-1">
-      <AppIcon name="arrow-left" size="sm" /> К методам лечения
-    </NuxtLink>
     <div v-if="method" class="bg-white rounded-xl border border-calming-200 p-6">
       <h1 class="text-2xl font-bold text-calming-900">{{ method.name }}</h1>
       <p class="text-calming-600 text-sm">Тип: {{ method.type }}, источник: {{ method.source }}</p>

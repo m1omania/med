@@ -1,9 +1,6 @@
 <template>
   <div class="py-8 px-4">
     <div class="max-w-4xl mx-auto">
-      <NuxtLink to="/clinics" class="text-calming-600 hover:underline mb-4 inline-flex items-center gap-1">
-        <AppIcon name="arrow-left" size="sm" /> Все клиники
-      </NuxtLink>
       <h1 class="text-2xl font-bold text-calming-900 mb-2">
         {{ slugLabel }} — клиники
       </h1>

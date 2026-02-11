@@ -1,9 +1,5 @@
 <template>
   <div class="py-8 px-4 max-w-2xl mx-auto">
-    <NuxtLink to="/community" class="text-calming-600 hover:underline mb-4 inline-flex items-center gap-1">
-      <AppIcon name="arrow-left" size="sm" /> К сообществу
-    </NuxtLink>
-
     <h1 class="text-xl font-bold text-calming-900 mb-6">Новая тема</h1>
 
     <div v-if="pending" class="flex justify-center py-8">
