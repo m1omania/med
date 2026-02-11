@@ -31,7 +31,7 @@
         </div>
 
         <!-- Форма ответа -->
-        <section class="rounded-xl bg-calming-50 border border-calming-100 p-5 mt-8">
+        <section class="rounded-xl bg-white border border-calming-100 p-5 mt-8">
           <h2 class="text-sm font-semibold text-calming-800 uppercase tracking-wider mb-4">Оставить сообщение</h2>
           <form @submit.prevent="onSubmit" class="space-y-4">
             <div>
