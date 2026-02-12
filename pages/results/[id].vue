@@ -114,6 +114,26 @@
           <p v-else class="text-sm text-calming-500 py-2">Пока нет обсуждений по теме.</p>
         </section>
 
+        <!-- 4.6 Предложения от партнёров -->
+        <section class="mb-10">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <h2 class="text-lg font-semibold text-calming-900">Предложения от партнёров</h2>
+            <NuxtLink to="/partners-offers" class="inline-flex items-center gap-1 text-sm font-medium text-calming-600 hover:underline">
+              Все предложения
+              <AppIcon name="arrow-right" size="sm" />
+            </NuxtLink>
+          </div>
+          <div v-if="partnerOffersRelevant.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <PartnerOfferCard
+              v-for="offer in partnerOffersRelevant"
+              :key="offer.id"
+              :offer="offer"
+              :category-label="partnerCategoryLabel(offer.tag)"
+            />
+          </div>
+          <p v-else class="text-sm text-calming-500 py-2">Подборка партнёрских предложений по вашему направлению.</p>
+        </section>
+
         <!-- 5. Призыв к регистрации / Дашборд — загрузка, затем контент -->
         <section class="mb-10">
           <div v-if="!sectionReady.cta" class="rounded-xl bg-calming-100 p-8 flex items-center justify-center min-h-[6rem]">
@@ -217,6 +237,29 @@ const communityThreads = computed(() => {
   support.forEach((t) => { if (!seen.has(t.id)) { byMethod.push(t); seen.add(t.id) } })
   return byMethod.slice(0, 5)
 })
+
+/** Партнёрские предложения: релевантные диагнозу категории */
+const diagnosisToPartnerTags: Record<string, string[]> = {
+  pechen: ['pharma', 'clinics', 'labs', 'insurance', 'medtourism', 'related'],
+  grudi: ['pharma', 'clinics', 'medtech', 'labs', 'insurance', 'related'],
+  kishechnik: ['pharma', 'clinics', 'labs', 'insurance', 'related'],
+  legkie: ['pharma', 'clinics', 'labs', 'medtech', 'insurance', 'related'],
+  obshiy: ['clinics', 'labs', 'insurance', 'related', 'medtourism'],
+}
+
+const { data: partnerOffersData } = await useFetch<{ categories: { slug: string; label: string }[]; offers: { id: string; title: string; description: string; tag: string; partnerName?: string; link?: string }[] }>('/api/partner-offers')
+
+const partnerOffersRelevant = computed(() => {
+  const offers = partnerOffersData.value?.offers ?? []
+  const slug = result.value?.primaryRisk?.slug || 'obshiy'
+  const allowedTags = new Set(diagnosisToPartnerTags[slug] ?? diagnosisToPartnerTags.obshiy)
+  return offers.filter((o) => allowedTags.has(o.tag)).slice(0, 6)
+})
+
+function partnerCategoryLabel(tag: string) {
+  const cat = partnerOffersData.value?.categories?.find((c) => c.slug === tag)
+  return cat?.label ?? tag
+}
 
 const clinicIdsFromMethods = computed(() => {
   const list = breakthroughMethods.value

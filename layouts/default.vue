@@ -165,6 +165,7 @@
             <h3 class="font-bold text-lg mb-2">Поддержка</h3>
             <ul class="space-y-1 text-sm">
               <li><NuxtLink to="/about" class="hover:underline">О проекте</NuxtLink></li>
+              <li><NuxtLink to="/partners-offers" class="hover:underline">Партнёры сервиса</NuxtLink></li>
               <li><NuxtLink to="/partners" class="hover:underline">Для партнёров</NuxtLink></li>
               <li><NuxtLink to="/donate" class="hover:underline">Пожертвования</NuxtLink></li>
               <li><NuxtLink to="/subscribe" class="hover:underline">Подписка и уведомления</NuxtLink></li>
