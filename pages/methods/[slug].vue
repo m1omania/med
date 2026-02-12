@@ -62,8 +62,8 @@
 
       <!-- Обсудить в сообществе -->
       <section class="mb-10">
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-3">
-          <h2 class="text-sm font-semibold text-calming-800 uppercase tracking-wider">Обсудить в сообществе</h2>
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <h2 class="text-lg font-semibold text-calming-900">Обсудить в сообществе</h2>
           <NuxtLink
             to="/community"
             class="inline-flex items-center gap-1 text-sm font-medium text-calming-600 hover:underline"
@@ -72,11 +72,12 @@
             <AppIcon name="arrow-right" size="sm" />
           </NuxtLink>
         </div>
-        <div v-if="communityThreads.length" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div v-if="communityThreads.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <CommunityThreadCard
             v-for="t in communityThreads"
             :key="t.id"
             :thread="t"
+            :replies-count="getRepliesCount(t.id)"
           />
         </div>
         <p v-else class="text-sm text-calming-500 py-2">Пока нет обсуждений по теме.</p>
@@ -236,13 +237,13 @@ const wherePlaceName = computed(() => {
   return c?.name ?? ''
 })
 
-const { data: forumData } = await useFetch<{ threads: { id: string; title: string; methodSlug?: string; categoryId?: string }[] }>('/api/forum')
+const { forumData, getRepliesCount } = useForum()
 /** Темы, релевантные методу: сначала с methodSlug === slug, если нет — общие темы поддержки */
 const communityThreads = computed(() => {
   const list = forumData.value?.threads ?? []
-  const forMethod = list.filter((t) => t.methodSlug === slug)
+  const forMethod = list.filter((t: { methodSlug?: string }) => t.methodSlug === slug)
   if (forMethod.length) return forMethod
-  return list.filter((t) => t.categoryId === 'support').slice(0, 5)
+  return list.filter((t: { categoryId?: string }) => t.categoryId === 'support').slice(0, 5)
 })
 
 useHead({

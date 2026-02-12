@@ -11,9 +11,18 @@
         :address="doctorAddress(d)"
       />
     </div>
-    <p v-else class="text-calming-600">
-      Пока нет избранных врачей. Добавляйте врачей в избранное на странице врача.
-    </p>
+    <div v-else class="space-y-4">
+      <p class="text-calming-600">
+        Пока нет избранных врачей. Добавляйте врачей в избранное на странице врача.
+      </p>
+      <NuxtLink
+        to="/clinics"
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-calming-600 text-white font-medium hover:bg-calming-700 transition"
+      >
+        Перейти к клиникам
+        <AppIcon name="arrow-right" size="sm" />
+      </NuxtLink>
+    </div>
   </div>
 </template>
 

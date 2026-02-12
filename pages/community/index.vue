@@ -23,18 +23,12 @@
       <section v-for="cat in categories" :key="cat.id" class="mb-10">
         <h2 class="text-lg font-semibold text-calming-900 mb-1">{{ cat.name }}</h2>
         <p class="text-sm text-calming-600 mb-4">{{ cat.description }}</p>
-        <ul class="space-y-3">
+        <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <li v-for="thread in threadsByCategory(cat.id)" :key="thread.id">
-            <NuxtLink
-              :to="`/community/thread/${thread.id}`"
-              class="block rounded-xl bg-white border border-calming-100 p-4 transition hover:shadow-md hover:border-calming-200"
-            >
-              <h3 class="font-medium text-calming-900">{{ thread.title }}</h3>
-              <p class="text-sm text-calming-600 mt-1 line-clamp-2">{{ thread.excerpt }}</p>
-              <p class="text-xs text-calming-500 mt-2">
-                {{ thread.author }} · {{ formatDate(thread.date) }} · {{ getRepliesCount(thread.id) }} ответов
-              </p>
-            </NuxtLink>
+            <CommunityThreadCard
+              :thread="thread"
+              :replies-count="getRepliesCount(thread.id)"
+            />
           </li>
         </ul>
         <p v-if="!threadsByCategory(cat.id).length" class="text-sm text-calming-500 py-2">Пока нет обсуждений. <NuxtLink to="/community/new" class="text-calming-600 hover:underline">Создать тему</NuxtLink></p>
@@ -52,14 +46,6 @@ const {
 } = useForum()
 
 const pending = computed(() => !forumData.value)
-
-function formatDate (d: string) {
-  if (!d) return ''
-  const [y, m, day] = d.split('-')
-  const months = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек']
-  const mi = parseInt(m || '0', 10) - 1
-  return `${day}.${months[mi] ?? m} ${y}`
-}
 
 useHead({
   title: 'Сообщество — AntiOnko',

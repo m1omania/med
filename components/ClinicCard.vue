@@ -5,7 +5,10 @@
   >
     <div class="min-w-0 flex-1">
       <h3 class="font-bold text-calming-900">{{ clinic.name }}</h3>
-      <p class="text-calming-600 mt-1">{{ clinic.city }}</p>
+      <p class="text-sm text-calming-500 mt-1 inline-flex items-center gap-1.5">
+        <AppIcon name="map-pin" size="sm" class="shrink-0" />
+        {{ clinic.city }}
+      </p>
     </div>
     <div
       v-if="clinic.lat != null && clinic.lng != null"

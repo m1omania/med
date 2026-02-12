@@ -28,27 +28,6 @@
       </div>
     </section>
 
-    <!-- Режим "по моему диагнозу" для авторизованных -->
-    <div v-if="patientStore.isLoggedIn" class="mb-4 flex items-center gap-2">
-      <span class="text-sm font-medium text-calming-700">Показать:</span>
-      <button
-        type="button"
-        class="px-3 py-1.5 rounded-lg text-sm font-medium transition"
-        :class="newsMode === 'all' ? 'bg-calming-600 text-white' : 'bg-calming-100 text-calming-700 hover:bg-calming-200'"
-        @click="newsMode = 'all'"
-      >
-        Все методы
-      </button>
-      <button
-        type="button"
-        class="px-3 py-1.5 rounded-lg text-sm font-medium transition"
-        :class="newsMode === 'diagnosis' ? 'bg-calming-600 text-white' : 'bg-calming-100 text-calming-700 hover:bg-calming-200'"
-        @click="newsMode = 'diagnosis'"
-      >
-        По моему диагнозу
-      </button>
-    </div>
-
     <!-- Список методов -->
     <section>
       <h2 class="sr-only">Список методов</h2>
@@ -109,28 +88,11 @@ function getClinicForMethod(method: Method): Clinic | undefined {
 
 const diseaseCategories = computed(() => diseaseData.value?.categories ?? [])
 
-const patientStore = usePatientStore()
-const newsMode = ref<'all' | 'diagnosis'>('all')
 const selectedDisease = ref('')
 
 function toggleDisease(slug: string) {
   selectedDisease.value = selectedDisease.value === slug ? '' : slug
 }
-
-const diagnosisKeywords = computed(() => {
-  const lastResult = patientStore.lastResultId
-    ? patientStore.getResultById(patientStore.lastResultId)
-    : null
-  const slug = lastResult?.primaryRisk?.slug || patientStore.quizData?.localization || ''
-  const map: Record<string, string[]> = {
-    pechen: ['печень', 'pechen'],
-    grudi: ['грудь', 'маммография', 'молочн', 'grudi', 'гормонотерапия'],
-    legkie: ['лёгкие', 'легкие', 'кт', 'курение', 'legkie'],
-    kishechnik: ['кишечник', 'колоноскопия', 'kishechnik'],
-    obshiy: [],
-  }
-  return map[slug] || []
-})
 
 function methodMatchesDisease(method: Method, keywords: string[]): boolean {
   if (!keywords.length) return true
@@ -143,12 +105,6 @@ function methodMatchesDisease(method: Method, keywords: string[]): boolean {
 
 const filteredMethods = computed(() => {
   let list = methods.value
-  if (patientStore.isLoggedIn && newsMode.value === 'diagnosis') {
-    const keywords = diagnosisKeywords.value
-    if (keywords.length) {
-      list = list.filter((m) => methodMatchesDisease(m, keywords))
-    }
-  }
   if (selectedDisease.value) {
     const cat = diseaseCategories.value.find((c) => c.slug === selectedDisease.value)
     if (cat?.keywords?.length) {

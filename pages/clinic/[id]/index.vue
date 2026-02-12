@@ -6,7 +6,10 @@
           <div class="p-6 lg:w-80 xl:w-96 shrink-0 flex flex-col gap-6">
             <div>
               <h1 class="text-2xl font-bold text-calming-900">{{ clinic.name }}</h1>
-              <p class="text-calming-600 mt-1">{{ clinic.city }}</p>
+              <p class="text-sm text-calming-500 mt-1 inline-flex items-center gap-1.5">
+              <AppIcon name="map-pin" size="sm" class="shrink-0" />
+              {{ clinic.city }}
+            </p>
             </div>
 
             <div>
@@ -70,7 +73,7 @@
         <div id="doctors">
           <section v-if="doctors.length" class="mb-10">
             <h2 class="text-lg font-semibold text-calming-900 mb-4">Врачи клиники</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <DoctorClinicCard
                 v-for="d in doctors"
                 :key="d.id"

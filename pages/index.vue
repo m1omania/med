@@ -195,24 +195,13 @@
             Показать все
           </NuxtLink>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <NuxtLink
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <CommunityThreadCard
             v-for="thread in latestThreads"
             :key="thread.id"
-            :to="`/community/thread/${thread.id}`"
-            class="block p-5 rounded-xl bg-white transition min-h-[15rem] hover:shadow-lg hover:scale-[1.02] flex flex-col"
-          >
-            <h2 class="font-semibold text-calming-800">{{ thread.title }}</h2>
-            <p v-if="thread.date" class="text-sm text-calming-600 mt-2">{{ formatThreadDate(thread.date) }}</p>
-            <div class="mt-auto pt-4">
-              <p class="text-sm text-calming-500">
-                <span class="font-medium">Автор:</span> {{ thread.author }}
-              </p>
-              <p class="text-sm text-calming-500 mt-0.5">
-                {{ getRepliesCount(thread.id) }} ответов
-              </p>
-            </div>
-          </NuxtLink>
+            :thread="thread"
+            :replies-count="getRepliesCount(thread.id)"
+          />
         </div>
         <p v-if="latestThreads.length === 0" class="text-calming-500 text-sm">Пока нет обсуждений.</p>
       </div>
@@ -292,7 +281,7 @@ const { data: clinicsData } = await useFetch<{ clinics: { id: number; name: stri
 const { data: doctorsData } = await useFetch<{
   doctors: { id: number; name: string; specialty: string; photo?: string; clinicId?: number; experience?: string; bio?: { title: string; institution: string; years?: string }[] }[]
 }>('/api/doctors')
-const { data: forumData } = await useFetch<{ threads: { id: string; title: string; author?: string; date?: string }[]; posts?: Record<string, unknown[]> }>('/api/forum')
+const { forumData, getRepliesCount } = useForum()
 
 const clinicsMap = computed(() => {
   const list = clinicsData.value?.clinics ?? []
@@ -353,23 +342,8 @@ const latestThreads = computed(() => {
   const list = forumData.value?.threads ?? []
   return [...list]
     .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
-    .slice(0, 4)
+    .slice(0, 6)
 })
-
-function formatThreadDate(d: string) {
-  if (!d) return ''
-  const [y, m, day] = d.split('-')
-  const months = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь']
-  const mi = Number.parseInt(m || '0', 10) - 1
-  if (mi < 0 || mi >= 12) return d
-  return `${months[mi]} ${y || ''}`
-}
-
-function getRepliesCount(threadId: string) {
-  const posts = forumData.value?.posts as Record<string, unknown[]> | undefined
-  const arr = posts?.[threadId]
-  return Array.isArray(arr) ? arr.length : 0
-}
 
 const heroRef = ref<HTMLElement | null>(null)
 let requestsInterval: ReturnType<typeof setInterval> | null = null

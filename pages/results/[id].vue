@@ -11,7 +11,7 @@
             @click="onFavoriteClick"
           >
             <AppIcon name="star" size="sm" :class="{ 'fill-current': isFavorite }" />
-            {{ isFavorite ? 'Убрать из избранного' : 'Добавить в избранное' }}
+            {{ isFavorite ? 'Сохранено' : 'Сохранить результат' }}
           </button>
         </div>
 
@@ -108,6 +108,7 @@
               v-for="t in communityThreads"
               :key="t.id"
               :thread="t"
+              :replies-count="getRepliesCount(t.id)"
             />
           </div>
           <p v-else class="text-sm text-calming-500 py-2">Пока нет обсуждений по теме.</p>
@@ -127,14 +128,6 @@
                 class="inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-white text-calming-600 text-sm font-medium hover:bg-white/90 transition"
               >
                 Регистрация
-              </NuxtLink>
-            </div>
-            <div v-else>
-              <NuxtLink
-                to="/dashboard"
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-calming-600 text-white text-sm font-medium hover:bg-calming-700"
-              >
-                Сохранить в дашборд
               </NuxtLink>
             </div>
           </div>
@@ -213,7 +206,8 @@ const breakthroughMethods = computed(() => {
 })
 
 const methodSlugs = computed(() => breakthroughMethods.value.map((m: { slug?: string }) => m.slug).filter(Boolean))
-const { data: forumData } = await useFetch<{ threads: { id: string; title: string; methodSlug?: string; categoryId?: string }[] }>('/api/forum')
+const { getRepliesCount } = useForum()
+const { data: forumData } = await useFetch<{ threads: { id: string; title: string; excerpt?: string; author?: string; date?: string; methodSlug?: string; categoryId?: string }[] }>('/api/forum')
 const communityThreads = computed(() => {
   const list = forumData.value?.threads ?? []
   const slugs = new Set(methodSlugs.value)

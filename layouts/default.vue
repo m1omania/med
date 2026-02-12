@@ -8,17 +8,49 @@
           <NuxtLink to="/" class="text-calming-700 font-bold text-xl shrink-0">
             AntiOnko
           </NuxtLink>
-          <nav class="hidden md:flex flex-1 justify-center items-center gap-6 text-sm">
-            <NuxtLink
-              v-for="link in centerNavLinks"
-              :key="link.to"
-              :to="link.to"
-              class="text-calming-600 hover:text-calming-800 font-medium"
-              active-class="text-calming-800 underline"
-            >
-              {{ link.label }}
-            </NuxtLink>
-          </nav>
+          <!-- Режим поиска: поле + крестик -->
+          <template v-if="searchOpen">
+            <div class="flex-1 flex items-center justify-center gap-2">
+              <input
+                ref="searchInputRef"
+                v-model="searchQuery"
+                type="text"
+                autocomplete="off"
+                placeholder="Поиск..."
+                class="w-1/2 min-w-0 h-10 px-3 py-2 rounded-lg border border-calming-200 bg-white text-calming-900 placeholder:text-calming-400 focus:outline-none focus:ring-2 focus:ring-calming-500 focus:border-transparent text-sm"
+                @keydown.escape="closeSearch"
+                @keydown.enter.prevent="submitSearch"
+              />
+              <button
+                type="button"
+                class="flex items-center justify-center w-10 h-10 rounded-lg text-calming-600 hover:bg-calming-100 hover:text-calming-800 shrink-0"
+                aria-label="Закрыть поиск"
+                @click="closeSearch"
+              >
+                <AppIcon name="close" size="sm" />
+              </button>
+            </div>
+          </template>
+          <template v-else>
+            <nav class="hidden md:flex flex-1 justify-center items-center gap-6 text-sm">
+              <NuxtLink
+                v-for="link in centerNavLinks"
+                :key="link.to"
+                :to="link.to"
+                class="text-calming-600 hover:text-calming-800 font-medium"
+                active-class="text-calming-800 underline"
+              >
+                {{ link.label }}
+              </NuxtLink>
+              <button
+                type="button"
+                class="flex items-center justify-center w-9 h-9 rounded-lg text-calming-600 hover:bg-calming-100 hover:text-calming-800 shrink-0 -mr-1"
+                aria-label="Поиск"
+                @click="openSearch"
+              >
+                <AppIcon name="search" size="sm" />
+              </button>
+            </nav>
           <div class="hidden md:flex items-center gap-3 shrink-0">
             <NuxtLink
               v-if="!patientStore.isLoggedIn"
@@ -104,6 +136,7 @@
               </div>
             </template>
           </div>
+          </template>
         </div>
       </div>
     </header>
@@ -149,6 +182,31 @@
 <script setup lang="ts">
 const route = useRoute()
 const patientStore = usePatientStore()
+
+const searchOpen = ref(false)
+const searchQuery = ref('')
+const searchInputRef = ref<HTMLInputElement | null>(null)
+
+function openSearch() {
+  searchOpen.value = true
+  searchQuery.value = ''
+  nextTick(() => {
+    searchInputRef.value?.focus()
+  })
+}
+
+function closeSearch() {
+  searchOpen.value = false
+  searchQuery.value = ''
+}
+
+function submitSearch() {
+  const q = searchQuery.value?.trim()
+  if (q) {
+    navigateTo({ path: '/search', query: { q } })
+    closeSearch()
+  }
+}
 
 const loginLink = computed(() => {
   const path = route.fullPath

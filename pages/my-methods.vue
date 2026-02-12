@@ -11,9 +11,18 @@
         :clinic="getClinicForMethod(m)"
       />
     </div>
-    <p v-else class="text-calming-600">
-      Пока нет избранных методов. Добавляйте методы в избранное на странице метода.
-    </p>
+    <div v-else class="space-y-4">
+      <p class="text-calming-600">
+        Пока нет избранных методов. Добавляйте методы в избранное на странице метода.
+      </p>
+      <NuxtLink
+        to="/methods"
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-calming-600 text-white font-medium hover:bg-calming-700 transition"
+      >
+        Методы лечения
+        <AppIcon name="arrow-right" size="sm" />
+      </NuxtLink>
+    </div>
   </div>
 </template>
 

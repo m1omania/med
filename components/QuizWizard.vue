@@ -208,8 +208,8 @@ const stepTitle = computed(() => stepTitles[currentStep.value] ?? '')
 const stepInstruction = computed(() => stepInstructions[currentStep.value] ?? '')
 
 const genderOptions = [
-  { value: 'M', label: 'Мужской', icon: 'user-male' as const },
-  { value: 'F', label: 'Женский', icon: 'user-female' as const },
+  { value: 'M', label: 'Мужской', icon: 'male' as const },
+  { value: 'F', label: 'Женский', icon: 'female' as const },
 ]
 
 const localizationOptions = [

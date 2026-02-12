@@ -22,9 +22,18 @@
         </span>
       </NuxtLink>
     </div>
-    <p v-else class="text-calming-600">
-      Пока нет избранных результатов. Добавляйте результаты в избранное на странице результата опроса.
-    </p>
+    <div v-else class="space-y-4">
+      <p class="text-calming-600">
+        Пока нет избранных результатов. Пройдите опрос, чтобы получить результат и сохранить его в избранное.
+      </p>
+      <NuxtLink
+        to="/quiz"
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-calming-600 text-white font-medium hover:bg-calming-700 transition"
+      >
+        Пройти опрос
+        <AppIcon name="arrow-right" size="sm" />
+      </NuxtLink>
+    </div>
   </div>
 </template>
 
