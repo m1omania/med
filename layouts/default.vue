@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col bg-calming-50">
     <header
-      v-if="!route.path.startsWith('/design-portal') && route.path !== '/quizstart'"
+      v-if="route.path !== '/' && !route.path.startsWith('/design-portal') && route.path !== '/quizstart'"
       class="sticky top-0 z-[1100] bg-white/95 backdrop-blur border-b border-calming-100 shadow-sm"
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -145,7 +145,7 @@
     <main class="flex-1 flex flex-col min-h-0">
       <slot />
     </main>
-    <footer v-if="!route.path.startsWith('/design-portal')" class="relative z-20 shrink-0 border-t border-neutral-200 mt-auto">
+    <footer v-if="route.path !== '/' && !route.path.startsWith('/design-portal')" class="relative z-20 shrink-0 border-t border-neutral-200 mt-auto">
       <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <!-- Верхний блок: компания + соцсети | приложение -->
         <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10 pb-8">
