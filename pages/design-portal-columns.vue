@@ -249,6 +249,37 @@
               </div>
             </article>
 
+            <!-- Баннер опроса (в стиле design-portal, с иконкой вместо фото) -->
+            <NuxtLink
+              v-else-if="entry.type === 'quiz-banner'"
+              to="/quizstart"
+              class="mt-6 block relative overflow-hidden rounded-3xl border border-white text-slate-700 feed-banner-spots"
+            >
+              <div class="absolute inset-0 feed-banner-blobs pointer-events-none">
+                <span class="feed-banner-blob feed-banner-blob--1" />
+                <span class="feed-banner-blob feed-banner-blob--2" />
+                <span class="feed-banner-blob feed-banner-blob--3" />
+                <span class="feed-banner-blob feed-banner-blob--4" />
+                <span class="feed-banner-blob feed-banner-blob--5" />
+              </div>
+              <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 24px 24px;" />
+              <div class="relative z-10 px-6 sm:px-8 py-6 md:py-8 flex flex-col md:flex-row items-center gap-6">
+                <div class="max-w-xl flex-1">
+                  <h2 class="text-xl sm:text-2xl font-bold text-slate-900 leading-snug mb-6">
+                    Подберите проверенный метод лечения онкологии
+                  </h2>
+                  <span class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">
+                    Подобрать метод
+                    <AppIcon name="arrow-right" class="w-5 h-5 text-white" />
+                  </span>
+                </div>
+                <div class="shrink-0 flex items-end justify-center gap-1 md:gap-2">
+                  <img src="/assets/pil.png" alt="" class="w-20 h-20 md:w-28 md:h-28 object-contain" />
+                  <img src="/assets/pil2.png" alt="" class="w-20 h-20 md:w-28 md:h-28 object-contain" />
+                </div>
+              </div>
+            </NuxtLink>
+
             <!-- Один большой блок метода (featured) -->
             <NuxtLink
               v-else-if="entry.type === 'method-featured' && featuredMethodBlock"
@@ -681,11 +712,15 @@ const moreBigMethodBlocks = computed(() => latestMethods.value.slice(5, 14))
 /** Лента: блоки методов чередуются с блоками по типу болезни через каждые 4 метода */
 const mainFeed = computed(() => {
   const disease = diseaseTypeBlocks.value
-  const feed: { type: 'method-grid' | 'disease' | 'method-featured' | 'method-big' | 'method-partner'; payload?: unknown }[] = []
+  const feed: { type: 'method-grid' | 'disease' | 'method-featured' | 'method-big' | 'method-partner' | 'quiz-banner'; payload?: unknown }[] = []
   feed.push({ type: 'method-grid' })
   if (disease[0]) feed.push({ type: 'disease', payload: disease[0] })
   feed.push({ type: 'method-featured' })
-  moreBigMethodBlocks.value.forEach((item, idx) => feed.push({ type: 'method-big', payload: { item, index: idx } }))
+  const bigBlocks = moreBigMethodBlocks.value
+  bigBlocks.forEach((item, idx) => {
+    feed.push({ type: 'method-big', payload: { item, index: idx } })
+    if (idx === 0) feed.push({ type: 'quiz-banner' })
+  })
   if (disease[1]) feed.push({ type: 'disease', payload: disease[1] })
   feed.push({ type: 'method-partner' })
   if (disease[2]) feed.push({ type: 'disease', payload: disease[2] })
@@ -817,3 +852,57 @@ useHead({
   ],
 })
 </script>
+
+<style scoped>
+.feed-banner-spots {
+  background: #e0f2fe;
+}
+.feed-banner-shadow {
+  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.08), 0 10px 25px -10px rgba(0, 0, 0, 0.04);
+}
+.feed-banner-blobs {
+  position: absolute;
+  inset: 0;
+}
+.feed-banner-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.85;
+}
+.feed-banner-blob--1 {
+  width: 55%;
+  height: 55%;
+  top: -5%;
+  right: -5%;
+  background: rgba(255, 255, 255, 0.9);
+}
+.feed-banner-blob--2 {
+  width: 50%;
+  height: 55%;
+  bottom: -10%;
+  right: -5%;
+  background: rgba(134, 239, 172, 0.75);
+}
+.feed-banner-blob--3 {
+  width: 45%;
+  height: 45%;
+  top: 10%;
+  left: -5%;
+  background: rgba(186, 230, 253, 0.8);
+}
+.feed-banner-blob--4 {
+  width: 50%;
+  height: 50%;
+  bottom: -5%;
+  left: 20%;
+  background: rgba(94, 234, 212, 0.7);
+}
+.feed-banner-blob--5 {
+  width: 45%;
+  height: 50%;
+  top: 30%;
+  right: 10%;
+  background: rgba(59, 130, 246, 0.6);
+}
+</style>
