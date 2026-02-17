@@ -42,7 +42,5 @@ export default defineNuxtConfig({
   ssr: true,
   routeRules: {
     '/api/**': { cors: true },
-    '/news': { redirect: '/methods' },
-    '/news/**': { redirect: '/methods/**' },
   },
 })
