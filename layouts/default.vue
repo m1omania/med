@@ -1,143 +1,111 @@
 <template>
   <div class="min-h-screen flex flex-col bg-calming-50">
+    <!-- Шапка с иконкой меню и выезжающим меню (все страницы кроме / и /v1) -->
     <header
-      v-if="route.path !== '/' && !route.path.startsWith('/design-portal') && route.path !== '/quizstart'"
-      class="sticky top-0 z-[1100] bg-white/95 backdrop-blur border-b border-calming-100 shadow-sm"
+      v-if="route.path !== '/' && route.path !== '/v1'"
+      class="sticky top-0 z-[1100] bg-transparent"
     >
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center h-16 gap-4">
-          <NuxtLink to="/" class="text-calming-700 font-bold text-xl shrink-0">
-            AntiOnko
+      <div class="max-w-[1600px] mx-auto px-6 sm:px-8 h-16 flex items-center justify-between gap-6">
+        <div ref="headerMenuRef" class="flex items-center gap-3 shrink-0 relative">
+          <button
+            type="button"
+            class="flex items-center justify-center w-10 h-10 rounded-full border transition-colors"
+            :class="headerMenuOpen ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white/90 border-slate-200 text-slate-700 hover:bg-white'"
+            aria-label="Меню"
+            :aria-expanded="headerMenuOpen"
+            @click="headerMenuOpen = !headerMenuOpen"
+          >
+            <AppIcon name="menu" class="w-5 h-5" :class="headerMenuOpen ? 'text-white' : 'text-slate-600'" />
+          </button>
+          <NuxtLink to="/" class="text-xl font-bold tracking-tight" @click="headerMenuOpen = false">
+            <span class="text-[#0d2e27]">Anti</span><span class="text-blue-600">Onko</span>
           </NuxtLink>
-          <!-- Режим поиска: поле + крестик -->
-          <template v-if="searchOpen">
-            <div class="flex-1 flex items-center justify-center gap-2">
-              <input
-                ref="searchInputRef"
-                v-model="searchQuery"
-                type="text"
-                autocomplete="off"
-                placeholder="Поиск..."
-                class="w-1/2 min-w-0 h-10 px-3 py-2 rounded-lg border border-calming-200 bg-white text-calming-900 placeholder:text-calming-400 focus:outline-none focus:ring-2 focus:ring-calming-500 focus:border-transparent text-sm"
-                @keydown.escape="closeSearch"
-                @keydown.enter.prevent="submitSearch"
-              />
-              <button
-                type="button"
-                class="flex items-center justify-center w-10 h-10 rounded-lg text-calming-600 hover:bg-calming-100 hover:text-calming-800 shrink-0"
-                aria-label="Закрыть поиск"
-                @click="closeSearch"
-              >
-                <AppIcon name="close" size="sm" />
-              </button>
-            </div>
-          </template>
-          <template v-else>
-            <nav class="hidden md:flex flex-1 justify-center items-center gap-6 text-sm">
-              <NuxtLink
-                v-for="link in centerNavLinks"
-                :key="link.to"
-                :to="link.to"
-                class="text-calming-600 hover:text-calming-800 font-medium"
-                active-class="text-calming-800 underline"
-              >
-                {{ link.label }}
-              </NuxtLink>
-              <button
-                type="button"
-                class="flex items-center justify-center w-9 h-9 rounded-lg text-calming-600 hover:bg-calming-100 hover:text-calming-800 shrink-0 -mr-1"
-                aria-label="Поиск"
-                @click="openSearch"
-              >
-                <AppIcon name="search" size="sm" />
-              </button>
-            </nav>
-          <div class="hidden md:flex items-center gap-3 shrink-0">
-            <NuxtLink
-              v-if="!patientStore.isLoggedIn"
-              :to="loginLink"
-              class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-neutral-200 text-neutral-900 text-sm font-medium rounded-full hover:bg-neutral-50 hover:border-neutral-300 transition-colors shadow-sm"
+          <Transition
+            enter-active-class="default-layout-menu-enter-active"
+            enter-from-class="default-layout-menu-enter-from"
+            enter-to-class="default-layout-menu-enter-to"
+            leave-active-class="default-layout-menu-leave-active"
+            leave-from-class="default-layout-menu-leave-from"
+            leave-to-class="default-layout-menu-leave-to"
+          >
+            <div
+              v-show="headerMenuOpen"
+              class="absolute left-[9px] top-full mt-1 flex flex-col min-w-[220px] z-50 overflow-hidden"
             >
-              <AppIcon name="user-male" class="w-5 h-5 text-blue-600 shrink-0" />
-              Войти
-            </NuxtLink>
-            <template v-else>
+              <NuxtLink to="/quiz" class="default-layout-menu-item flex items-center gap-[23px] py-2.5 pr-4 text-slate-700 hover:text-slate-900 transition-colors" @click="headerMenuOpen = false">
+                <AppIcon name="clipboard" class="w-5 h-5 text-blue-600 shrink-0" />
+                Найти метод
+              </NuxtLink>
+              <NuxtLink to="/methods" class="default-layout-menu-item flex items-center gap-[23px] py-2.5 pr-4 text-slate-700 hover:text-slate-900 transition-colors" @click="headerMenuOpen = false">
+                <AppIcon name="briefcase-medical" class="w-5 h-5 text-blue-600 shrink-0" />
+                Все методы
+              </NuxtLink>
+              <NuxtLink to="/clinics" class="default-layout-menu-item flex items-center gap-[23px] py-2.5 pr-4 text-slate-700 hover:text-slate-900 transition-colors" @click="headerMenuOpen = false">
+                <AppIcon name="hospital" class="w-5 h-5 text-blue-600 shrink-0" />
+                Клиники
+              </NuxtLink>
+              <NuxtLink to="/community" class="default-layout-menu-item flex items-center gap-[23px] py-2.5 pr-4 text-slate-700 hover:text-slate-900 transition-colors" @click="headerMenuOpen = false">
+                <AppIcon name="message-circle-heart" class="w-5 h-5 text-blue-600 shrink-0" />
+                Сообщество
+              </NuxtLink>
+            </div>
+          </Transition>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <NuxtLink
+            to="/search"
+            class="flex items-center justify-center w-10 h-10 rounded-full bg-white/90 border border-slate-200 text-slate-700 hover:bg-white transition-colors"
+            aria-label="Поиск"
+          >
+            <AppIcon name="search" class="w-5 h-5 text-slate-600" />
+          </NuxtLink>
+          <NuxtLink
+            v-if="!patientStore.isLoggedIn"
+            :to="loginLink"
+            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white/90 border border-slate-200 text-slate-700 text-sm font-medium rounded-full hover:bg-white transition-colors"
+          >
+            <AppIcon name="user-male" class="w-5 h-5 text-blue-600 shrink-0" />
+            Войти
+          </NuxtLink>
+          <template v-else>
+            <div
+              ref="userMenuRef"
+              class="relative flex items-center gap-3"
+              @mouseenter="onUserMenuEnter"
+              @mouseleave="onUserMenuLeave"
+            >
+              <button
+                type="button"
+                class="text-slate-600 text-sm truncate max-w-[12rem] text-left bg-transparent border-none cursor-pointer hover:text-slate-800 p-0"
+                :title="patientStore.user?.email"
+                @click="userMenuOpen = !userMenuOpen"
+              >
+                {{ patientStore.user?.email }}
+              </button>
+              <button
+                type="button"
+                class="flex items-center justify-center w-9 h-9 rounded-full bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 shrink-0"
+                aria-label="Меню пользователя"
+                @click="userMenuOpen = !userMenuOpen"
+              >
+                {{ userInitial }}
+              </button>
               <div
-                ref="userMenuRef"
-                class="relative flex items-center gap-3"
+                v-show="userMenuOpen"
+                class="absolute right-0 top-full pt-2 z-[1100]"
                 @mouseenter="onUserMenuEnter"
                 @mouseleave="onUserMenuLeave"
               >
-                <button
-                  type="button"
-                  class="text-calming-600 text-sm truncate max-w-[12rem] text-left bg-transparent border-none cursor-pointer hover:text-calming-800 p-0"
-                  :title="patientStore.user?.email"
-                  @click="userMenuOpen = !userMenuOpen"
-                >
-                  {{ patientStore.user?.email }}
-                </button>
-                <button
-                  type="button"
-                  class="flex items-center justify-center w-9 h-9 rounded-full bg-calming-600 text-white text-sm font-semibold hover:bg-calming-700 focus:outline-none focus:ring-2 focus:ring-calming-500 focus:ring-offset-2 shrink-0"
-                  aria-label="Меню пользователя"
-                  @click="userMenuOpen = !userMenuOpen"
-                >
-                  {{ userInitial }}
-                </button>
-                <div
-                  v-show="userMenuOpen"
-                  class="absolute right-0 top-full pt-2 z-[1100]"
-                  @mouseenter="onUserMenuEnter"
-                  @mouseleave="onUserMenuLeave"
-                >
-                  <div class="w-48 py-1 bg-white rounded-lg border border-neutral-200 shadow-lg">
-                  <NuxtLink
-                    to="/my-results"
-                    class="block px-4 py-2 text-sm text-calming-700 hover:bg-calming-50"
-                    @click="userMenuOpen = false"
-                  >
-                    Мои результаты
-                  </NuxtLink>
-                  <NuxtLink
-                    to="/my-methods"
-                    class="block px-4 py-2 text-sm text-calming-700 hover:bg-calming-50"
-                    @click="userMenuOpen = false"
-                  >
-                    Мои методы
-                  </NuxtLink>
-                  <NuxtLink
-                    to="/my-clinics"
-                    class="block px-4 py-2 text-sm text-calming-700 hover:bg-calming-50"
-                    @click="userMenuOpen = false"
-                  >
-                    Мои клиники
-                  </NuxtLink>
-                  <NuxtLink
-                    to="/my-doctors"
-                    class="block px-4 py-2 text-sm text-calming-700 hover:bg-calming-50"
-                    @click="userMenuOpen = false"
-                  >
-                    Мои врачи
-                  </NuxtLink>
-                  <NuxtLink
-                    to="/settings"
-                    class="block px-4 py-2 text-sm text-calming-700 hover:bg-calming-50"
-                    @click="userMenuOpen = false"
-                  >
-                    Настройки
-                  </NuxtLink>
-                  <button
-                    type="button"
-                    class="block w-full text-left px-4 py-2 text-sm text-calming-700 hover:bg-calming-50"
-                    @click="onLogout"
-                  >
-                    Выйти
-                  </button>
-                  </div>
+                <div class="w-48 py-1 bg-white rounded-lg border border-slate-200 shadow-lg">
+                  <NuxtLink to="/my-results" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="userMenuOpen = false">Мои результаты</NuxtLink>
+                  <NuxtLink to="/my-methods" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="userMenuOpen = false">Мои методы</NuxtLink>
+                  <NuxtLink to="/my-clinics" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="userMenuOpen = false">Мои клиники</NuxtLink>
+                  <NuxtLink to="/my-doctors" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="userMenuOpen = false">Мои врачи</NuxtLink>
+                  <NuxtLink to="/settings" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="userMenuOpen = false">Настройки</NuxtLink>
+                  <button type="button" class="block w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="onLogout">Выйти</button>
                 </div>
               </div>
-            </template>
-          </div>
+            </div>
           </template>
         </div>
       </div>
@@ -206,6 +174,12 @@
 <script setup lang="ts">
 const route = useRoute()
 const patientStore = usePatientStore()
+
+const headerMenuOpen = ref(false)
+const headerMenuRef = ref<HTMLElement | null>(null)
+onClickOutside(headerMenuRef, () => {
+  headerMenuOpen.value = false
+})
 
 const searchOpen = ref(false)
 const searchQuery = ref('')
@@ -295,3 +269,18 @@ onClickOutside(userMenuRef, () => {
   userMenuOpen.value = false
 })
 </script>
+
+<style scoped>
+.default-layout-menu-enter-active,
+.default-layout-menu-leave-active {
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.default-layout-menu-enter-from,
+.default-layout-menu-leave-to {
+  transform: translateX(-100%);
+}
+.default-layout-menu-enter-to,
+.default-layout-menu-leave-from {
+  transform: translateX(0);
+}
+</style>

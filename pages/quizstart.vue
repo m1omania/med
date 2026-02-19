@@ -1,30 +1,6 @@
 <template>
   <div class="quizstart min-h-screen relative" style="font-family: 'Manrope', sans-serif;">
-    <!-- Шапка как на design-portal-columns -->
-    <header class="sticky top-0 z-50 bg-transparent">
-      <div class="max-w-[1600px] mx-auto px-6 sm:px-8 h-16 flex items-center justify-between gap-6">
-        <NuxtLink to="/" class="text-xl font-bold tracking-tight shrink-0">
-          <span class="text-[#0d2e27]">Anti</span><span class="text-blue-600">Onko</span>
-        </NuxtLink>
-        <div class="flex items-center gap-2 shrink-0">
-          <button
-            type="button"
-            class="flex items-center justify-center w-10 h-10 rounded-full bg-white/90 border border-slate-200 text-slate-700 hover:bg-white transition-colors"
-            aria-label="Поиск"
-          >
-            <AppIcon name="search" class="w-5 h-5 text-slate-600" />
-          </button>
-          <NuxtLink
-            to="/login"
-            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white/90 border border-slate-200 text-slate-700 text-sm font-medium rounded-full hover:bg-white transition-colors"
-          >
-            <AppIcon name="user-male" class="w-5 h-5 text-blue-600 shrink-0" />
-            Войти
-          </NuxtLink>
-        </div>
-      </div>
-    </header>
-
+    <!-- Шапка из layout (default.vue) -->
     <!-- Фиксированный анимированный фон как в баннере -->
     <div class="quizstart-bg fixed inset-0 z-0 quizstart-blobs">
       <div ref="blob1" class="quizstart-blob quizstart-blob--1" />
@@ -33,6 +9,38 @@
       <div ref="blob4" class="quizstart-blob quizstart-blob--4" />
       <div ref="blob5" class="quizstart-blob quizstart-blob--5" />
       <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 24px 24px;" />
+    </div>
+    <!-- Цифры в столбик — вне contentRef, чтобы fixed не ломался из‑за transform у родителя -->
+    <div class="quizstart-stats-fixed fixed bottom-5 left-5 z-20 flex flex-col gap-3">
+      <div class="flex flex-col">
+        <span class="quizstart-counter-block inline-flex items-baseline overflow-hidden">
+          <span
+            v-for="(digit, idx) in requestDigits"
+            :key="'r-' + idx"
+            class="quizstart-digit-roller"
+          >
+            <span
+              class="quizstart-digit-strip text-slate-700"
+              :style="{ transform: `translateY(-${digit * quizstartDigitHeightPx}px)` }"
+            >
+              <span v-for="n in 10" :key="n" class="quizstart-digit-cell">{{ n - 1 }}</span>
+            </span>
+          </span>
+        </span>
+        <span class="text-sm text-slate-600 mt-1">Обращения</span>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-2xl md:text-3xl font-bold text-slate-700">{{ stats?.methods ?? '—' }}</span>
+        <span class="text-sm text-slate-600 mt-1">Методы</span>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-2xl md:text-3xl font-bold text-slate-700">{{ stats?.clinics ?? '—' }}</span>
+        <span class="text-sm text-slate-600 mt-1">Клиники</span>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-2xl md:text-3xl font-bold text-slate-700">{{ stats?.doctors ?? '—' }}</span>
+        <span class="text-sm text-slate-600 mt-1">Докторы</span>
+      </div>
     </div>
     <!-- Контент поверх фона -->
     <div ref="contentRef" class="relative z-10">
@@ -205,10 +213,65 @@
 
 <script setup lang="ts">
 const patientStore = usePatientStore()
-
 function startQuizFromScratch() {
   patientStore.resetQuiz()
 }
+
+const { data: stats } = await useFetch<{ requests: number; methods: number; clinics: number; doctors: number }>('/api/stats', {
+  default: () => null,
+})
+
+const quizstartDigitHeightPx = 36
+const animatedRequestsCount = ref(0)
+const requestTargetRef = ref(0)
+const requestsCancelId = { current: 0 }
+
+function runSequentialCount(
+  current: Ref<number>,
+  target: number,
+  options: { maxDurationMs?: number; minStepMs?: number; maxStepMs?: number; cancelToken?: { current: number } } = {}
+) {
+  const { maxDurationMs = 2200, minStepMs = 28, maxStepMs = 120, cancelToken } = options
+  if (cancelToken) cancelToken.current += 1
+  const myId = cancelToken ? cancelToken.current : 0
+  const start = current.value
+  if (start === target) return
+  const steps = Math.abs(target - start)
+  const totalDuration = Math.min(maxDurationMs, steps * 70)
+  const stepMs = Math.max(minStepMs, Math.min(maxStepMs, Math.round(totalDuration / steps)))
+  const step = target > start ? 1 : -1
+  const tick = () => {
+    if (cancelToken && myId !== cancelToken.current) return
+    const next = current.value + step
+    if ((step > 0 && next >= target) || (step < 0 && next <= target)) {
+      current.value = target
+      return
+    }
+    current.value = next
+    setTimeout(tick, stepMs)
+  }
+  setTimeout(tick, stepMs)
+}
+
+const requestDigits = computed(() =>
+  String(animatedRequestsCount.value)
+    .split('')
+    .map((c) => Number.parseInt(c, 10))
+)
+
+watch(
+  () => stats.value?.requests,
+  (n) => {
+    if (n == null || !Number.isFinite(n)) return
+    requestTargetRef.value = n
+    if (animatedRequestsCount.value === 0) {
+      animatedRequestsCount.value = n
+      return
+    }
+    runSequentialCount(animatedRequestsCount, n, { cancelToken: requestsCancelId })
+  },
+  { immediate: true }
+)
 
 const { data: doctorsData } = await useFetch<{ doctors: { id: number; name: string; specialty: string; experience?: string; photo?: string; bio?: { title: string; institution: string }[] }[] }>('/api/doctors', { default: () => ({ doctors: [] }) })
 const serviceExperts = computed(() => (doctorsData.value?.doctors ?? []).slice(0, 8))
@@ -239,6 +302,8 @@ const resultCard3Ref = ref<HTMLElement | null>(null)
 const resultCardScale1 = ref(1)
 const resultCardScale2 = ref(1)
 const resultCardScale3 = ref(1)
+
+let requestsInterval: ReturnType<typeof setInterval> | null = null
 
 const parallaxScrollY = ref(0)
 function pillParallax(factor: number, baseTransform = '') {
@@ -284,6 +349,12 @@ onMounted(() => {
     gsap.to(blobs[3], { x: '-15%', y: '-8%', scale: 1.18, duration: duration * 0.95, ease, repeat: -1, yoyo: true })
     gsap.to(blobs[4], { x: '20%', y: '5%', scale: 1.12, duration: duration * 1.05, ease, repeat: -1, yoyo: true })
   }
+  if (import.meta.client) {
+    requestsInterval = setInterval(() => {
+      requestTargetRef.value += 3
+      runSequentialCount(animatedRequestsCount, requestTargetRef.value, { cancelToken: requestsCancelId })
+    }, 5000)
+  }
   updateResultCardScales()
   updateParallax()
   let rafId = 0
@@ -299,6 +370,7 @@ onMounted(() => {
   onUnmounted(() => {
     window.removeEventListener('scroll', onScroll)
     if (rafId) cancelAnimationFrame(rafId)
+    if (requestsInterval) clearInterval(requestsInterval)
   })
 })
 
@@ -371,5 +443,39 @@ useHead({
   top: 30%;
   right: 10%;
   background: rgba(59, 130, 246, 0.6);
+}
+
+.quizstart-stats-fixed {
+  position: fixed !important;
+  bottom: 1.25rem;
+  left: 1.25rem;
+  z-index: 20;
+}
+
+.quizstart-counter-block {
+  min-width: 2rem;
+  vertical-align: middle;
+  height: 2.25rem;
+}
+.quizstart-digit-roller {
+  display: inline-block;
+  overflow: hidden;
+  height: 2.25rem;
+  vertical-align: top;
+}
+.quizstart-digit-strip {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.12s ease-out;
+}
+.quizstart-digit-cell {
+  height: 2.25rem;
+  min-height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1;
 }
 </style>

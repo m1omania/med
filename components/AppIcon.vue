@@ -27,6 +27,7 @@ import {
   Hospital,
   Search,
   X,
+  Menu,
   Headphones,
   BriefcaseMedical,
   MessageCircleHeart,
@@ -35,7 +36,7 @@ import {
 
 const props = withDefaults(
   defineProps<{
-    name: 'logo' | 'clipboard' | 'chart' | 'building' | 'arrow-right' | 'arrow-left' | 'plus' | 'star' | 'map-pin' | 'bell' | 'user-male' | 'user-female' | 'male' | 'female' | 'hospital' | 'search' | 'close' | 'headset' | 'briefcase-medical' | 'message-circle-heart' | 'message-circle-plus'
+    name: 'logo' | 'clipboard' | 'chart' | 'building' | 'arrow-right' | 'arrow-left' | 'plus' | 'star' | 'map-pin' | 'bell' | 'user-male' | 'user-female' | 'male' | 'female' | 'hospital' | 'search' | 'close' | 'menu' | 'headset' | 'briefcase-medical' | 'message-circle-heart' | 'message-circle-plus'
     class?: string
     size?: 'sm' | 'md' | 'lg'
   }>(),
@@ -68,6 +69,7 @@ const iconMap = {
   hospital: Hospital,
   search: Search,
   close: X,
+  menu: Menu,
   headset: Headphones,
   'briefcase-medical': BriefcaseMedical,
   'message-circle-heart': MessageCircleHeart,

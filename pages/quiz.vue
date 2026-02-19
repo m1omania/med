@@ -1,12 +1,23 @@
 <template>
-  <div class="min-h-[80vh] py-12 md:py-16 px-4">
+  <div class="quiz-page min-h-screen relative" style="font-family: 'Manrope', sans-serif;">
+    <!-- Шапка из layout (default.vue) -->
+    <!-- Фон как на quizstart -->
+    <div class="quiz-page-bg fixed inset-0 z-0 quiz-page-blobs">
+      <div class="quiz-page-blob quiz-page-blob--1" />
+      <div class="quiz-page-blob quiz-page-blob--2" />
+      <div class="quiz-page-blob quiz-page-blob--3" />
+      <div class="quiz-page-blob quiz-page-blob--4" />
+      <div class="quiz-page-blob quiz-page-blob--5" />
+      <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 24px 24px;" />
+    </div>
+    <div class="relative z-10 min-h-[80vh] py-12 md:py-16 px-4">
     <div class="max-w-4xl mx-auto">
       <!-- Общий блок: две колонки — вопрос/ответы и счётчики -->
-      <div class="rounded-2xl overflow-hidden shadow-sm border border-calming-100 flex flex-col lg:flex-row lg:h-[72vh]">
-        <div class="min-w-0 lg:flex-[1.6] bg-white overflow-hidden flex flex-col">
+      <div class="rounded-2xl overflow-hidden shadow-lg border border-white/70 bg-white/40 backdrop-blur-md flex flex-col lg:flex-row lg:h-[72vh]">
+        <div class="min-w-0 lg:flex-[1.6] bg-white/20 backdrop-blur-sm overflow-hidden flex flex-col">
           <QuizWizard class="min-h-0 flex-1" @complete="onQuizComplete" />
         </div>
-        <aside class="lg:flex-1 min-w-0 lg:border-l border-calming-200 px-8 pt-10 pb-8 flex flex-col gap-6 justify-start bg-calming-100">
+        <aside class="lg:flex-1 min-w-0 lg:border-l border-white/50 px-8 pt-10 pb-8 flex flex-col gap-6 justify-start bg-white/25 backdrop-blur-sm">
           <div class="flex flex-col items-start gap-1">
             <span class="counter-block inline-flex items-baseline overflow-hidden h-12">
               <span
@@ -68,8 +79,13 @@
             </span>
             <span class="font-medium text-calming-900 text-sm">Доктора</span>
           </div>
+          <div class="quiz-pills mt-auto pt-6 flex items-end justify-end gap-3 pr-0">
+            <img src="/assets/pil.png" alt="" class="w-24 h-24 md:w-28 md:h-28 object-contain" />
+            <img src="/assets/pil2.png" alt="" class="w-24 h-24 md:w-28 md:h-28 object-contain" />
+          </div>
         </aside>
       </div>
+    </div>
     </div>
   </div>
 </template>
@@ -397,6 +413,11 @@ async function onQuizComplete(resultId: string) {
 
 useHead({
   title: 'Опрос — AntiOnko',
+  link: [
+    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap' },
+  ],
 })
 </script>
 
@@ -433,5 +454,72 @@ useHead({
   font-size: 2.25rem;
   font-weight: 700;
   line-height: 1;
+}
+
+/* Фон как на quizstart */
+.quiz-page-bg {
+  background: #e0f2fe;
+  pointer-events: none;
+}
+.quiz-page-blobs {
+  pointer-events: none;
+}
+.quiz-page-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.85;
+  will-change: transform;
+}
+.quiz-page-blob--1 {
+  width: 55%;
+  height: 55%;
+  top: -5%;
+  right: -5%;
+  background: rgba(255, 255, 255, 0.9);
+}
+.quiz-page-blob--2 {
+  width: 50%;
+  height: 55%;
+  bottom: -10%;
+  right: -5%;
+  background: rgba(134, 239, 172, 0.75);
+}
+.quiz-page-blob--3 {
+  width: 45%;
+  height: 45%;
+  top: 10%;
+  left: -5%;
+  background: rgba(186, 230, 253, 0.8);
+}
+.quiz-page-blob--4 {
+  width: 50%;
+  height: 50%;
+  bottom: -5%;
+  left: 20%;
+  background: rgba(94, 234, 212, 0.7);
+}
+.quiz-page-blob--5 {
+  width: 45%;
+  height: 50%;
+  top: 30%;
+  right: 10%;
+  background: rgba(59, 130, 246, 0.6);
+}
+
+/* Пилюли: плавное появление снизу вверх при загрузке */
+.quiz-pills {
+  animation: quiz-pills-rise 0.8s ease-out forwards;
+}
+
+@keyframes quiz-pills-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
