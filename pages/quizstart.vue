@@ -13,6 +13,18 @@
     <!-- Цифры в столбик — вне contentRef, чтобы fixed не ломался из‑за transform у родителя -->
     <div class="quizstart-stats-fixed fixed bottom-5 left-5 z-20 flex flex-col gap-3">
       <div class="flex flex-col">
+        <span class="text-2xl md:text-3xl font-bold text-slate-700">{{ stats?.methods ?? '—' }}</span>
+        <span class="text-sm text-slate-600 mt-1">Методы</span>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-2xl md:text-3xl font-bold text-slate-700">{{ stats?.clinics ?? '—' }}</span>
+        <span class="text-sm text-slate-600 mt-1">Клиники</span>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-2xl md:text-3xl font-bold text-slate-700">{{ stats?.doctors ?? '—' }}</span>
+        <span class="text-sm text-slate-600 mt-1">Докторы</span>
+      </div>
+      <div class="flex flex-col">
         <span class="quizstart-counter-block inline-flex items-baseline overflow-hidden">
           <span
             v-for="(digit, idx) in requestDigits"
@@ -28,18 +40,6 @@
           </span>
         </span>
         <span class="text-sm text-slate-600 mt-1">Обращения</span>
-      </div>
-      <div class="flex flex-col">
-        <span class="text-2xl md:text-3xl font-bold text-slate-700">{{ stats?.methods ?? '—' }}</span>
-        <span class="text-sm text-slate-600 mt-1">Методы</span>
-      </div>
-      <div class="flex flex-col">
-        <span class="text-2xl md:text-3xl font-bold text-slate-700">{{ stats?.clinics ?? '—' }}</span>
-        <span class="text-sm text-slate-600 mt-1">Клиники</span>
-      </div>
-      <div class="flex flex-col">
-        <span class="text-2xl md:text-3xl font-bold text-slate-700">{{ stats?.doctors ?? '—' }}</span>
-        <span class="text-sm text-slate-600 mt-1">Докторы</span>
       </div>
     </div>
     <!-- Контент поверх фона -->
