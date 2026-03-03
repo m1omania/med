@@ -14,7 +14,7 @@
     <div class="quizstart-stats-fixed fixed bottom-5 left-5 z-20 flex flex-col gap-3">
       <div class="flex flex-col">
         <span class="text-2xl md:text-3xl font-bold text-slate-700">{{ stats?.methods ?? '—' }}</span>
-        <span class="text-sm text-slate-600 mt-1">Методы</span>
+        <span class="text-sm text-slate-600 mt-1">Способы</span>
       </div>
       <div class="flex flex-col">
         <span class="text-2xl md:text-3xl font-bold text-slate-700">{{ stats?.clinics ?? '—' }}</span>
@@ -69,14 +69,14 @@
       </div>
       <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
         <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 tracking-tight mb-4">
-          Подберите проверенный метод лечения онкологии
+          Подберите проверенный способ лечения онкологии
         </h1>
         <NuxtLink
           to="/quiz"
           class="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-calming-600 text-white font-semibold text-lg hover:bg-calming-700 shadow-lg shadow-calming-600/20 transition-all hover:shadow-xl hover:shadow-calming-600/25"
           @click="startQuizFromScratch"
         >
-          Подобрать метод
+          Подобрать способ
           <AppIcon name="arrow-right" class="w-5 h-5" />
         </NuxtLink>
         <p class="text-sm text-slate-500 mt-3">Анонимно · Бесплатно · Без регистрации</p>
@@ -88,11 +88,11 @@
       <div class="max-w-3xl mx-auto px-4 sm:px-6">
         <div class="px-0 py-0">
           <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 leading-tight mb-5 md:mb-6">
-            Зачем подбирать метод лечения под свой случай
+            Зачем подбирать способ лечения под свой случай
           </h2>
           <div class="space-y-5 md:space-y-6">
             <p class="leading-relaxed text-slate-800">
-              <span class="font-bold text-slate-900 block mb-1">Не все методы подходят под тип опухоли и стадию.</span>
+              <span class="font-bold text-slate-900 block mb-1">Не все способы подходят под тип опухоли и стадию.</span>
               Таргетная терапия, иммунотерапия и хирургия имеют разные показания. Персональный подбор снижает риск неэффективного лечения и помогает сфокусироваться на вариантах с доказанной пользой для вашей ситуации.
             </p>
             <p class="leading-relaxed text-slate-800">
@@ -101,7 +101,7 @@
             </p>
             <p class="leading-relaxed text-slate-800">
               <span class="font-bold text-slate-900 block mb-1">Это экономит время и даёт опору для разговора с врачом.</span>
-              Зная заранее проверенные методы и подходящие клиники, вы приходите на приём подготовленными: можно задавать точные вопросы и вместе с доктором выбирать тактику на основе понятных вариантов.
+              Зная заранее проверенные способы и подходящие клиники, вы приходите на приём подготовленными: можно задавать точные вопросы и вместе с доктором выбирать тактику на основе понятных вариантов.
             </p>
           </div>
         </div>
@@ -117,21 +117,21 @@
         <ul class="relative">
           <li ref="resultCard1Ref" class="result-card flex gap-4 p-6 rounded-2xl bg-white/60 backdrop-blur-md border border-white/80 shadow-lg sticky z-10 top-6 md:top-8 origin-top transition-transform duration-200 min-h-[14rem]" :style="{ transform: `scale(${resultCardScale1})` }">
             <div class="min-w-0 flex-1">
-              <h3 class="font-bold text-slate-900 text-lg mb-2">Передовой метод лечения под ваш тип болезни, проверенный нашими специалистами</h3>
-              <p class="text-slate-700 text-sm leading-relaxed">Мы опираемся на клинические рекомендации и данные исследований. Каждый метод в подборке оценён экспертами и соответствует современным стандартам помощи при вашем диагнозе.</p>
+              <h3 class="font-bold text-slate-900 text-lg mb-2">Передовой способ лечения под ваш тип болезни, проверенный нашими специалистами</h3>
+              <p class="text-slate-700 text-sm leading-relaxed">Мы опираемся на клинические рекомендации и данные исследований. Каждый способ в подборке оценён экспертами и соответствует современным стандартам помощи при вашем диагнозе.</p>
             </div>
             <span class="shrink-0 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xl leading-none" aria-hidden="true">+</span>
           </li>
           <li ref="resultCard2Ref" class="result-card flex gap-4 p-6 rounded-2xl bg-white/60 backdrop-blur-md border border-white/80 shadow-lg sticky z-20 top-14 md:top-16 mt-6 origin-top transition-transform duration-200 min-h-[14rem]" :style="{ transform: `scale(${resultCardScale2})` }">
             <div class="min-w-0 flex-1">
               <h3 class="font-bold text-slate-900 text-lg mb-2">Список клиник в вашем или соседнем регионе с возможностью записи на приём</h3>
-              <p class="text-slate-700 text-sm leading-relaxed">Подборка учреждений с учётом географии и профиля: онкоцентры, диспансеры и частные клиники, где доступен нужный метод. Удобная запись на приём прямо из личного кабинета.</p>
+              <p class="text-slate-700 text-sm leading-relaxed">Подборка учреждений с учётом географии и профиля: онкоцентры, диспансеры и частные клиники, где доступен нужный способ. Удобная запись на приём прямо из личного кабинета.</p>
             </div>
             <span class="shrink-0 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xl leading-none" aria-hidden="true">+</span>
           </li>
           <li ref="resultCard3Ref" class="result-card flex gap-4 p-6 rounded-2xl bg-white/60 backdrop-blur-md border border-white/80 shadow-lg sticky z-30 top-20 md:top-24 mt-6 pb-8 origin-top transition-transform duration-200 min-h-[14rem]" :style="{ transform: `scale(${resultCardScale3})` }">
             <div class="min-w-0 flex-1">
-              <h3 class="font-bold text-slate-900 text-lg mb-2">Список докторов, практикующих этот метод</h3>
+              <h3 class="font-bold text-slate-900 text-lg mb-2">Список докторов, практикующих этот способ</h3>
               <p class="text-slate-700 text-sm leading-relaxed">Врачи с опытом в выбранном направлении: хирургия, лучевая или лекарственная терапия. Контакты и возможность записаться к специалисту без лишних поисков.</p>
             </div>
             <span class="shrink-0 w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xl leading-none" aria-hidden="true">+</span>
@@ -147,7 +147,7 @@
           Эксперты сервиса
         </h2>
         <p class="text-slate-700 text-base md:text-lg mb-6 md:mb-8 leading-relaxed">
-          Наши эксперты сверяют методы лечения с клиническими рекомендациями и авторитетными базами, проверяют соответствие методов вашему типу заболевания и стадии, формируют персональную подборку клиник и врачей с учётом географии и специализации.
+          Наши эксперты сверяют способы лечения с клиническими рекомендациями и авторитетными базами, проверяют соответствие способов вашему типу заболевания и стадии, формируют персональную подборку клиник и врачей с учётом географии и специализации.
         </p>
         <div class="grid sm:grid-cols-2 gap-6 md:gap-8">
           <div
@@ -180,7 +180,7 @@
           Наш сервис не заменит врача
         </h2>
         <p class="text-slate-700 leading-relaxed mb-3">
-          Ответственность за ваше здоровье лежит на вас и лечащем враче: мы не медучреждение и даём рекомендации по подбору методов и клиник, а не медицинские консультации. При формировании подборки мы опираемся на клинические рекомендации и оценку наших экспертов.
+          Ответственность за ваше здоровье лежит на вас и лечащем враче: мы не медучреждение и даём рекомендации по подбору способов и клиник, а не медицинские консультации. При формировании подборки мы опираемся на клинические рекомендации и оценку наших экспертов.
         </p>
         <p class="text-slate-700 leading-relaxed">
           Если у вас есть сомнения в назначениях, обратитесь за вторым мнением к другому специалисту. Отказываться от лечения без веских причин опасно для жизни.
@@ -202,7 +202,7 @@
           class="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-calming-600 text-white font-semibold text-lg hover:bg-calming-700 shadow-lg shadow-calming-600/20 transition-all"
           @click="startQuizFromScratch"
         >
-          Подобрать метод
+          Подобрать способ
           <AppIcon name="arrow-right" class="w-5 h-5" />
         </NuxtLink>
       </div>
@@ -375,9 +375,9 @@ onMounted(() => {
 })
 
 useHead({
-  title: 'Подбор метода лечения | AntiOnko',
+  title: 'Подбор способа лечения | AntiOnko',
   meta: [
-    { name: 'description', content: 'Пройдите короткий опрос и получите персональные рекомендации по методам лечения, клиникам и врачам. Анонимно и бесплатно.' },
+    { name: 'description', content: 'Пройдите короткий опрос и получите персональные рекомендации по способам лечения, клиникам и врачам. Анонимно и бесплатно.' },
   ],
   link: [
     { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
