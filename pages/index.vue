@@ -8,7 +8,7 @@
         </NuxtLink>
         <div class="hidden sm:flex flex-1 justify-center items-center gap-4 min-w-0">
           <p class="text-slate-800 font-medium text-sm truncate">
-            Подберите проверенный способ лечения онкологии
+            Подберите инновационный способ лечения онкологии
           </p>
           <NuxtLink
             to="/quizstart"
@@ -266,7 +266,7 @@
               <div class="relative z-10 px-6 sm:px-8 py-6 md:py-8 flex flex-col md:flex-row items-center gap-6">
                 <div class="max-w-xl flex-1">
                   <h2 class="text-xl sm:text-2xl font-bold text-slate-900 leading-snug mb-6">
-                    Подберите проверенный способ лечения онкологии
+                    Подберите инновационный способ лечения онкологии
                   </h2>
                   <span class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">
                     Подобрать способ

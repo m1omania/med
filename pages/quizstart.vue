@@ -65,7 +65,7 @@
       </div>
       <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
         <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-slate-900 tracking-tight mb-4">
-          Подберите проверенный способ лечения онкологии
+          Подберите инновационный способ лечения онкологии
         </h1>
         <NuxtLink
           to="/quiz"
