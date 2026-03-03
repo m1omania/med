@@ -124,7 +124,7 @@
           </section>
 
           <section v-if="methods?.length" class="space-y-3">
-            <h2 class="text-sm font-semibold text-calming-800 uppercase tracking-wide">Методы лечения</h2>
+            <h2 class="text-sm font-semibold text-calming-800 uppercase tracking-wide">Способы лечения</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <NuxtLink
                 v-for="m in methods"
@@ -135,7 +135,7 @@
                 <p class="font-semibold text-calming-900 line-clamp-2 text-sm">{{ stripEmojis(m.title) }}</p>
                 <p v-if="m.date" class="text-xs text-calming-500 mt-1.5">{{ m.date }}</p>
                 <span class="mt-2 inline-flex items-center gap-1 text-xs text-calming-600 font-medium">
-                  К методу
+                  К способу
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                 </span>
               </NuxtLink>

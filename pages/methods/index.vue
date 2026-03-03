@@ -1,7 +1,7 @@
 <template>
   <div class="py-8 px-4 max-w-4xl mx-auto">
-    <h1 class="text-2xl font-bold text-calming-900 mb-2">Методы лечения</h1>
-    <p class="text-calming-600 text-sm mb-8">Все методы верифицированы специалистами с медицинским образованием</p>
+    <h1 class="text-2xl font-bold text-calming-900 mb-2">Способы лечения</h1>
+    <p class="text-calming-600 text-sm mb-8">Все способы верифицированы специалистами с медицинским образованием</p>
 
     <section class="mb-8">
       <div class="flex flex-wrap gap-2">
@@ -28,9 +28,9 @@
       </div>
     </section>
 
-    <!-- Список методов -->
+    <!-- Список способов -->
     <section>
-      <h2 class="sr-only">Список методов</h2>
+      <h2 class="sr-only">Список способов</h2>
       <div v-if="filteredMethods.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <MethodCard
           v-for="item in filteredMethods"
@@ -39,7 +39,7 @@
           :clinic="getClinicForMethod(item)"
         />
       </div>
-      <p v-else class="text-calming-600">Нет методов по выбранному типу заболевания.</p>
+      <p v-else class="text-calming-600">Нет способов по выбранному типу заболевания.</p>
     </section>
   </div>
 </template>
@@ -115,6 +115,6 @@ const filteredMethods = computed(() => {
 })
 
 useHead({
-  title: 'Методы лечения — AntiOnko',
+  title: 'Способы лечения — AntiOnko',
 })
 </script>

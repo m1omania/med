@@ -8,14 +8,14 @@
         </NuxtLink>
         <div class="hidden sm:flex flex-1 justify-center items-center gap-4 min-w-0">
           <p class="text-slate-800 font-medium text-sm truncate">
-            Подберите проверенный метод лечения онкологии
+            Подберите проверенный способ лечения онкологии
           </p>
           <NuxtLink
             to="/quizstart"
             class="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-calming-600 text-white text-sm font-semibold hover:bg-calming-700 transition-colors"
             @click="startQuizFromScratch"
           >
-            Подобрать метод
+            Подобрать способ
             <AppIcon name="arrow-right" class="w-4 h-4" />
           </NuxtLink>
         </div>
@@ -45,11 +45,11 @@
         <nav class="py-4 space-y-1 text-base text-slate-700">
           <NuxtLink to="/quizstart" class="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-white text-slate-700 font-medium">
             <AppIcon name="clipboard" class="text-blue-600 shrink-0 w-8 h-8" />
-            Найти метод
+            Найти способ
           </NuxtLink>
           <NuxtLink to="/methods" class="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-white text-slate-700">
             <AppIcon name="briefcase-medical" class="text-blue-600 shrink-0 w-8 h-8" />
-            Все методы
+            Все способы
           </NuxtLink>
           <NuxtLink to="/clinics" class="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-white text-slate-700">
             <AppIcon name="hospital" class="text-blue-600 shrink-0 w-8 h-8" />
@@ -266,10 +266,10 @@
               <div class="relative z-10 px-6 sm:px-8 py-6 md:py-8 flex flex-col md:flex-row items-center gap-6">
                 <div class="max-w-xl flex-1">
                   <h2 class="text-xl sm:text-2xl font-bold text-slate-900 leading-snug mb-6">
-                    Подберите проверенный метод лечения онкологии
+                    Подберите проверенный способ лечения онкологии
                   </h2>
                   <span class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">
-                    Подобрать метод
+                    Подобрать способ
                     <AppIcon name="arrow-right" class="w-5 h-5 text-white" />
                   </span>
                 </div>
@@ -292,7 +292,7 @@
                     <AppIcon name="hospital" class="w-5 h-5 text-blue-600" />
                   </span>
                   <div class="min-w-0 flex-1">
-                    <p class="font-medium text-slate-900">Метод лечения</p>
+                    <p class="font-medium text-slate-900">Способ лечения</p>
                     <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-slate-500">
                       <span>{{ featuredMethodBlock.date ? new Date(featuredMethodBlock.date).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }) : '' }}</span>
                       <span class="flex items-center gap-1">
@@ -350,7 +350,7 @@
                     <AppIcon name="hospital" class="w-5 h-5 text-blue-600" />
                   </span>
                   <div class="min-w-0 flex-1">
-                    <p class="font-medium text-slate-900">Метод лечения</p>
+                    <p class="font-medium text-slate-900">Способ лечения</p>
                     <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-xs text-slate-500">
                       <span>{{ (entry.payload as { item: { date?: string } }).item.date ? new Date((entry.payload as { item: { date: string } }).item.date).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }) : '' }}</span>
                       <span class="flex items-center gap-1">
@@ -591,7 +591,7 @@
 
           <!-- Топ: Методы -->
           <article class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
-            <h3 class="font-bold text-slate-900 mb-4">Методы</h3>
+            <h3 class="font-bold text-slate-900 mb-4">Способы</h3>
             <ul class="space-y-3 mb-4">
               <li v-for="m in topMethods" :key="m.slug" class="flex items-center gap-3">
                 <span class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
@@ -748,7 +748,7 @@ function methodDiseaseLabel(m: { forWhom?: string; tags?: string[]; topic?: stri
   if (m.forWhom?.trim()) return m.forWhom.split(',')[0].trim().split('(')[0].trim()
   if (m.tags?.length) return m.tags[0]
   if (m.topic?.trim()) return m.topic
-  return 'Методы'
+  return 'Способы'
 }
 const methodImageFiles = [
   'chemist-doctor-explaining-nurse-vaccine-development-modern-equipped-laboratory-holding-test-tube-with-blood-sample 1.png',
@@ -838,7 +838,7 @@ function getDiscussAvatars(thread: { title: string }, threadIndex: number) {
 
 useHead({
   title: 'AntiOnko — онко-скрининг и рекомендации',
-  meta: [{ name: 'description', content: 'Методы лечения, новости и сообщество. Подберите проверенный метод лечения онкологии.' }],
+  meta: [{ name: 'description', content: 'Способы лечения, новости и сообщество. Подберите проверенный способ лечения онкологии.' }],
   link: [
     { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
     { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },

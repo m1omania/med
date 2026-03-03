@@ -57,7 +57,7 @@
         </div>
 
         <section v-if="clinicMethods.length" class="mb-10">
-          <h2 class="text-lg font-semibold text-calming-900 mb-4">Методы лечения</h2>
+          <h2 class="text-lg font-semibold text-calming-900 mb-4">Способы лечения</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <MethodCard
               v-for="m in clinicMethods"

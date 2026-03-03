@@ -42,13 +42,13 @@
             :slug="methodTagsSlug"
           />
         </div>
-        <p v-else class="text-sm text-calming-600 py-2">Клиник по этому методу не найдено.</p>
+        <p v-else class="text-sm text-calming-600 py-2">Клиник по этому способу не найдено.</p>
       </section>
 
       <!-- Доктора практикующие этот метод -->
       <section v-if="methodDoctors.length" class="mb-10">
         <h2 class="text-lg font-semibold text-calming-900 mb-4">
-          Доктора практикующие этот метод
+          Доктора, практикующие этот способ
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <DoctorClinicCard
@@ -97,7 +97,7 @@
         <span v-else class="text-sm text-calming-500">—</span>
       </div>
     </article>
-    <p v-else class="text-calming-600">Метод не найден.</p>
+    <p v-else class="text-calming-600">Способ не найден.</p>
   </div>
 </template>
 
@@ -247,6 +247,6 @@ const communityThreads = computed(() => {
 })
 
 useHead({
-  title: `${methodTitle.value || 'Метод'} — AntiOnko`,
+  title: `${methodTitle.value || 'Способ'} — AntiOnko`,
 })
 </script>

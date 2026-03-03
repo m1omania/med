@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white rounded-xl border border-calming-200 p-6">
-    <h2 class="text-lg font-semibold text-calming-800 mb-4">Методы лечения по вашему направлению</h2>
+    <h2 class="text-lg font-semibold text-calming-800 mb-4">Способы лечения по вашему направлению</h2>
     <ul class="space-y-3">
       <li v-for="m in methods" :key="m.slug">
         <NuxtLink
@@ -13,10 +13,10 @@
       </li>
     </ul>
     <p v-if="!methods.length" class="text-sm text-calming-500">
-      Пройдите опрос — подберём методы по вашему направлению.
+      Пройдите опрос — подберём способы по вашему направлению.
     </p>
     <NuxtLink v-if="methods.length" to="/methods" class="mt-3 inline-block text-sm text-calming-600 hover:underline">
-      Все методы →
+      Все способы →
     </NuxtLink>
   </div>
 </template>

@@ -33,7 +33,7 @@
                 </span>
               </span>
             </span>
-            <span class="font-medium text-calming-900 text-sm">Подходящие методы</span>
+            <span class="font-medium text-calming-900 text-sm">Подходящие способы</span>
           </div>
           <div class="flex flex-col items-start gap-1">
             <span class="counter-block inline-flex items-baseline overflow-hidden h-12">

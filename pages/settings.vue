@@ -105,7 +105,7 @@
             />
           </label>
           <label class="flex items-center justify-between gap-4 cursor-pointer">
-            <span class="text-calming-700">Методы лечения</span>
+            <span class="text-calming-700">Способы лечения</span>
             <input
               v-model="notify.news"
               type="checkbox"

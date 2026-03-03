@@ -1,7 +1,7 @@
 <template>
   <div class="py-8 px-4 max-w-4xl mx-auto">
-    <h1 class="text-2xl font-bold text-calming-900 mb-2">Мои методы</h1>
-    <p class="text-calming-600 text-sm mb-8">Избранные методы лечения</p>
+    <h1 class="text-2xl font-bold text-calming-900 mb-2">Мои способы</h1>
+    <p class="text-calming-600 text-sm mb-8">Избранные способы лечения</p>
 
     <div v-if="favoriteMethods.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <MethodCard
@@ -13,13 +13,13 @@
     </div>
     <div v-else class="space-y-4">
       <p class="text-calming-600">
-        Пока нет избранных методов. Добавляйте методы в избранное на странице метода.
+        Пока нет избранных способов. Добавляйте способы в избранное на странице способа.
       </p>
       <NuxtLink
         to="/methods"
         class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-calming-600 text-white font-medium hover:bg-calming-700 transition"
       >
-        Методы лечения
+        Способы лечения
         <AppIcon name="arrow-right" size="sm" />
       </NuxtLink>
     </div>
@@ -65,6 +65,6 @@ const favoriteMethods = computed(() => {
 })
 
 useHead({
-  title: 'Мои методы — AntiOnko',
+  title: 'Мои способы — AntiOnko',
 })
 </script>

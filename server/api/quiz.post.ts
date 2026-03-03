@@ -52,7 +52,7 @@ function mockAnalyze(body: QuizBody) {
   if (general && Object.keys(risks).length === 0) {
     risks['Общий скрининг'] = 30
     primaryRisk = { slug: 'obshiy', label: 'Общий' }
-    recommendations.push('Профилактический осмотр', 'Изучите методы скрининга')
+    recommendations.push('Профилактический осмотр', 'Изучите способы скрининга')
   }
   if (Object.keys(risks).length === 0) {
     risks['Общий'] = 20

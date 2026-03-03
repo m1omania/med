@@ -3,7 +3,7 @@
     <div class="max-w-4xl mx-auto">
       <template v-if="result">
         <div class="flex flex-wrap items-start justify-between gap-4 mb-8">
-          <h1 class="text-2xl font-bold text-calming-900">Методы лечения и клиники</h1>
+          <h1 class="text-2xl font-bold text-calming-900">Способы лечения и клиники</h1>
           <button
             type="button"
             class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition shrink-0"
@@ -22,7 +22,7 @@
 
         <!-- 2. Методы лечения — загрузка, затем контент с анимацией -->
         <section class="mb-10">
-          <h2 class="text-lg font-semibold text-calming-900 mb-4">Методы лечения</h2>
+          <h2 class="text-lg font-semibold text-calming-900 mb-4">Способы лечения</h2>
           <div v-if="!sectionReady.methods" class="rounded-xl bg-calming-100 p-8 flex items-center justify-center min-h-[12rem]">
             <span class="h-8 w-8 rounded-full border-2 border-calming-600 border-t-transparent animate-spin" aria-hidden="true" />
           </div>
@@ -36,7 +36,7 @@
               />
             </div>
             <p v-else class="p-4 rounded-xl bg-calming-50 text-calming-700 text-sm">
-              Подборка методов по вашему направлению появится после сохранения ответов.
+              Подборка способов по вашему направлению появится после сохранения ответов.
             </p>
           </div>
         </section>
@@ -61,7 +61,7 @@
               <p v-else class="text-sm text-calming-600 py-2">В вашем регионе клиник по направлению не найдено.</p>
             </template>
             <template v-else>
-              <p class="text-sm text-calming-600 mb-4">Клиники, связанные с рекомендованными методами.</p>
+              <p class="text-sm text-calming-600 mb-4">Клиники, связанные с рекомендованными способами.</p>
               <div v-if="displayClinics.length" class="grid md:grid-cols-2 gap-6">
                 <ClinicCard
                   v-for="clinic in displayClinics"

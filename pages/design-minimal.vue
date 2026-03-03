@@ -4,7 +4,7 @@
     <header class="py-12 px-6 max-w-7xl mx-auto flex justify-between items-center">
       <NuxtLink to="/" class="text-2xl font-bold tracking-tight">AntiOnko<span class="text-emerald-500">.</span></NuxtLink>
       <div class="flex gap-8 text-sm font-medium text-zinc-500">
-        <NuxtLink to="/methods" class="hover:text-zinc-900 transition-colors">Методы</NuxtLink>
+        <NuxtLink to="/methods" class="hover:text-zinc-900 transition-colors">Способы</NuxtLink>
         <NuxtLink to="/clinics" class="hover:text-zinc-900 transition-colors">Клиники</NuxtLink>
         <NuxtLink to="/community" class="hover:text-zinc-900 transition-colors">Сообщество</NuxtLink>
       </div>
@@ -18,7 +18,7 @@
            <span class="text-emerald-600">понимание</span>
         </h1>
         <p ref="descRef" class="text-xl text-zinc-500 mb-12 leading-relaxed">
-          Простой и анонимный способ получить проверенную информацию о методах лечения и ведущих специалистах. Мы поможем сориентироваться.
+          Простой и анонимный способ получить проверенную информацию о способах лечения и ведущих специалистах. Мы поможем сориентироваться.
         </p>
         <div class="mb-12 rounded-3xl overflow-hidden shadow-2xl shadow-emerald-100/50">
           <img src="/images/minimal_hero.png" alt="Minimal Hero" class="w-full h-64 md:h-96 object-cover" />
@@ -66,7 +66,7 @@
     <!-- Latest Publications: Clean List -->
     <section class="py-32 max-w-4xl mx-auto px-6">
       <div class="flex items-center justify-between mb-16">
-        <h2 class="text-2xl font-bold">Актуальные методы</h2>
+        <h2 class="text-2xl font-bold">Актуальные способы</h2>
         <NuxtLink to="/methods" class="text-emerald-600 font-bold text-sm hover:underline">См. все</NuxtLink>
       </div>
       
@@ -164,7 +164,7 @@ const minimalFeatures = [
 
 const minimalStats = computed(() => [
   { label: 'Пациентов прошли скрининг', value: stats.value?.requests.toLocaleString() || '1200' },
-  { label: 'Актуальных методик', value: stats.value?.methods || '0' },
+  { label: 'Актуальных способов', value: stats.value?.methods || '0' },
   { label: 'Медицинских центров', value: stats.value?.clinics || '0' }
 ])
 

@@ -34,11 +34,11 @@
             >
               <NuxtLink to="/quiz" class="default-layout-menu-item flex items-center gap-[23px] py-2.5 pr-4 text-slate-700 hover:text-slate-900 transition-colors" @click="headerMenuOpen = false">
                 <AppIcon name="clipboard" class="w-5 h-5 text-blue-600 shrink-0" />
-                Найти метод
+                Найти способ
               </NuxtLink>
               <NuxtLink to="/methods" class="default-layout-menu-item flex items-center gap-[23px] py-2.5 pr-4 text-slate-700 hover:text-slate-900 transition-colors" @click="headerMenuOpen = false">
                 <AppIcon name="briefcase-medical" class="w-5 h-5 text-blue-600 shrink-0" />
-                Все методы
+                Все способы
               </NuxtLink>
               <NuxtLink to="/clinics" class="default-layout-menu-item flex items-center gap-[23px] py-2.5 pr-4 text-slate-700 hover:text-slate-900 transition-colors" @click="headerMenuOpen = false">
                 <AppIcon name="hospital" class="w-5 h-5 text-blue-600 shrink-0" />
@@ -98,7 +98,7 @@
               >
                 <div class="w-48 py-1 bg-white rounded-lg border border-slate-200 shadow-lg">
                   <NuxtLink to="/my-results" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="userMenuOpen = false">Мои результаты</NuxtLink>
-                  <NuxtLink to="/my-methods" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="userMenuOpen = false">Мои методы</NuxtLink>
+                  <NuxtLink to="/my-methods" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="userMenuOpen = false">Мои способы</NuxtLink>
                   <NuxtLink to="/my-clinics" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="userMenuOpen = false">Мои клиники</NuxtLink>
                   <NuxtLink to="/my-doctors" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="userMenuOpen = false">Мои врачи</NuxtLink>
                   <NuxtLink to="/settings" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50" @click="userMenuOpen = false">Настройки</NuxtLink>
@@ -220,13 +220,13 @@ function onLogout() {
 const centerNavLinks = computed(() => {
   if (patientStore.isLoggedIn) {
     return [
-      { to: '/methods', label: 'Методы лечения' },
+      { to: '/methods', label: 'Способы лечения' },
       { to: '/clinics', label: 'Клиники' },
       { to: '/community', label: 'Сообщество' },
     ]
   }
   return [
-    { to: '/methods', label: 'Методы лечения' },
+    { to: '/methods', label: 'Способы лечения' },
     { to: '/clinics', label: 'Клиники' },
     { to: '/community', label: 'Сообщество' },
   ]

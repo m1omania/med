@@ -17,7 +17,7 @@
         </p>
       </template>
       <span v-else class="inline-flex items-center gap-1 font-medium text-calming-600">
-        К методу
+        К способу
         <AppIcon name="arrow-right" size="sm" class="inline" />
       </span>
     </div>

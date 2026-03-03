@@ -7,7 +7,7 @@
           AntiOnko<span class="text-[#054a3e]">.</span>
         </NuxtLink>
         <div class="hidden md:flex items-center gap-8 text-sm font-medium text-[#4b5563]">
-          <NuxtLink to="/methods" class="hover:text-[#054a3e] transition-colors">Методы</NuxtLink>
+          <NuxtLink to="/methods" class="hover:text-[#054a3e] transition-colors">Способы</NuxtLink>
           <NuxtLink to="/clinics" class="hover:text-[#054a3e] transition-colors">Клиники</NuxtLink>
           <NuxtLink to="/community" class="hover:text-[#054a3e] transition-colors">Сообщество</NuxtLink>
           <NuxtLink to="/about" class="hover:text-[#054a3e] transition-colors">О проекте</NuxtLink>
@@ -52,7 +52,7 @@
               </h1>
               
               <p class="text-lg opacity-80 mb-12 max-w-lg leading-relaxed">
-                Доступ к верифицированным методам лечения, подбору клиник и поддержке экспертов — в одном месте.
+                Доступ к верифицированным способам лечения, подбору клиник и поддержке экспертов — в одном месте.
               </p>
               
               <NuxtLink 
@@ -64,7 +64,7 @@
 
               <!-- Features list floating -->
               <div class="mt-16 space-y-6">
-                <div v-for="feat in ['Верифицированные методы', 'Клиники по вашему региону', 'Только проверенные специалисты']" :key="feat" class="flex items-center gap-4 group">
+                <div v-for="feat in ['Верифицированные способы', 'Клиники по вашему региону', 'Только проверенные специалисты']" :key="feat" class="flex items-center gap-4 group">
                   <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
                     <div class="w-2 h-2 rounded-full bg-white"></div>
                   </div>
@@ -151,7 +151,7 @@
            <h2 class="text-5xl font-serif mb-12">Отзывы <span class="italic font-light opacity-60 text-[#054a3e]">пациентов</span></h2>
            <div class="space-y-12">
              <div class="bg-white p-10 rounded-[32px] shadow-sm relative italic text-lg leading-relaxed text-[#0d2e27]">
-               «От записи до консультации — всё прошло легко. Подбор методов и клиник по результатам опроса оказался очень понятным. Наконец-то есть ощущение, что можно разобраться в ситуации, не выходя из дома».
+               «От записи до консультации — всё прошло легко. Подбор способов и клиник по результатам опроса оказался очень понятным. Наконец-то есть ощущение, что можно разобраться в ситуации, не выходя из дома».
                <div class="mt-8 flex items-center gap-4 not-italic">
                  <div class="w-12 h-12 rounded-full bg-slate-200 overflow-hidden">
                    <img src="https://i.pravatar.cc/100?img=32" alt="Пользователь" />
@@ -181,7 +181,7 @@
         <div class="col-span-2 space-y-8">
           <h3 class="text-3xl font-bold">AntiOnko<span class="text-[#054a3e]">.</span></h3>
           <p class="opacity-60 max-w-sm">
-            Удобный подбор методов лечения и клиник по результатам опроса — в один клик.
+            Удобный подбор способов лечения и клиник по результатам опроса — в один клик.
           </p>
         </div>
         <div v-for="col in footerLinks" :key="col.title" class="space-y-6">
@@ -209,9 +209,9 @@
 import { ref } from 'vue'
 
 const stats = [
-  { label: 'Точность подбора методов', value: '98%' },
+  { label: 'Точность подбора способов', value: '98%' },
   { label: 'Проверка симптомов', value: '24/7' },
-  { label: 'Верифицированные методы', value: 'да' },
+  { label: 'Верифицированные способы', value: 'да' },
   { label: 'Пользователей', value: '+15k' }
 ]
 
@@ -223,14 +223,14 @@ const team = [
 ]
 
 const faqs = [
-  { question: 'Как работает опрос на платформе?', answer: 'Вы отвечаете на вопросы о возрасте, симптомах, локализации и регионе. На основе ответов формируется подборка верифицированных методов лечения и клиник, релевантных вашему направлению.' },
+  { question: 'Как работает опрос на платформе?', answer: 'Вы отвечаете на вопросы о возрасте, симптомах, локализации и регионе. На основе ответов формируется подборка верифицированных способов лечения и клиник, релевантных вашему направлению.' },
   { question: 'Какие данные нужно указать?', answer: 'Возраст, пол, симптомы (при наличии), направление (печень, молочные железы, кишечник, лёгкие или общий скрининг), город — по желанию, для подбора клиник в вашем регионе.' },
-  { question: 'Результаты заменяют консультацию врача?', answer: 'Нет. Платформа помогает сориентироваться в методах и клиниках. Окончательное решение по обследованию и лечению принимает врач.' },
+  { question: 'Результаты заменяют консультацию врача?', answer: 'Нет. Платформа помогает сориентироваться в способах и клиниках. Окончательное решение по обследованию и лечению принимает врач.' },
   { question: 'Безопасны ли мои данные?', answer: 'Да. Данные опроса хранятся локально и анонимно. Мы не передаём вашу личную и медицинскую информацию третьим лицам.' }
 ]
 
 const footerLinks = [
-  { title: 'Навигация', links: [{ name: 'Методы лечения', to: '/methods' }, { name: 'Клиники', to: '/clinics' }, { name: 'Сообщество', to: '/community' }, { name: 'О проекте', to: '/about' }] },
+  { title: 'Навигация', links: [{ name: 'Способы лечения', to: '/methods' }, { name: 'Клиники', to: '/clinics' }, { name: 'Сообщество', to: '/community' }, { name: 'О проекте', to: '/about' }] },
   { title: 'Поддержка', links: [{ name: 'Опрос', to: '/quiz' }, { name: 'Партнёры', to: '/partners-offers' }, { name: 'Подписка', to: '/subscribe' }] }
 ]
 

@@ -66,7 +66,7 @@ const props = defineProps<{
 const emit = defineEmits<{ done: [] }>()
 
 const stepLabels = computed(() => [
-  'Ищем методы лечения',
+  'Ищем способы лечения',
   props.userCity?.trim() ? `Ищем клиники в ${props.userCity.trim()}` : 'Ищем клиники в локации указанной пользователем',
   'Ищем клиники в соседних регионах',
   'Составляем план лечения',

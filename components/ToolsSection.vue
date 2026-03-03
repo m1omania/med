@@ -1,9 +1,9 @@
 <template>
   <section class="mb-10">
-    <h2 class="text-lg font-semibold text-calming-900 mb-4">{{ hideMethods ? 'Инструменты поддержки' : 'Подборка методов и инструментов поддержки' }}</h2>
+    <h2 class="text-lg font-semibold text-calming-900 mb-4">{{ hideMethods ? 'Инструменты поддержки' : 'Подборка способов и инструментов поддержки' }}</h2>
     <div class="space-y-4">
       <div v-if="!hideMethods && methods?.length">
-        <h3 class="text-sm font-medium text-calming-700 mb-2">Методы по вашему направлению</h3>
+        <h3 class="text-sm font-medium text-calming-700 mb-2">Способы по вашему направлению</h3>
         <ul class="space-y-1.5">
           <li v-for="m in methods" :key="m.slug" class="text-sm">
             <NuxtLink :to="`/methods/${m.slug}`" class="text-calming-600 hover:underline">

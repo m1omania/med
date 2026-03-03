@@ -16,7 +16,7 @@
     </template>
     <template v-else-if="type === 'TYPE2'">
       <div class="p-4 rounded-xl bg-calming-50 border border-calming-200 text-calming-700 text-sm">
-        После визита к онкологу и уточнения стадии мы покажем актуальные прорывные методы и варианты лечения по вашему направлению.
+        После визита к онкологу и уточнения стадии мы покажем актуальные прорывные способы и варианты лечения по вашему направлению.
       </div>
     </template>
     <template v-else-if="items.length">

@@ -2,12 +2,12 @@
   <div class="py-8 px-4 max-w-4xl mx-auto">
     <h1 class="text-2xl font-bold text-calming-900 mb-2">Поиск</h1>
     <p v-if="query" class="text-calming-600 text-sm mb-8">
-      По запросу «{{ query }}» найдено: методы — {{ methods.length }}, клиники — {{ clinics.length }}
+      По запросу «{{ query }}» найдено: способы — {{ methods.length }}, клиники — {{ clinics.length }}
     </p>
     <p v-else class="text-calming-600 text-sm mb-8">Введите запрос в поле поиска в шапке и нажмите Enter.</p>
 
     <section v-if="methods.length" class="mb-10">
-      <h2 class="text-lg font-semibold text-calming-900 mb-4">Методы лечения</h2>
+      <h2 class="text-lg font-semibold text-calming-900 mb-4">Способы лечения</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <MethodCard
           v-for="item in methods"

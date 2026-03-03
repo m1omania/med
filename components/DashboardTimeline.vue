@@ -65,7 +65,7 @@ const timelineItems = computed(() => {
     title: 'Терапия',
     desc: 'По назначению врача',
     link: '/methods',
-    linkText: 'Методы',
+    linkText: 'Способы',
     done: false,
   })
   return items

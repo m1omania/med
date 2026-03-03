@@ -3,10 +3,10 @@
     <section class="relative pt-28 pb-20 md:pt-36 md:pb-28 bg-gradient-to-b from-calming-100 to-calming-50">
       <div ref="heroRef" class="max-w-4xl mx-auto px-4 text-center">
         <h1 class="text-4xl md:text-5xl font-bold text-calming-900 mb-4">
-          Передовые методы лечения рака
+          Передовые способы лечения рака
         </h1>
         <p class="text-lg text-calming-700 mb-8 max-w-2xl mx-auto">
-          Пройдите короткий опрос — получите проверенные методы лечения, список клиник и докторов.
+          Пройдите короткий опрос — получите проверенные способы лечения, список клиник и докторов.
         </p>
         <NuxtLink
           to="/quiz"
@@ -42,7 +42,7 @@
           </div>
           <div class="text-center">
             <p class="text-3xl md:text-4xl font-bold text-calming-600">{{ stats?.methods ?? '—' }}</p>
-            <p class="text-sm text-calming-600 mt-1">Методы</p>
+            <p class="text-sm text-calming-600 mt-1">Способы</p>
           </div>
           <div class="text-center">
             <p class="text-3xl md:text-4xl font-bold text-calming-600">{{ stats?.clinics ?? '—' }}</p>
@@ -59,7 +59,7 @@
     <section class="py-16 bg-calming-50">
       <div class="max-w-6xl mx-auto px-4">
         <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-          <h2 class="text-2xl font-bold text-calming-900">Методы лечения</h2>
+          <h2 class="text-2xl font-bold text-calming-900">Способы лечения</h2>
           <NuxtLink
             v-if="latestMethods.length"
             to="/methods"
@@ -76,7 +76,7 @@
             :clinic="getClinicForMethod(item)"
           />
         </div>
-        <p v-if="latestMethods.length === 0" class="text-calming-500 text-sm">Методов пока нет.</p>
+        <p v-if="latestMethods.length === 0" class="text-calming-500 text-sm">Способов пока нет.</p>
       </div>
     </section>
 
@@ -85,7 +85,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
           <div>
             <h2 class="text-2xl md:text-3xl font-bold text-calming-900 mb-6">
-              Все методы верифицированы специалистами с медицинским образованием
+              Все способы верифицированы специалистами с медицинским образованием
             </h2>
           </div>
           <div class="relative flex items-center gap-3">

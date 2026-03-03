@@ -4,9 +4,9 @@
       <h1 class="text-2xl font-bold text-calming-900">{{ method.name }}</h1>
       <p class="text-calming-600 text-sm">Тип: {{ method.type }}, источник: {{ method.source }}</p>
       <p class="mt-2">Эффективность по данным: {{ method.success }}%</p>
-      <p class="mt-2 text-calming-700">{{ method.description || 'Метод применяется в современных протоколах лечения.' }}</p>
+      <p class="mt-2 text-calming-700">{{ method.description || 'Способ применяется в современных протоколах лечения.' }}</p>
     </div>
-    <p v-else class="text-calming-600">Метод не найден.</p>
+    <p v-else class="text-calming-600">Способ не найден.</p>
   </div>
 </template>
 
@@ -23,7 +23,7 @@ const method = computed(() =>
 )
 
 useHead({
-  title: method.value ? `${method.value.name} — AntiOnko` : 'Метод — AntiOnko',
+  title: method.value ? `${method.value.name} — AntiOnko` : 'Способ — AntiOnko',
 })
 
 interface MethodRecord {

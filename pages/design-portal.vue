@@ -8,7 +8,7 @@
             <span class="text-[#0d2e27]">Anti</span><span class="text-blue-600">Onko</span>
           </NuxtLink>
           <div class="flex items-center gap-6 text-sm font-medium text-slate-700">
-            <NuxtLink to="/methods" class="border-b-2 border-transparent hover:border-emerald-600 pb-0.5 hover:text-emerald-700 transition-colors">Методы лечения</NuxtLink>
+            <NuxtLink to="/methods" class="border-b-2 border-transparent hover:border-emerald-600 pb-0.5 hover:text-emerald-700 transition-colors">Способы лечения</NuxtLink>
             <NuxtLink to="/clinics" class="border-b-2 border-transparent hover:border-emerald-600 pb-0.5 hover:text-emerald-700 transition-colors">Клиники</NuxtLink>
             <NuxtLink to="/community" class="border-b-2 border-transparent hover:border-emerald-600 pb-0.5 hover:text-emerald-700 transition-colors">Сообщество</NuxtLink>
             <NuxtLink to="/about" class="border-b-2 border-transparent hover:border-emerald-600 pb-0.5 hover:text-emerald-700 transition-colors">О проекте</NuxtLink>
@@ -40,10 +40,10 @@
           <div class="relative z-10 px-8 sm:px-10 py-6 md:py-10 flex flex-col md:flex-row items-center gap-6 md:gap-8">
             <div class="max-w-2xl flex-1">
               <h1 class="text-3xl md:text-4xl font-sans font-normal leading-tight mb-4 text-slate-700">
-                Передовые методы лечения онкологических заболеваний
+                Передовые способы лечения онкологических заболеваний
               </h1>
               <p class="text-lg md:text-xl text-slate-700/90 mb-8 leading-relaxed">
-                Пройдите короткий опрос — получите проверенные методы лечения, список клиник и докторов.
+                Пройдите короткий опрос — получите проверенные способы лечения, список клиник и докторов.
               </p>
               <NuxtLink
                 to="/quiz"
@@ -102,7 +102,7 @@
             <span class="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center mb-4 text-blue-600">
               <AppIcon name="hospital" size="lg" class="w-full h-full" />
             </span>
-            <span class="font-medium text-sm md:text-base leading-snug">Методы лечения</span>
+            <span class="font-medium text-sm md:text-base leading-snug">Способы лечения</span>
           </NuxtLink>
           <NuxtLink
             to="/quiz"
@@ -118,12 +118,12 @@
       </div>
     </section>
 
-    <!-- Методы — карточки с изображением, горизонтальный скролл (~3.5 карточки до края контейнера + фейд) -->
+    <!-- Способы — карточки с изображением, горизонтальный скролл (~3.5 карточки до края контейнера + фейд) -->
     <section class="px-4 sm:px-6 lg:px-8 py-12">
       <div class="max-w-7xl mx-auto">
         <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
-          <h2 class="text-2xl font-serif text-slate-900">Методы лечения</h2>
-          <NuxtLink to="/methods" class="text-slate-600 hover:text-slate-900 text-sm font-medium">Все методы</NuxtLink>
+          <h2 class="text-2xl font-serif text-slate-900">Способы лечения</h2>
+          <NuxtLink to="/methods" class="text-slate-600 hover:text-slate-900 text-sm font-medium">Все способы</NuxtLink>
         </div>
         <div class="relative">
           <div
@@ -213,10 +213,10 @@
         <div class="bg-white p-10 border border-slate-200 flex flex-col justify-between rounded-2xl">
           <div>
             <h4 class="text-2xl font-serif text-slate-900 mb-4">База знаний</h4>
-            <p class="text-slate-600">Более {{ stats?.methods ?? '0' }} верифицированных методик лечения и диагностики.</p>
+            <p class="text-slate-600">Более {{ stats?.methods ?? '0' }} верифицированных способов лечения и диагностики.</p>
           </div>
           <NuxtLink to="/methods" class="inline-flex items-center text-blue-700 font-bold hover:gap-2 transition-all w-fit">
-            К СПИСКУ МЕТОДОВ <AppIcon name="arrow-right" class="ml-1 w-4 h-4" />
+            К СПИСКУ СПОСОБОВ <AppIcon name="arrow-right" class="ml-1 w-4 h-4" />
           </NuxtLink>
         </div>
 
@@ -326,7 +326,7 @@ const { data: doctorsData } = await useFetch<{
 
 // Computed & Helpers
 const portalStats = computed(() => [
-  { label: 'Методик лечения', value: stats.value?.methods || '0+' },
+  { label: 'Способов лечения', value: stats.value?.methods || '0+' },
   { label: 'Партнерских клиник', value: stats.value?.clinics || '0' },
   { label: 'Специалистов', value: stats.value?.doctors || '0' },
   { label: 'Городов присутствия', value: '12' }

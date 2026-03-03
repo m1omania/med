@@ -7,12 +7,12 @@
       </ul>
     </div>
     <div v-if="result.methods?.length" class="bg-white rounded-xl border border-calming-200 p-6">
-      <h2 class="text-lg font-semibold text-calming-800 mb-4">Методы лечения (по данным onguide.ru)</h2>
+      <h2 class="text-lg font-semibold text-calming-800 mb-4">Способы лечения (по данным onguide.ru)</h2>
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
             <tr class="border-b border-calming-200">
-              <th class="text-left py-2">Метод</th>
+              <th class="text-left py-2">Способ</th>
               <th class="text-left py-2">Тип</th>
               <th class="text-left py-2">Действие</th>
             </tr>
