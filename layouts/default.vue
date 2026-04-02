@@ -1,5 +1,8 @@
 <template>
-  <div class="min-h-screen flex flex-col bg-calming-50">
+  <div
+    class="min-h-screen flex flex-col"
+    :class="isQuizstartLyonsBg ? 'bg-transparent' : 'bg-calming-50'"
+  >
     <!-- Шапка с иконкой меню и выезжающим меню (все страницы кроме / и /v1) -->
     <header
       v-if="route.path !== '/' && route.path !== '/v1'"
@@ -18,7 +21,7 @@
             <AppIcon name="menu" class="w-5 h-5" :class="headerMenuOpen ? 'text-white' : 'text-slate-600'" />
           </button>
           <NuxtLink to="/" class="text-xl font-bold tracking-tight" @click="headerMenuOpen = false">
-            <span class="text-[#0d2e27]">Anti</span><span class="text-blue-600">Onko</span>
+            <span :class="isQuizstartLyonsBg ? 'text-white' : 'text-[#0d2e27]'">Anti</span><span class="text-blue-600">Onko</span>
           </NuxtLink>
           <Transition
             enter-active-class="default-layout-menu-enter-active"
@@ -174,6 +177,11 @@
 <script setup lang="ts">
 const route = useRoute()
 const patientStore = usePatientStore()
+
+/** /quizstart?bg=3 — под полноэкранный WebGL, иначе светлый фон перекрывает canvas */
+const isQuizstartLyonsBg = computed(
+  () => route.path === '/quizstart' && String(route.query.bg ?? '') === '3'
+)
 
 const headerMenuOpen = ref(false)
 const headerMenuRef = ref<HTMLElement | null>(null)

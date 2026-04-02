@@ -1,7 +1,11 @@
 <template>
-  <div class="quizstart min-h-screen relative" style="font-family: 'Manrope', sans-serif;">
+  <div
+    class="quizstart min-h-screen relative"
+    :class="{ 'quizstart--bg-v3': quizstartBgVariant === 3 }"
+    style="font-family: 'Manrope', sans-serif;"
+  >
     <!-- Шапка из layout (default.vue) -->
-    <!-- Фон: блобы (по умолчанию и ?bg=2); ?bg=1 — светлый градиент; ?bg=2 — блобы + 3D-спираль (codepen.io/madcat/pen/gveQjK) -->
+    <!-- Фон: блобы (0,2); ?bg=1 — градиент; ?bg=2 — блобы + DNA (madcat); ?bg=3 — тёмная 3D сцена (davidlyons/GRRWrey) -->
     <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
       <div v-if="quizstartBgVariant === 0 || quizstartBgVariant === 2" class="quizstart-bg absolute inset-0 quizstart-blobs">
         <div ref="blob1" class="quizstart-blob quizstart-blob--1" />
@@ -22,6 +26,9 @@
         <QuizstartDnaSpiral />
       </ClientOnly>
     </div>
+    <ClientOnly v-if="quizstartBgVariant === 3">
+      <QuizstartLyonsScene />
+    </ClientOnly>
     <!-- Цифры в столбик — вне contentRef, чтобы fixed не ломался из‑за transform у родителя -->
     <div class="quizstart-stats-fixed pointer-events-auto fixed bottom-5 left-5 z-20 flex flex-col gap-3">
       <div class="flex flex-col">
@@ -56,7 +63,7 @@
     <section class="relative pt-48 pb-36 md:pt-72 md:pb-52">
       <!-- Пиллюли вокруг заголовка, z-index ниже контента (параллакс по скроллу, появляются медленнее) -->
       <div
-        v-if="quizstartBgVariant !== 2"
+        v-if="quizstartBgVariant !== 2 && quizstartBgVariant !== 3"
         ref="pillsWrapRef"
         class="absolute inset-0 z-0 pointer-events-none opacity-0"
       >
@@ -226,7 +233,7 @@
 </template>
 
 <script setup lang="ts">
-/** ?bg=1 — светлый градиент; ?bg=2 — блобы + 3D DNA-спираль; иначе — только блобы */
+/** ?bg=1 — градиент; ?bg=2 — блобы + DNA; ?bg=3 — френель-DNA + частицы (davidlyons); иначе — блобы */
 const route = useRoute()
 const quizstartBgVariant = computed(() => {
   const raw = route.query.bg
@@ -234,8 +241,23 @@ const quizstartBgVariant = computed(() => {
   const n = Number.parseInt(String(s ?? ''), 10)
   if (n === 1) return 1
   if (n === 2) return 2
+  if (n === 3) return 3
   return 0
 })
+
+function applyQuizstartV3PageBg(active: boolean) {
+  if (!import.meta.client) return
+  const c = active ? '#0d1528' : ''
+  document.documentElement.style.backgroundColor = c
+  document.body.style.backgroundColor = c
+}
+
+watch(
+  quizstartBgVariant,
+  (v) => applyQuizstartV3PageBg(v === 3),
+  { immediate: true }
+)
+onUnmounted(() => applyQuizstartV3PageBg(false))
 
 const patientStore = usePatientStore()
 function startQuizFromScratch() {
@@ -558,4 +580,34 @@ useHead({
   line-height: 1;
 }
 
+</style>
+
+<style>
+/* ?bg=3 — читаемый текст на тёмном фоне сцены */
+.quizstart--bg-v3 .text-slate-900 {
+  color: rgb(248 250 252) !important;
+}
+.quizstart--bg-v3 .text-slate-800 {
+  color: rgb(226 232 240) !important;
+}
+.quizstart--bg-v3 .text-slate-700 {
+  color: rgb(203 213 225) !important;
+}
+.quizstart--bg-v3 .text-slate-600 {
+  color: rgb(148 163 184) !important;
+}
+.quizstart--bg-v3 .text-slate-500 {
+  color: rgb(148 163 184) !important;
+}
+.quizstart--bg-v3 .text-blue-600 {
+  color: rgb(147 197 253) !important;
+}
+
+/* Карточки «Что вы получите» — светлое стекло, тёмный шрифт */
+.quizstart--bg-v3 .result-card .text-slate-900 {
+  color: rgb(15 23 42) !important;
+}
+.quizstart--bg-v3 .result-card .text-slate-700 {
+  color: rgb(51 65 85) !important;
+}
 </style>
