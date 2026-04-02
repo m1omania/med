@@ -1,9 +1,9 @@
 <template>
   <div class="quizstart min-h-screen relative" style="font-family: 'Manrope', sans-serif;">
     <!-- Шапка из layout (default.vue) -->
-    <!-- Фон: по умолчанию блобы; ?bg=1 — светлый анимированный градиент (логика как codepen.io/P1N2O/pen/pyBNzX) -->
+    <!-- Фон: блобы (по умолчанию и ?bg=2); ?bg=1 — светлый градиент; ?bg=2 — блобы + 3D-спираль (codepen.io/madcat/pen/gveQjK) -->
     <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
-      <div v-if="quizstartBgVariant === 0" class="quizstart-bg absolute inset-0 quizstart-blobs">
+      <div v-if="quizstartBgVariant === 0 || quizstartBgVariant === 2" class="quizstart-bg absolute inset-0 quizstart-blobs">
         <div ref="blob1" class="quizstart-blob quizstart-blob--1" />
         <div ref="blob2" class="quizstart-blob quizstart-blob--2" />
         <div ref="blob3" class="quizstart-blob quizstart-blob--3" />
@@ -12,6 +12,15 @@
         <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 24px 24px;" />
       </div>
       <div v-if="quizstartBgVariant === 1" class="quizstart-bg-v1-gradient absolute inset-0" />
+    </div>
+    <div
+      v-if="quizstartBgVariant === 2"
+      class="quizstart-dna-anchor absolute left-0 right-0 top-0 z-[5] min-h-screen min-h-[100dvh] pointer-events-none"
+      aria-hidden="true"
+    >
+      <ClientOnly>
+        <QuizstartDnaSpiral />
+      </ClientOnly>
     </div>
     <!-- Цифры в столбик — вне contentRef, чтобы fixed не ломался из‑за transform у родителя -->
     <div class="quizstart-stats-fixed pointer-events-auto fixed bottom-5 left-5 z-20 flex flex-col gap-3">
@@ -46,7 +55,11 @@
     <!-- Hero -->
     <section class="relative pt-48 pb-36 md:pt-72 md:pb-52">
       <!-- Пиллюли вокруг заголовка, z-index ниже контента (параллакс по скроллу, появляются медленнее) -->
-      <div ref="pillsWrapRef" class="absolute inset-0 z-0 pointer-events-none opacity-0">
+      <div
+        v-if="quizstartBgVariant !== 2"
+        ref="pillsWrapRef"
+        class="absolute inset-0 z-0 pointer-events-none opacity-0"
+      >
         <div class="absolute left-[37%] top-[18%] -translate-x-1/2 -translate-y-1/2 pointer-events-none" :style="pillParallax(0.08, 'translate(-50%, -50%)')">
           <img src="/assets/pil.png" alt="" class="w-[5.6rem] h-[5.6rem] md:w-[8.4rem] md:h-[8.4rem] object-contain opacity-90" aria-hidden="true" />
         </div>
@@ -213,13 +226,15 @@
 </template>
 
 <script setup lang="ts">
-/** ?bg=1 — светлый анимированный градиент (голубой/циан/синий/фиолетовый + белый); иначе — блобы */
+/** ?bg=1 — светлый градиент; ?bg=2 — блобы + 3D DNA-спираль; иначе — только блобы */
 const route = useRoute()
 const quizstartBgVariant = computed(() => {
   const raw = route.query.bg
   const s = Array.isArray(raw) ? raw[0] : raw
   const n = Number.parseInt(String(s ?? ''), 10)
-  return n === 1 ? 1 : 0
+  if (n === 1) return 1
+  if (n === 2) return 2
+  return 0
 })
 
 const patientStore = usePatientStore()
@@ -364,7 +379,7 @@ onMounted(() => {
       )
     }
     const blobs =
-      quizstartBgVariant.value === 0
+      quizstartBgVariant.value === 0 || quizstartBgVariant.value === 2
         ? ([blob1, blob2, blob3, blob4, blob5].map((r) => r.value).filter(Boolean) as HTMLElement[])
         : []
     if (blobs.length) {
