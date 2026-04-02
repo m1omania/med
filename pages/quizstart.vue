@@ -91,9 +91,8 @@
           Подберите инновационный способ лечения онкологии
         </h1>
         <NuxtLink
-          to="/quiz"
+          :to="legacyQuizUrl"
           class="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-calming-600 text-white font-semibold text-lg hover:bg-calming-700 shadow-lg shadow-calming-600/20 transition-all hover:shadow-xl hover:shadow-calming-600/25"
-          @click="startQuizFromScratch"
         >
           Подобрать способ
           <AppIcon name="arrow-right" class="w-5 h-5" />
@@ -219,9 +218,8 @@
           Начните с короткого опроса — это бесплатно и займёт несколько минут.
         </p>
         <NuxtLink
-          to="/quiz"
+          :to="legacyQuizUrl"
           class="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-calming-600 text-white font-semibold text-lg hover:bg-calming-700 shadow-lg shadow-calming-600/20 transition-all"
-          @click="startQuizFromScratch"
         >
           Подобрать способ
           <AppIcon name="arrow-right" class="w-5 h-5" />
@@ -234,6 +232,7 @@
 
 <script setup lang="ts">
 /** ?bg=1 — градиент; ?bg=2 — блобы + DNA; ?bg=3 — френель-DNA + частицы (davidlyons); иначе — блобы */
+const legacyQuizUrl = useRuntimeConfig().public.legacyQuizBaseUrl as string
 const route = useRoute()
 const quizstartBgVariant = computed(() => {
   const raw = route.query.bg
@@ -258,11 +257,6 @@ watch(
   { immediate: true }
 )
 onUnmounted(() => applyQuizstartV3PageBg(false))
-
-const patientStore = usePatientStore()
-function startQuizFromScratch() {
-  patientStore.resetQuiz()
-}
 
 const { data: stats } = await useFetch<{ requests: number; methods: number; clinics: number; doctors: number }>('/api/stats', {
   default: () => null,

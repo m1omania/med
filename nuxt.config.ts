@@ -39,6 +39,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       hfApiKey: process.env.HF_API_KEY || '',
+      /** Первый вариант экрана подбора (CTA «Подобрать / Найти способ»): /quizstart?bg=1 */
+      legacyQuizBaseUrl:
+        process.env.NUXT_PUBLIC_LEGACY_QUIZ_URL || '/quizstart?bg=1',
     },
   },
   ssr: true,

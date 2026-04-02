@@ -35,7 +35,11 @@
               v-show="headerMenuOpen"
               class="absolute left-[9px] top-full mt-1 flex flex-col min-w-[220px] z-50 overflow-hidden"
             >
-              <NuxtLink to="/quiz" class="default-layout-menu-item flex items-center gap-[23px] py-2.5 pr-4 text-slate-700 hover:text-slate-900 transition-colors" @click="headerMenuOpen = false">
+              <NuxtLink
+                :to="legacyQuizUrl"
+                class="default-layout-menu-item flex items-center gap-[23px] py-2.5 pr-4 text-slate-700 hover:text-slate-900 transition-colors"
+                @click="headerMenuOpen = false"
+              >
                 <AppIcon name="clipboard" class="w-5 h-5 text-blue-600 shrink-0" />
                 Найти способ
               </NuxtLink>
@@ -177,6 +181,7 @@
 <script setup lang="ts">
 const route = useRoute()
 const patientStore = usePatientStore()
+const legacyQuizUrl = useRuntimeConfig().public.legacyQuizBaseUrl as string
 
 /** /quizstart?bg=3 — под полноэкранный WebGL, иначе светлый фон перекрывает canvas */
 const isQuizstartLyonsBg = computed(

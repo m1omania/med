@@ -11,9 +11,8 @@
             Подберите инновационный способ лечения онкологии
           </p>
           <NuxtLink
-            to="/quizstart"
+            :to="legacyQuizUrl"
             class="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-calming-600 text-white text-sm font-semibold hover:bg-calming-700 transition-colors"
-            @click="startQuizFromScratch"
           >
             Подобрать способ
             <AppIcon name="arrow-right" class="w-4 h-4" />
@@ -43,7 +42,7 @@
       <!-- Левая колонка: фиксирована, скролл внутри колонки -->
       <aside class="hidden lg:block fixed left-0 top-16 w-56 xl:w-64 h-[calc(100vh-4rem)] overflow-y-auto z-40 px-6" style="background-color: #f5f5f5;">
         <nav class="py-4 space-y-1 text-base text-slate-700">
-          <NuxtLink to="/quizstart" class="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-white text-slate-700 font-medium">
+          <NuxtLink :to="legacyQuizUrl" class="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-white text-slate-700 font-medium">
             <AppIcon name="clipboard" class="text-blue-600 shrink-0 w-8 h-8" />
             Найти способ
           </NuxtLink>
@@ -252,7 +251,7 @@
             <!-- Баннер опроса (в стиле design-portal, с иконкой вместо фото) -->
             <NuxtLink
               v-else-if="entry.type === 'quiz-banner'"
-              to="/quizstart"
+              :to="legacyQuizUrl"
               class="mt-6 block relative overflow-hidden rounded-3xl border border-white text-slate-700 feed-banner-spots"
             >
               <div class="absolute inset-0 feed-banner-blobs pointer-events-none">
@@ -638,11 +637,7 @@
 </template>
 
 <script setup lang="ts">
-const patientStore = usePatientStore()
-
-function startQuizFromScratch() {
-  patientStore.resetQuiz()
-}
+const legacyQuizUrl = useRuntimeConfig().public.legacyQuizBaseUrl as string
 
 const { data: diseaseData } = await useFetch<{ categories: { slug: string; title: string; keywords?: string[] }[] }>('/api/disease-types', {
   default: () => ({ categories: [] }),
