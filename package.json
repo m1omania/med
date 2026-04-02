@@ -7,7 +7,10 @@
   },
   "scripts": {
     "build": "nuxt build",
+    "build:clean": "npm run clean:nuxt && nuxt prepare && nuxt build",
+    "clean:nuxt": "rm -rf .nuxt .output node_modules/.vite node_modules/.cache",
     "dev": "nuxt dev",
+    "dev:clean": "npm run clean:nuxt && nuxt prepare && nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "check-links": "node scripts/check-methods-clinics-doctors.mjs"

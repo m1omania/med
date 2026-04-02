@@ -1,17 +1,20 @@
 <template>
   <div class="quizstart min-h-screen relative" style="font-family: 'Manrope', sans-serif;">
     <!-- Шапка из layout (default.vue) -->
-    <!-- Фиксированный анимированный фон как в баннере -->
-    <div class="quizstart-bg fixed inset-0 z-0 quizstart-blobs">
-      <div ref="blob1" class="quizstart-blob quizstart-blob--1" />
-      <div ref="blob2" class="quizstart-blob quizstart-blob--2" />
-      <div ref="blob3" class="quizstart-blob quizstart-blob--3" />
-      <div ref="blob4" class="quizstart-blob quizstart-blob--4" />
-      <div ref="blob5" class="quizstart-blob quizstart-blob--5" />
-      <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 24px 24px;" />
+    <!-- Фон: по умолчанию блобы; ?bg=1 — светлый анимированный градиент (логика как codepen.io/P1N2O/pen/pyBNzX) -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+      <div v-if="quizstartBgVariant === 0" class="quizstart-bg absolute inset-0 quizstart-blobs">
+        <div ref="blob1" class="quizstart-blob quizstart-blob--1" />
+        <div ref="blob2" class="quizstart-blob quizstart-blob--2" />
+        <div ref="blob3" class="quizstart-blob quizstart-blob--3" />
+        <div ref="blob4" class="quizstart-blob quizstart-blob--4" />
+        <div ref="blob5" class="quizstart-blob quizstart-blob--5" />
+        <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 24px 24px;" />
+      </div>
+      <div v-if="quizstartBgVariant === 1" class="quizstart-bg-v1-gradient absolute inset-0" />
     </div>
     <!-- Цифры в столбик — вне contentRef, чтобы fixed не ломался из‑за transform у родителя -->
-    <div class="quizstart-stats-fixed fixed bottom-5 left-5 z-20 flex flex-col gap-3">
+    <div class="quizstart-stats-fixed pointer-events-auto fixed bottom-5 left-5 z-20 flex flex-col gap-3">
       <div class="flex flex-col">
         <span class="text-2xl md:text-3xl font-bold text-slate-700">{{ stats?.clinics ?? '—' }}</span>
         <span class="text-sm text-slate-600 mt-1">Клиники</span>
@@ -39,7 +42,7 @@
       </div>
     </div>
     <!-- Контент поверх фона -->
-    <div ref="contentRef" class="relative z-10">
+    <div ref="contentRef" class="relative z-10 pointer-events-auto">
     <!-- Hero -->
     <section class="relative pt-48 pb-36 md:pt-72 md:pb-52">
       <!-- Пиллюли вокруг заголовка, z-index ниже контента (параллакс по скроллу, появляются медленнее) -->
@@ -75,7 +78,9 @@
           Подобрать способ
           <AppIcon name="arrow-right" class="w-5 h-5" />
         </NuxtLink>
-        <p class="text-sm text-slate-500 mt-3">Анонимно · Бесплатно · Без регистрации</p>
+        <p class="text-sm text-slate-500 mt-3">
+          Анонимно · Бесплатно · Без регистрации
+        </p>
       </div>
     </section>
 
@@ -208,6 +213,15 @@
 </template>
 
 <script setup lang="ts">
+/** ?bg=1 — светлый анимированный градиент (голубой/циан/синий/фиолетовый + белый); иначе — блобы */
+const route = useRoute()
+const quizstartBgVariant = computed(() => {
+  const raw = route.query.bg
+  const s = Array.isArray(raw) ? raw[0] : raw
+  const n = Number.parseInt(String(s ?? ''), 10)
+  return n === 1 ? 1 : 0
+})
+
 const patientStore = usePatientStore()
 function startQuizFromScratch() {
   patientStore.resetQuiz()
@@ -328,29 +342,56 @@ function updateResultCardScales() {
 }
 
 onMounted(() => {
-  const gsap = useGsap()
-  if (import.meta.client && contentRef.value) {
-    gsap.from(contentRef.value, { opacity: 0, y: 40, duration: 0.7, ease: 'power2.out' })
+  if (!import.meta.client) return
+
+  try {
+    const gsap = useGsap()
+    /* Не трогаем opacity: gsap.from(..., { opacity: 0 }) оставляет блок невидимым,
+       если твин не завершился (dev/HMR/ошибка) — выглядит как «сломалась вёрстка». */
+    if (contentRef.value) {
+      gsap.from(contentRef.value, {
+        y: 32,
+        duration: 0.6,
+        ease: 'power2.out',
+        clearProps: 'transform',
+      })
+    }
+    if (pillsWrapRef.value) {
+      gsap.fromTo(
+        pillsWrapRef.value,
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, duration: 1.2, delay: 0.2, ease: 'power2.out' }
+      )
+    }
+    const blobs =
+      quizstartBgVariant.value === 0
+        ? ([blob1, blob2, blob3, blob4, blob5].map((r) => r.value).filter(Boolean) as HTMLElement[])
+        : []
+    if (blobs.length) {
+      const duration = 6
+      const ease = 'sine.inOut'
+      gsap.to(blobs[0], { x: '15%', y: '-10%', scale: 1.15, duration, ease, repeat: -1, yoyo: true })
+      gsap.to(blobs[1], { x: '-20%', y: '12%', scale: 1.2, duration: duration * 0.9, ease, repeat: -1, yoyo: true })
+      gsap.to(blobs[2], { x: '10%', y: '15%', scale: 1.1, duration: duration * 1.1, ease, repeat: -1, yoyo: true })
+      gsap.to(blobs[3], { x: '-15%', y: '-8%', scale: 1.18, duration: duration * 0.95, ease, repeat: -1, yoyo: true })
+      gsap.to(blobs[4], { x: '20%', y: '5%', scale: 1.12, duration: duration * 1.05, ease, repeat: -1, yoyo: true })
+    }
+  } catch (e) {
+    console.warn('[quizstart] gsap', e)
+    if (contentRef.value) {
+      contentRef.value.style.opacity = '1'
+      contentRef.value.style.transform = ''
+    }
+    if (pillsWrapRef.value) {
+      pillsWrapRef.value.style.opacity = '1'
+      pillsWrapRef.value.style.transform = ''
+    }
   }
-  if (import.meta.client && pillsWrapRef.value) {
-    gsap.fromTo(pillsWrapRef.value, { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 1.3, delay: 0.25, ease: 'power2.out' })
-  }
-  const blobs = [blob1, blob2, blob3, blob4, blob5].map((r) => r.value).filter(Boolean) as HTMLElement[]
-  if (blobs.length) {
-    const duration = 6
-    const ease = 'sine.inOut'
-    gsap.to(blobs[0], { x: '15%', y: '-10%', scale: 1.15, duration, ease, repeat: -1, yoyo: true })
-    gsap.to(blobs[1], { x: '-20%', y: '12%', scale: 1.2, duration: duration * 0.9, ease, repeat: -1, yoyo: true })
-    gsap.to(blobs[2], { x: '10%', y: '15%', scale: 1.1, duration: duration * 1.1, ease, repeat: -1, yoyo: true })
-    gsap.to(blobs[3], { x: '-15%', y: '-8%', scale: 1.18, duration: duration * 0.95, ease, repeat: -1, yoyo: true })
-    gsap.to(blobs[4], { x: '20%', y: '5%', scale: 1.12, duration: duration * 1.05, ease, repeat: -1, yoyo: true })
-  }
-  if (import.meta.client) {
-    requestsInterval = setInterval(() => {
-      requestTargetRef.value += 3
-      runSequentialCount(animatedRequestsCount, requestTargetRef.value, { cancelToken: requestsCancelId })
-    }, 5000)
-  }
+
+  requestsInterval = setInterval(() => {
+    requestTargetRef.value += 3
+    runSequentialCount(animatedRequestsCount, requestTargetRef.value, { cancelToken: requestsCancelId })
+  }, 5000)
   updateResultCardScales()
   updateParallax()
   let rafId = 0
@@ -387,6 +428,33 @@ useHead({
 .quizstart-bg {
   background: #e0f2fe;
   pointer-events: none;
+}
+
+/* Вариант ?bg=1 — анимация фона как в codepen P1N2O, светлая палитра */
+.quizstart-bg-v1-gradient {
+  /* Голубой, циан, белый, синий, светло-фиолетовый, лавандовый */
+  background: linear-gradient(
+    -45deg,
+    #dbeafe,
+    #a5f3fc,
+    #ffffff,
+    #bfdbfe,
+    #ede9fe,
+    #ddd6fe
+  );
+  background-size: 400% 400%;
+  animation: quizstart-gradient-v1 7s ease infinite;
+}
+@keyframes quizstart-gradient-v1 {
+  0% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
 }
 
 .quizstart-blobs {
@@ -474,4 +542,5 @@ useHead({
   font-weight: 700;
   line-height: 1;
 }
+
 </style>

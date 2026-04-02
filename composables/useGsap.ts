@@ -1,4 +1,7 @@
+import gsap from 'gsap'
+
 export function useGsap() {
-  const { $gsap } = useNuxtApp()
-  return $gsap as typeof import('gsap')
+  const nuxtApp = useNuxtApp()
+  const injected = nuxtApp.$gsap as typeof gsap | undefined
+  return injected ?? gsap
 }

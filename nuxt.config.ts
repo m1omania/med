@@ -10,7 +10,9 @@ export default defineNuxtConfig({
   },
   modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt', '@vueuse/nuxt'],
   app: {
-    pageTransition: { name: 'page', mode: 'out-in' },
+    /* Глобальные переходы ломали весь сайт в dev (HMR/SSR): контент NuxtPage залипал */
+    pageTransition: false,
+    layoutTransition: false,
     head: {
       title: 'AntiOnko — онко-скрининг и рекомендации',
       meta: [
